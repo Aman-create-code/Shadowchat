@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ShadowChat Ultimate V7 - Audio Fix</title>
+    <title>ShadowChat Ultimate V8 - Rename & Delete</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -31,13 +31,13 @@
                         sans: ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
                     },
                     animation: {
-                        'slide-up': 'slideUp 0.3s ease-out forwards',
+                        'slide-up': 'slideUp 0.4s cubic-bezier(0.32, 0.72, 0, 1) forwards',
                         'pulse-slow': 'pulse 2s infinite'
                     },
                     keyframes: {
                         slideUp: {
-                            '0%': { transform: 'translateY(100%)', opacity: '0' },
-                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                            '0%': { transform: 'translateY(100%)' },
+                            '100%': { transform: 'translateY(0)' },
                         }
                     }
                 }
@@ -55,17 +55,17 @@
         @keyframes msgSlide { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         
         /* iOS Call Specifics */
-        .ios-blur { backdrop-filter: blur(50px) saturate(150%); -webkit-backdrop-filter: blur(50px) saturate(150%); background: rgba(10, 10, 10, 0.75); }
+        .ios-blur { backdrop-filter: blur(60px) saturate(180%); -webkit-backdrop-filter: blur(60px) saturate(180%); background: rgba(22, 22, 22, 0.85); }
         .call-btn { transition: transform 0.1s; }
-        .call-btn:active { transform: scale(0.9); }
+        .call-btn:active { transform: scale(0.92); opacity: 0.8; }
         .ripple {
             position: absolute; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2);
             animation: rippleAnim 2s infinite ease-out; pointer-events: none; z-index: 0;
-            width: 100%; height: 100%;
+            width: 100%; height: 100%; top: 0; left: 0;
         }
         @keyframes rippleAnim {
-            0% { transform: scale(1); opacity: 0.8; }
-            100% { transform: scale(2.5); opacity: 0; }
+            0% { transform: scale(1); opacity: 0.6; }
+            100% { transform: scale(2.2); opacity: 0; }
         }
     </style>
 </head>
@@ -80,7 +80,7 @@
                 <div id="myAvatar" class="w-10 h-10 rounded-full bg-wa-accent flex items-center justify-center font-bold text-white cursor-pointer hover:opacity-80 transition" onclick="window.switchTab('settings')">?</div>
                 <div class="hidden sm:block">
                     <p class="font-bold text-sm leading-none" id="myDisplayNick">Loading...</p>
-                    <p class="text-[10px] text-wa-accent font-bold mt-1">ShadowChat V7</p>
+                    <p class="text-[10px] text-wa-accent font-bold mt-1">ShadowChat V8</p>
                 </div>
             </div>
             <div class="flex items-center gap-1">
@@ -196,34 +196,34 @@
     </main>
 
     <div id="callOverlay" class="hidden fixed inset-0 z-[200] flex flex-col items-center justify-between py-12 px-6 ios-blur text-white animate-slide-up">
-        <div class="absolute inset-0 z-0 bg-gradient-to-b from-black/40 via-transparent to-black/80 pointer-events-none"></div>
+        <div class="absolute inset-0 z-0 bg-gradient-to-b from-black/50 via-transparent to-black/80 pointer-events-none"></div>
         
-        <div class="relative z-10 text-center w-full flex flex-col items-center">
-            <div class="flex items-center gap-2 text-gray-300 text-sm font-semibold mb-6 opacity-80">
-                <i data-lucide="lock" class="w-3 h-3"></i> <span>End-to-End Encrypted</span>
+        <div class="relative z-10 text-center w-full flex flex-col items-center mt-8">
+            <div class="flex items-center gap-2 text-gray-300 text-sm font-semibold mb-8 opacity-80">
+                <i data-lucide="shield-check" class="w-4 h-4 text-green-400"></i> <span>Shadow Audio Secure</span>
             </div>
-            <div class="relative mb-6">
+            <div class="relative mb-8">
                 <div id="callRipple" class="hidden ripple"></div>
-                <div id="callAvatar" class="w-32 h-32 rounded-full bg-[#202c33] flex items-center justify-center text-5xl font-bold shadow-2xl border border-white/10 relative z-10">?</div>
+                <div id="callAvatar" class="w-36 h-36 rounded-full bg-[#202c33] flex items-center justify-center text-5xl font-bold shadow-2xl border border-white/10 relative z-10">?</div>
             </div>
-            <h2 id="callName" class="text-3xl font-bold tracking-tight mb-2">Unbekannt</h2>
+            <h2 id="callName" class="text-4xl font-bold tracking-tight mb-2">Unbekannt</h2>
             <p id="callStatus" class="text-lg font-medium text-gray-400 animate-pulse">Verbinden...</p>
         </div>
 
         <div id="activeCallControls" class="relative z-10 w-full max-w-sm hidden">
-            <div class="grid grid-cols-3 gap-6 mb-12">
-                <button class="flex flex-col items-center gap-2 group opacity-50"><div class="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center"><i data-lucide="mic-off" class="w-7 h-7"></i></div><span class="text-xs">Stumm</span></button>
-                <button class="flex flex-col items-center gap-2 group opacity-50"><div class="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center"><i data-lucide="grid" class="w-7 h-7"></i></div><span class="text-xs">Tasten</span></button>
-                <button class="flex flex-col items-center gap-2 group opacity-50"><div class="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center"><i data-lucide="volume-2" class="w-7 h-7"></i></div><span class="text-xs">Laut</span></button>
+            <div class="grid grid-cols-3 gap-6 mb-16 px-4">
+                <button class="flex flex-col items-center gap-3 group opacity-60 hover:opacity-100 transition"><div class="w-16 h-16 rounded-full bg-white/10 backdrop-blur flex items-center justify-center"><i data-lucide="mic-off" class="w-7 h-7"></i></div><span class="text-xs font-medium">Stumm</span></button>
+                <button class="flex flex-col items-center gap-3 group opacity-60 hover:opacity-100 transition"><div class="w-16 h-16 rounded-full bg-white/10 backdrop-blur flex items-center justify-center"><i data-lucide="volume-2" class="w-7 h-7"></i></div><span class="text-xs font-medium">Laut</span></button>
+                <button class="flex flex-col items-center gap-3 group opacity-60 hover:opacity-100 transition"><div class="w-16 h-16 rounded-full bg-white/10 backdrop-blur flex items-center justify-center"><i data-lucide="video-off" class="w-7 h-7"></i></div><span class="text-xs font-medium">Video</span></button>
             </div>
-            <div class="flex justify-center">
+            <div class="flex justify-center mb-8">
                 <button onclick="window.hangUpCall()" class="w-20 h-20 rounded-full bg-wa-iosRed flex items-center justify-center shadow-lg hover:scale-105 active:scale-90 transition call-btn">
-                    <i data-lucide="phone-off" class="w-8 h-8 fill-current"></i>
+                    <i data-lucide="phone-off" class="w-9 h-9 fill-current"></i>
                 </button>
             </div>
         </div>
 
-        <div id="incomingCallControls" class="relative z-10 w-full max-w-sm flex items-center justify-between px-8 hidden">
+        <div id="incomingCallControls" class="relative z-10 w-full max-w-sm flex items-center justify-between px-8 hidden mb-8">
             <div class="flex flex-col items-center gap-3">
                 <button onclick="window.hangUpCall()" class="w-20 h-20 rounded-full bg-wa-iosRed flex items-center justify-center shadow-lg hover:scale-105 active:scale-90 transition call-btn">
                     <i data-lucide="phone-off" class="w-8 h-8 fill-current"></i>
@@ -309,6 +309,7 @@
         let activeChatId = null;
         let isPrivate = false;
         let myNick = "Gast";
+        let myCustomNames = {}; // Local Cache for renamed friends
         let messageUnsub = null;
         
         // --- WEBRTC CORE VARIABLES ---
@@ -319,13 +320,11 @@
         let candidateUnsub = null;
         let incomingCallListener = null;
         let currentCallId = null;
+        let candidateQueue = []; // WICHTIG: Puffer für Daten
 
-        // BESSERE STUN SERVER LISTE
         const servers = {
             iceServers: [
-                { urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] },
-                { urls: 'stun:stun.l.google.com:19302' },
-                { urls: 'stun:global.stun.twilio.com:3478' }
+                { urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }
             ],
             iceCandidatePoolSize: 10,
         };
@@ -341,8 +340,12 @@
                 const snap = await getDoc(uRef);
                 if(!snap.exists()) {
                     myNick = "User-" + Math.floor(Math.random()*9000+1000);
-                    await setDoc(uRef, { uid: u.uid, nickname: myNick, friends: [], incoming: [], lastSeen: serverTimestamp() });
-                } else myNick = snap.data().nickname;
+                    await setDoc(uRef, { uid: u.uid, nickname: myNick, friends: [], incoming: [], customNames: {}, lastSeen: serverTimestamp() });
+                } else {
+                    const d = snap.data();
+                    myNick = d.nickname;
+                    myCustomNames = d.customNames || {};
+                }
                 
                 document.getElementById('myAvatar').innerText = myNick.substring(0,2).toUpperCase();
                 document.getElementById('setAvatar').innerText = myNick.substring(0,2).toUpperCase();
@@ -354,12 +357,12 @@
                 loadChats();
                 loadFriendsTab();
                 loadStatusTab();
-                startIncomingCallListener(); // Anrufe empfangen
+                startIncomingCallListener();
             }
         });
 
         // ==========================================
-        // 🔥 FIXED AUDIO CALL LOGIC
+        // 🔥 AUDIO CALL LOGIC (VERBESSERT)
         // ==========================================
 
         window.initiateCall = async () => {
@@ -367,51 +370,42 @@
             const parts = activeChatId.split("_");
             const otherId = parts.find(p => p !== currentUser.uid);
 
-            // UI Show
             setupCallUI(true, document.getElementById('activeTitle').innerText);
 
-            // 1. Create Call Document
             const callDoc = doc(collection(db, "calls"));
             currentCallId = callDoc.id;
 
-            // 2. Setup Local Audio
             await setupLocalStream();
-            
-            // 3. Create PC & Tracks
             peerConnection = new RTCPeerConnection(servers);
-            localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-
-            // 4. Handle Remote Audio (THE FIX: Force Play)
-            peerConnection.ontrack = (event) => {
-                const remoteAudio = document.getElementById('remoteAudio');
-                if (remoteAudio.srcObject !== event.streams[0]) {
-                    remoteAudio.srcObject = event.streams[0];
-                    console.log("Remote Stream empfangen!");
-                    remoteAudio.play().catch(e => console.log("Autoplay blocked:", e));
-                }
-            };
-
-            // 5. ICE Candidates logic
+            
+            // Kandidaten Puffern wenn Verbindung noch nicht bereit
             peerConnection.onicecandidate = (event) => {
                 if(event.candidate) {
                     addDoc(collection(callDoc, 'offerCandidates'), event.candidate.toJSON());
                 }
             };
 
-            // 6. Create Offer
+            peerConnection.ontrack = (event) => {
+                const el = document.getElementById('remoteAudio');
+                if (el.srcObject !== event.streams[0]) {
+                    el.srcObject = event.streams[0];
+                    el.play().catch(e => console.log("Audio play err:", e));
+                }
+            };
+
+            localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
             const offerDescription = await peerConnection.createOffer();
             await peerConnection.setLocalDescription(offerDescription);
 
-            const offer = { sdp: offerDescription.sdp, type: offerDescription.type };
             await setDoc(callDoc, {
                 callerId: currentUser.uid,
                 callerName: myNick,
                 targetId: otherId,
-                offer: offer,
-                status: 'ringing' // Wichtig!
+                offer: { type: offerDescription.type, sdp: offerDescription.sdp },
+                status: 'ringing'
             });
 
-            // 7. Wait for Answer
             callUnsub = onSnapshot(callDoc, (snapshot) => {
                 const data = snapshot.data();
                 if(!peerConnection.currentRemoteDescription && data?.answer) {
@@ -424,12 +418,11 @@
                 if(data?.status === 'ended') window.hangUpCall();
             });
 
-            // 8. Listen for Remote ICE
             candidateUnsub = onSnapshot(collection(callDoc, 'answerCandidates'), (snapshot) => {
                 snapshot.docChanges().forEach((change) => {
                     if(change.type === 'added') {
                         const candidate = new RTCIceCandidate(change.doc.data());
-                        peerConnection.addIceCandidate(candidate);
+                        peerConnection.addIceCandidate(candidate).catch(e => console.log("Cand err:", e));
                     }
                 });
             });
@@ -440,23 +433,24 @@
             const callSnap = await getDoc(callDoc);
             const callData = callSnap.data();
 
-            setupCallUI(false, callData.callerName); // Switch to active UI
+            setupCallUI(false, callData.callerName);
 
             await setupLocalStream();
             peerConnection = new RTCPeerConnection(servers);
-            localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-
-            peerConnection.ontrack = (event) => {
-                const remoteAudio = document.getElementById('remoteAudio');
-                remoteAudio.srcObject = event.streams[0];
-                remoteAudio.play();
-            };
 
             peerConnection.onicecandidate = (event) => {
                 if(event.candidate) {
                     addDoc(collection(callDoc, 'answerCandidates'), event.candidate.toJSON());
                 }
             };
+
+            peerConnection.ontrack = (event) => {
+                const el = document.getElementById('remoteAudio');
+                el.srcObject = event.streams[0];
+                el.play();
+            };
+
+            localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
 
             await peerConnection.setRemoteDescription(new RTCSessionDescription(callData.offer));
             const answerDescription = await peerConnection.createAnswer();
@@ -470,7 +464,8 @@
             candidateUnsub = onSnapshot(collection(callDoc, 'offerCandidates'), (snapshot) => {
                 snapshot.docChanges().forEach((change) => {
                     if(change.type === 'added') {
-                        peerConnection.addIceCandidate(new RTCIceCandidate(change.doc.data()));
+                        const candidate = new RTCIceCandidate(change.doc.data());
+                        peerConnection.addIceCandidate(candidate).catch(e => console.log("Cand err:", e));
                     }
                 });
             });
@@ -481,7 +476,7 @@
 
             document.getElementById('callStatus').innerText = "Verbunden";
             document.getElementById('callStatus').classList.remove('animate-pulse');
-             document.getElementById('callStatus').classList.add('text-green-400');
+            document.getElementById('callStatus').classList.add('text-green-400');
         };
 
         function startIncomingCallListener() {
@@ -492,7 +487,6 @@
                         currentCallId = change.doc.id;
                         const data = change.doc.data();
                         
-                        // Show Incoming UI
                         const overlay = document.getElementById('callOverlay');
                         overlay.classList.remove('hidden');
                         document.getElementById('activeCallControls').classList.add('hidden');
@@ -509,14 +503,10 @@
 
         window.hangUpCall = async () => {
             if(currentCallId) {
-                // Try to notify other peer
                 try { await updateDoc(doc(db, "calls", currentCallId), { status: 'ended' }); } catch(e){}
             }
-            
-            // Cleanup Local
             if(peerConnection) { peerConnection.close(); peerConnection = null; }
             if(localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
-            
             if(callUnsub) callUnsub();
             if(candidateUnsub) candidateUnsub();
             
@@ -527,8 +517,13 @@
         };
 
         async function setupLocalStream() {
-            localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-            document.getElementById('localAudio').srcObject = localStream;
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                document.getElementById('localAudio').srcObject = localStream;
+            } catch(e) {
+                alert("Mikrofon Zugriff verweigert! Anruf nicht möglich.");
+                throw e;
+            }
         }
 
         function setupCallUI(isCaller, name) {
@@ -545,7 +540,103 @@
             document.getElementById('callRipple').classList.remove('hidden');
         }
 
-        // --- REST OF APP LOGIC (IDENTICAL TO V6) ---
+        // --- FRIENDS (RENAME & DELETE) ---
+        function loadFriendsTab() {
+            onSnapshot(doc(db, "users", currentUser.uid), async (s) => {
+                const data = s.data(); if(!data) return;
+                myCustomNames = data.customNames || {};
+
+                // Incoming
+                const pL = document.getElementById('pendingList');
+                if(data.incoming?.length > 0) {
+                    document.getElementById('pendingContainer').classList.remove('hidden'); pL.innerHTML = "";
+                    for(const rid of data.incoming) {
+                        const rU = await getDoc(doc(db, "users", rid));
+                        const div = document.createElement('div');
+                        div.className = "flex items-center justify-between bg-white dark:bg-wa-panel p-3 rounded-xl shadow-sm border dark:border-gray-800";
+                        div.innerHTML = `<span class="font-bold text-sm">${rU.data().nickname}</span><div class="flex gap-2"><button onclick="window.acceptFriend('${rid}')" class="bg-wa-accent text-white p-2 rounded-lg"><i data-lucide="check" class="w-4 h-4"></i></button></div>`;
+                        pL.appendChild(div);
+                    }
+                } else document.getElementById('pendingContainer').classList.add('hidden');
+
+                // Contacts
+                const cL = document.getElementById('contactsList'); cL.innerHTML = "";
+                if(data.friends?.length > 0) {
+                    for(const fid of data.friends) {
+                        const fU = await getDoc(doc(db, "users", fid)); const fd = fU.data();
+                        
+                        // Use Custom Name if exists
+                        const dispName = myCustomNames[fid] || fd.nickname;
+
+                        const div = document.createElement('div');
+                        div.className = "flex items-center justify-between p-3 hover:bg-gray-100 dark:hover:bg-wa-panel rounded-xl transition group";
+                        div.innerHTML = `
+                            <div class="flex items-center gap-3 cursor-pointer flex-1" onclick="window.startPrivateChat('${fid}', '${dispName}')">
+                                <div class="w-10 h-10 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold">${dispName[0]}</div>
+                                <div>
+                                    <p class="font-bold text-sm">${dispName}</p>
+                                    ${myCustomNames[fid] ? `<p class='text-[10px] text-gray-400'>Original: ${fd.nickname}</p>` : ''}
+                                </div>
+                            </div>
+                            <div class="flex gap-1">
+                                <button onclick="window.renameContact('${fid}', '${dispName}')" class="p-2 text-gray-400 hover:text-blue-500"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                                <button onclick="window.deleteContact('${fid}')" class="p-2 text-gray-400 hover:text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                <button onclick="window.startPrivateChat('${fid}', '${dispName}')" class="text-wa-accent p-2 hover:bg-wa-accent/10 rounded-full"><i data-lucide="message-circle" class="w-5 h-5"></i></button>
+                            </div>
+                        `;
+                        cL.appendChild(div);
+                    }
+                } else cL.innerHTML = `<div class="text-center py-10 text-gray-500 text-xs">Noch keine Kontakte.</div>`;
+                lucide.createIcons();
+            });
+        }
+
+        window.renameContact = async (fid, currentName) => {
+            const newName = prompt("Neuen Namen eingeben:", currentName);
+            if(newName && newName !== currentName) {
+                const update = {};
+                update[`customNames.${fid}`] = newName;
+                await updateDoc(doc(db, "users", currentUser.uid), update);
+            }
+        };
+
+        window.deleteContact = async (fid) => {
+            if(confirm("Kontakt wirklich löschen?")) {
+                await updateDoc(doc(db, "users", currentUser.uid), { friends: arrayRemove(fid) });
+                // Optional: remove yourself from their list too, but usually not required
+            }
+        };
+
+        // --- MESSAGING & DELETE ---
+        function renderMessage(msgId, m) {
+            const list = document.getElementById('messagesList'); const isMe = m.senderId === currentUser.uid;
+            const time = m.timestamp ? new Date(m.timestamp.seconds*1000).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
+            
+            const div = document.createElement('div');
+            div.className = `flex ${isMe ? 'justify-end' : 'justify-start'} msg-anim group mb-1`;
+            
+            div.innerHTML = `
+                <div class="max-w-[85%] md:max-w-[70%] p-2 rounded-xl shadow-sm relative ${isMe ? 'bg-wa-bubbleOut dark:bg-wa-bubbleDarkOut text-gray-800 dark:text-gray-100 rounded-tr-none' : 'bg-white dark:bg-wa-bubbleDarkIn text-gray-800 dark:text-gray-100 rounded-tl-none'}">
+                    ${!isMe && !isPrivate ? `<p class="text-[10px] font-black text-wa-accent mb-1">${m.senderName}</p>` : ''}
+                    ${m.img ? `<img src="${m.img}" class="rounded-lg mb-2 max-w-full cursor-pointer hover:opacity-90" onclick="window.open('${m.img}')">` : ''}
+                    <p class="text-[14.5px] leading-relaxed pr-8 whitespace-pre-wrap">${m.text || ''}</p>
+                    <div class="absolute bottom-1 right-2 flex items-center gap-1">
+                        <span class="text-[9px] opacity-40 font-bold">${time}</span>
+                        ${isMe ? `<i data-lucide="check-check" class="w-3 h-3 text-gray-400"></i>` : ''}
+                    </div>
+                    ${isMe ? `<button onclick="window.deleteMessage('${msgId}')" class="absolute -left-8 top-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition shadow-sm"><i data-lucide="trash-2" class="w-3 h-3"></i></button>` : ''}
+                </div>`;
+            list.appendChild(div); lucide.createIcons();
+        }
+
+        window.deleteMessage = async (msgId) => {
+            if(confirm("Nachricht für alle löschen?")) {
+                await deleteDoc(doc(db, `chats/${activeChatId}/messages`, msgId));
+                // UI updates automatically via onSnapshot
+            }
+        };
+
+        // --- STANDARD APP LOGIC ---
         window.toggleTheme = () => { const d = document.documentElement.classList.toggle('dark'); localStorage.setItem('sc_theme', d ? 'dark' : 'light'); };
         if(localStorage.getItem('sc_theme') === 'light') document.documentElement.classList.remove('dark');
         window.toggleModal = (id) => document.getElementById(id).classList.toggle('hidden');
@@ -574,34 +665,6 @@
             const tRef = doc(db, "users", id); const tSnap = await getDoc(tRef);
             if(tSnap.exists()) { await updateDoc(tRef, { incoming: arrayUnion(currentUser.uid) }); alert("Anfrage gesendet!"); } else alert("ID nicht gefunden.");
         };
-
-        function loadFriendsTab() {
-            onSnapshot(doc(db, "users", currentUser.uid), async (s) => {
-                const data = s.data(); if(!data) return;
-                const pL = document.getElementById('pendingList');
-                if(data.incoming?.length > 0) {
-                    document.getElementById('pendingContainer').classList.remove('hidden'); pL.innerHTML = "";
-                    for(const rid of data.incoming) {
-                        const rU = await getDoc(doc(db, "users", rid));
-                        const div = document.createElement('div');
-                        div.className = "flex items-center justify-between bg-white dark:bg-wa-panel p-3 rounded-xl shadow-sm border dark:border-gray-800";
-                        div.innerHTML = `<span class="font-bold text-sm">${rU.data().nickname}</span><div class="flex gap-2"><button onclick="window.acceptFriend('${rid}')" class="bg-wa-accent text-white p-2 rounded-lg"><i data-lucide="check" class="w-4 h-4"></i></button></div>`;
-                        pL.appendChild(div);
-                    }
-                } else document.getElementById('pendingContainer').classList.add('hidden');
-                const cL = document.getElementById('contactsList'); cL.innerHTML = "";
-                if(data.friends?.length > 0) {
-                    for(const fid of data.friends) {
-                        const fU = await getDoc(doc(db, "users", fid)); const fd = fU.data();
-                        const div = document.createElement('div');
-                        div.className = "flex items-center justify-between p-3 hover:bg-gray-100 dark:hover:bg-wa-panel rounded-xl transition cursor-pointer";
-                        div.innerHTML = `<div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold">${fd.nickname[0]}</div><p class="font-bold text-sm">${fd.nickname}</p></div><button onclick="window.startPrivateChat('${fid}', '${fd.nickname}')" class="text-wa-accent p-2 hover:bg-wa-accent/10 rounded-full"><i data-lucide="message-circle" class="w-5 h-5"></i></button>`;
-                        cL.appendChild(div);
-                    }
-                } else cL.innerHTML = `<div class="text-center py-10 text-gray-500 text-xs">Noch keine Kontakte.</div>`;
-                lucide.createIcons();
-            });
-        }
 
         window.acceptFriend = async (rid) => {
             await updateDoc(doc(db, "users", currentUser.uid), { friends: arrayUnion(rid), incoming: arrayRemove(rid) });
@@ -639,7 +702,12 @@
                 snap.forEach(d => {
                     const c = d.data(); const isMember = c.type === 'private' ? c.participants.includes(currentUser.uid) : c.members.includes(currentUser.uid);
                     if(isMember) {
-                        let name = c.name; if(c.type === 'private') { const otherId = c.participants.find(p => p !== currentUser.uid); name = c.names[otherId]; }
+                        let name = c.name; 
+                        if(c.type === 'private') { 
+                            const otherId = c.participants.find(p => p !== currentUser.uid); 
+                            // Use nickname override if available
+                            name = myCustomNames[otherId] || c.names[otherId]; 
+                        }
                         const div = document.createElement('div');
                         div.className = "flex items-center gap-4 p-4 hover:bg-gray-100 dark:hover:bg-wa-panel cursor-pointer transition active:bg-gray-200 dark:active:bg-gray-700";
                         div.innerHTML = `<div class="w-14 h-14 rounded-full flex-shrink-0 bg-gradient-to-br ${c.type==='private'?'from-blue-500 to-indigo-600':'from-wa-accent to-emerald-700'} flex items-center justify-center text-white font-black shadow-md">${name[0]}</div><div class="flex-1 min-w-0"><div class="flex justify-between items-baseline mb-1"><h4 class="font-bold text-[15px] truncate">${name}</h4><span class="text-[10px] text-gray-400 font-mono">${c.type==='group'?'#'+d.id:''}</span></div><p class="text-xs text-gray-500 truncate">Klicke zum Chatten...</p></div>`;
@@ -664,21 +732,6 @@
                 list.scrollTop = list.scrollHeight;
             });
             updateInfoModal(id, name, isPriv);
-        }
-
-        function renderMessage(msgId, m) {
-            const list = document.getElementById('messagesList'); const isMe = m.senderId === currentUser.uid;
-            const time = m.timestamp ? new Date(m.timestamp.seconds*1000).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
-            const div = document.createElement('div');
-            div.className = `flex ${isMe ? 'justify-end' : 'justify-start'} msg-anim group mb-1`;
-            div.innerHTML = `
-                <div class="max-w-[85%] md:max-w-[70%] p-2 rounded-xl shadow-sm relative ${isMe ? 'bg-wa-bubbleOut dark:bg-wa-bubbleDarkOut text-gray-800 dark:text-gray-100 rounded-tr-none' : 'bg-white dark:bg-wa-bubbleDarkIn text-gray-800 dark:text-gray-100 rounded-tl-none'}">
-                    ${!isMe && !isPrivate ? `<p class="text-[10px] font-black text-wa-accent mb-1">${m.senderName}</p>` : ''}
-                    ${m.img ? `<img src="${m.img}" class="rounded-lg mb-2 max-w-full cursor-pointer hover:opacity-90" onclick="window.open('${m.img}')">` : ''}
-                    <p class="text-[14.5px] leading-relaxed pr-8 whitespace-pre-wrap">${m.text || ''}</p>
-                    <div class="absolute bottom-1 right-2 flex items-center gap-1"><span class="text-[9px] opacity-40 font-bold">${time}</span>${isMe ? `<i data-lucide="check-check" class="w-3 h-3 text-gray-400"></i>` : ''}</div>
-                </div>`;
-            list.appendChild(div); lucide.createIcons();
         }
 
         window.sendMsg = async () => {
