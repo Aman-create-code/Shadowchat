@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ShadowChat Ultimate V2</title>
+    <title>ShadowChat Ultimate V3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
@@ -19,159 +19,168 @@
         }
     </script>
     <style>
-        body { font-family: 'Segoe UI', 'Helvetica Neue', sans-serif; overflow: hidden; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; overflow: hidden; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .glass { backdrop-filter: blur(12px); }
-        @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .msg-anim { animation: slideIn 0.2s ease-out forwards; }
     </style>
 </head>
-<body class="h-[100dvh] w-screen flex bg-white dark:bg-wa-dark text-gray-900 dark:text-gray-100 transition-colors duration-300">
+<body class="h-[100dvh] w-screen flex bg-white dark:bg-wa-dark text-gray-900 dark:text-gray-100 transition-colors duration-300 overflow-hidden">
 
-    <aside id="mainSidebar" class="w-full md:w-[400px] flex flex-col border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-wa-dark relative z-20 transition-all">
+    <aside id="mainSidebar" class="w-full lg:w-[400px] flex flex-col border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-wa-dark relative z-20 transition-all h-full">
         
-        <div class="h-16 bg-gray-100 dark:bg-[#202c33] flex items-center justify-between px-4 shrink-0">
+        <div class="h-16 bg-gray-100 dark:bg-[#202c33] flex items-center justify-between px-4 shrink-0 border-b dark:border-gray-800">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-green-400 to-blue-500 flex items-center justify-center font-bold text-white text-sm" id="myAvatar">ME</div>
                 <h1 class="font-bold text-lg tracking-tight">ShadowChat</h1>
             </div>
-            <div class="flex gap-4 text-gray-500 dark:text-gray-400">
+            <div class="flex gap-3 text-gray-500 dark:text-gray-400">
                 <button onclick="window.toggleTheme()"><i data-lucide="sun-moon" class="w-6 h-6"></i></button>
                 <button onclick="window.toggleModal('newGroupModal')"><i data-lucide="plus-circle" class="w-6 h-6"></i></button>
                 <button onclick="window.toggleModal('joinGroupModal')"><i data-lucide="search" class="w-6 h-6"></i></button>
             </div>
         </div>
 
-        <div id="tab-chats" class="flex-1 overflow-y-auto hide-scrollbar p-2 space-y-1">
-            <div class="text-center mt-10 text-gray-400 text-sm">Lade Chats...</div>
+        <div class="hidden lg:flex justify-around p-3 bg-white dark:bg-wa-dark border-b dark:border-gray-800">
+            <button onclick="window.switchTab('chats')" class="p-2 hover:bg-gray-100 dark:hover:bg-[#202c33] rounded-lg text-wa-accent" id="dsk-chats" title="Chats"><i data-lucide="message-square"></i></button>
+            <button onclick="window.switchTab('status')" class="p-2 hover:bg-gray-100 dark:hover:bg-[#202c33] rounded-lg text-gray-500" id="dsk-status" title="Status"><i data-lucide="circle-dashed"></i></button>
+            <button onclick="window.switchTab('friends')" class="p-2 hover:bg-gray-100 dark:hover:bg-[#202c33] rounded-lg text-gray-500" id="dsk-friends" title="Freunde"><i data-lucide="users"></i></button>
+            <button onclick="window.switchTab('settings')" class="p-2 hover:bg-gray-100 dark:hover:bg-[#202c33] rounded-lg text-gray-500" id="dsk-settings" title="Profil"><i data-lucide="settings"></i></button>
         </div>
 
-        <div id="tab-status" class="hidden flex-1 overflow-y-auto hide-scrollbar p-4">
-            <div class="flex items-center gap-4 mb-6 cursor-pointer" onclick="document.getElementById('statusInput').click()">
-                <div class="relative w-12 h-12">
-                    <div class="w-12 h-12 rounded-full bg-gray-300 dark:bg-gray-700 overflow-hidden"><img id="myStatusPreview" class="w-full h-full object-cover opacity-50"></div>
-                    <div class="absolute bottom-0 right-0 bg-wa-accent rounded-full p-1 border-2 border-white dark:border-wa-dark"><i data-lucide="plus" class="w-3 h-3 text-white"></i></div>
-                </div>
-                <div><h3 class="font-bold">Mein Status</h3><p class="text-xs text-gray-500">Tippen für Update</p></div>
-                <input type="file" id="statusInput" class="hidden" accept="image/*" onchange="window.uploadStatus()">
+        <div class="flex-1 overflow-y-auto hide-scrollbar relative">
+            
+            <div id="tab-chats" class="p-2 space-y-1 h-full">
+                <div class="text-center mt-10 text-gray-400 text-sm">Lade Chats...</div>
             </div>
-            <p class="text-xs font-bold text-gray-500 mb-2 uppercase">Aktuelle Meldungen</p>
-            <div id="statusList" class="space-y-4"></div>
+
+            <div id="tab-status" class="hidden p-4 h-full">
+                <div class="flex items-center gap-4 mb-6 cursor-pointer hover:bg-gray-50 dark:hover:bg-[#202c33] p-2 rounded-lg transition" onclick="document.getElementById('statusInput').click()">
+                    <div class="relative w-12 h-12">
+                        <div class="w-12 h-12 rounded-full bg-gray-300 dark:bg-gray-700 overflow-hidden"><img id="myStatusPreview" class="w-full h-full object-cover opacity-50"></div>
+                        <div class="absolute bottom-0 right-0 bg-wa-accent rounded-full p-1 border-2 border-white dark:border-wa-dark"><i data-lucide="plus" class="w-3 h-3 text-white"></i></div>
+                    </div>
+                    <div><h3 class="font-bold">Mein Status</h3><p class="text-xs text-gray-500">Tippen für Update</p></div>
+                    <input type="file" id="statusInput" class="hidden" accept="image/*" onchange="window.uploadStatus()">
+                </div>
+                <p class="text-xs font-bold text-gray-500 mb-2 uppercase px-2">Aktuelle Meldungen</p>
+                <div id="statusList" class="space-y-4"></div>
+            </div>
+
+            <div id="tab-friends" class="hidden p-4 space-y-6 h-full">
+                <div class="bg-gray-100 dark:bg-[#202c33] p-4 rounded-xl">
+                    <p class="text-xs text-wa-accent font-bold uppercase mb-2">Freund hinzufügen</p>
+                    <div class="flex gap-2">
+                        <input type="text" id="friendIdInput" class="flex-1 bg-transparent border-b border-gray-500 outline-none pb-1 text-sm dark:text-white" placeholder="User-ID eingeben">
+                        <button onclick="window.sendFriendRequest()" class="text-wa-accent font-bold text-sm"><i data-lucide="user-plus" class="w-5 h-5"></i></button>
+                    </div>
+                </div>
+                <div id="requestsContainer" class="hidden">
+                    <p class="text-xs text-orange-500 font-bold uppercase mb-2">Anfragen</p>
+                    <div id="requestsList" class="space-y-2"></div>
+                </div>
+                <div>
+                    <p class="text-xs text-gray-500 font-bold uppercase mb-2">Deine Freunde</p>
+                    <div id="friendsList" class="space-y-2 text-sm text-gray-400">Keine Freunde...</div>
+                </div>
+            </div>
+
+            <div id="tab-settings" class="hidden p-4 space-y-6 h-full">
+                <div class="bg-gray-100 dark:bg-[#202c33] p-4 rounded-xl">
+                    <p class="text-xs text-wa-accent font-bold uppercase mb-2">Dein Profil</p>
+                    <div class="flex gap-2">
+                        <input type="text" id="editNick" class="flex-1 bg-transparent border-b border-gray-500 outline-none pb-1 dark:text-white" placeholder="Neuer Name">
+                        <button onclick="window.updateNick()" class="text-wa-accent font-bold text-sm">SAVE</button>
+                    </div>
+                    <div onclick="window.copyId()" class="mt-4 pt-4 border-t border-gray-600 cursor-pointer hover:opacity-70">
+                        <p class="text-[10px] text-gray-500 uppercase">Deine ID (Klicken zum Kopieren)</p>
+                        <p class="font-mono text-xs truncate select-all text-wa-accent" id="myIdDisplay">...</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div id="tab-friends" class="hidden flex-1 overflow-y-auto hide-scrollbar p-4 space-y-6">
-            <div class="bg-gray-100 dark:bg-[#202c33] p-4 rounded-xl">
-                <p class="text-xs text-wa-accent font-bold uppercase mb-2">Freund hinzufügen</p>
-                <div class="flex gap-2">
-                    <input type="text" id="friendIdInput" class="flex-1 bg-transparent border-b border-gray-500 outline-none pb-1 text-sm" placeholder="User-ID eingeben">
-                    <button onclick="window.sendFriendRequest()" class="text-wa-accent font-bold text-sm"><i data-lucide="user-plus" class="w-5 h-5"></i></button>
-                </div>
-            </div>
-
-            <div id="requestsContainer" class="hidden">
-                <p class="text-xs text-orange-500 font-bold uppercase mb-2">Anfragen</p>
-                <div id="requestsList" class="space-y-2"></div>
-            </div>
-
-            <div>
-                <p class="text-xs text-gray-500 font-bold uppercase mb-2">Deine Freunde</p>
-                <div id="friendsList" class="space-y-2 text-sm text-gray-400">Keine Freunde...</div>
-            </div>
-        </div>
-
-        <div id="tab-settings" class="hidden flex-1 overflow-y-auto p-4 space-y-6">
-            <div class="bg-gray-100 dark:bg-[#202c33] p-4 rounded-xl">
-                <p class="text-xs text-wa-accent font-bold uppercase mb-2">Dein Profil</p>
-                <div class="flex gap-2">
-                    <input type="text" id="editNick" class="flex-1 bg-transparent border-b border-gray-500 outline-none pb-1" placeholder="Neuer Name">
-                    <button onclick="window.updateNick()" class="text-wa-accent font-bold text-sm">SAVE</button>
-                </div>
-                <div onclick="window.copyId()" class="mt-4 pt-4 border-t border-gray-600 cursor-pointer">
-                    <p class="text-[10px] text-gray-500 uppercase">Deine ID (Klicken zum Kopieren)</p>
-                    <p class="font-mono text-xs truncate select-all text-wa-accent" id="myIdDisplay">...</p>
-                </div>
-            </div>
-        </div>
-
-        <nav class="md:hidden h-16 bg-white dark:bg-[#202c33] border-t dark:border-gray-800 flex justify-around items-center shrink-0">
-            <button onclick="window.switchTab('chats')" class="flex flex-col items-center gap-1 text-wa-accent nav-btn" id="nav-chats">
+        <nav class="lg:hidden h-16 bg-white dark:bg-[#202c33] border-t dark:border-gray-800 flex justify-around items-center shrink-0 z-50">
+            <button onclick="window.switchTab('chats')" class="flex flex-col items-center gap-1 text-wa-accent nav-btn w-full h-full justify-center" id="nav-chats">
                 <i data-lucide="message-square" class="w-6 h-6"></i>
                 <span class="text-[10px] font-bold">Chats</span>
             </button>
-            <button onclick="window.switchTab('status')" class="flex flex-col items-center gap-1 text-gray-500 nav-btn" id="nav-status">
+            <button onclick="window.switchTab('status')" class="flex flex-col items-center gap-1 text-gray-500 nav-btn w-full h-full justify-center" id="nav-status">
                 <i data-lucide="circle-dashed" class="w-6 h-6"></i>
                 <span class="text-[10px] font-bold">Status</span>
             </button>
-            <button onclick="window.switchTab('friends')" class="flex flex-col items-center gap-1 text-gray-500 nav-btn" id="nav-friends">
+            <button onclick="window.switchTab('friends')" class="flex flex-col items-center gap-1 text-gray-500 nav-btn w-full h-full justify-center" id="nav-friends">
                 <i data-lucide="users" class="w-6 h-6"></i>
                 <span class="text-[10px] font-bold">Kontakte</span>
             </button>
-            <button onclick="window.switchTab('settings')" class="flex flex-col items-center gap-1 text-gray-500 nav-btn" id="nav-settings">
+            <button onclick="window.switchTab('settings')" class="flex flex-col items-center gap-1 text-gray-500 nav-btn w-full h-full justify-center" id="nav-settings">
                 <i data-lucide="settings" class="w-6 h-6"></i>
                 <span class="text-[10px] font-bold">Profil</span>
             </button>
         </nav>
     </aside>
 
-    <main id="chatArea" class="hidden md:flex flex-1 flex-col bg-[#efeae2] dark:bg-[#0b141a] relative w-full h-full fixed top-0 left-0 md:relative z-30">
+    <main id="chatArea" class="hidden lg:flex flex-1 flex-col bg-[#efeae2] dark:bg-[#0b141a] w-full h-full fixed top-0 left-0 lg:static z-40 transition-transform duration-300">
         <div class="absolute inset-0 opacity-10 dark:opacity-5 pointer-events-none" style="background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');"></div>
 
-        <header class="h-16 bg-gray-100 dark:bg-[#202c33] flex items-center px-4 justify-between shrink-0 relative z-10 border-b dark:border-gray-800">
+        <header class="h-16 bg-gray-100 dark:bg-[#202c33] flex items-center px-4 justify-between shrink-0 relative z-10 border-b dark:border-gray-800 shadow-sm">
             <div class="flex items-center gap-3">
-                <button onclick="window.closeChatMobile()" class="md:hidden"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+                <button onclick="window.closeChatMobile()" class="lg:hidden p-2 -ml-2"><i data-lucide="arrow-left" class="w-6 h-6 dark:text-gray-300"></i></button>
+                
                 <div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center font-bold text-xs" id="chatHeaderAvatar">#</div>
                 <div class="cursor-pointer" onclick="window.toggleModal('groupInfoModal')">
                     <h2 id="chatName" class="font-bold text-md dark:text-white">Chat</h2>
                     <p id="chatSub" class="text-xs text-gray-500 truncate">Klicke für Infos</p>
                 </div>
             </div>
-            <button onclick="window.toggleModal('groupInfoModal')"><i data-lucide="more-vertical" class="w-6 h-6 text-gray-500"></i></button>
+            <button onclick="window.toggleModal('groupInfoModal')" class="p-2"><i data-lucide="more-vertical" class="w-6 h-6 text-gray-500"></i></button>
         </header>
 
         <div id="messagesList" class="flex-1 overflow-y-auto p-4 space-y-2 relative z-10 custom-scrollbar"></div>
 
         <footer class="p-2 bg-gray-100 dark:bg-[#202c33] flex items-end gap-2 shrink-0 relative z-10">
-            <div id="imgPreviewFooter" class="hidden absolute bottom-full left-0 w-full bg-gray-800 p-2"><img id="previewImgElement" class="h-20 rounded"></div>
-            <button onclick="document.getElementById('chatImgInput').click()" class="p-3 text-gray-500 hover:text-wa-accent"><i data-lucide="plus" class="w-6 h-6"></i></button>
+            <div id="imgPreviewFooter" class="hidden absolute bottom-full left-0 w-full bg-gray-800 p-2"><img id="previewImgElement" class="h-24 rounded shadow-lg border border-gray-600"></div>
+            <button onclick="document.getElementById('chatImgInput').click()" class="p-3 text-gray-500 hover:text-wa-accent transition"><i data-lucide="plus" class="w-6 h-6"></i></button>
             <input type="file" id="chatImgInput" class="hidden" accept="image/*" onchange="window.previewChatImage()">
-            <div class="flex-1 bg-white dark:bg-[#2a3942] rounded-2xl flex items-center px-4 py-2 min-h-[45px]">
+            <div class="flex-1 bg-white dark:bg-[#2a3942] rounded-2xl flex items-center px-4 py-2 min-h-[45px] shadow-sm">
                 <input type="text" id="msgInput" placeholder="Nachricht" class="w-full bg-transparent outline-none dark:text-white text-sm" onkeypress="if(event.key === 'Enter') window.sendMessage()">
             </div>
-            <button onclick="window.sendMessage()" class="p-3 bg-wa-accent rounded-full text-white shadow-lg"><i data-lucide="send-horizontal" class="w-5 h-5"></i></button>
+            <button onclick="window.sendMessage()" class="p-3 bg-wa-accent rounded-full text-white shadow-lg hover:opacity-90 transition"><i data-lucide="send-horizontal" class="w-5 h-5"></i></button>
         </footer>
     </main>
 
-    <div id="newGroupModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-[#202c33] w-full max-w-sm rounded-2xl p-6">
+    <div id="newGroupModal" class="hidden fixed inset-0 z-[60] bg-black/80 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#202c33] w-full max-w-sm rounded-2xl p-6 shadow-2xl">
             <h3 class="text-xl font-bold mb-4 dark:text-white">Neue Gruppe</h3>
-            <input id="ngName" type="text" placeholder="Name" class="w-full bg-gray-100 dark:bg-[#2a3942] p-3 rounded-lg mb-3 dark:text-white outline-none">
+            <input id="ngName" type="text" placeholder="Gruppenname" class="w-full bg-gray-100 dark:bg-[#2a3942] p-3 rounded-lg mb-3 dark:text-white outline-none">
             <input id="ngPass" type="password" placeholder="Passwort (Optional)" class="w-full bg-gray-100 dark:bg-[#2a3942] p-3 rounded-lg mb-6 dark:text-white outline-none">
             <div class="flex justify-end gap-3">
-                <button onclick="window.toggleModal('newGroupModal')" class="text-red-500 font-bold">Abbrechen</button>
+                <button onclick="window.toggleModal('newGroupModal')" class="text-red-500 font-bold px-4 py-2">Abbrechen</button>
                 <button onclick="window.createGroup()" class="bg-wa-accent px-6 py-2 rounded-lg text-white font-bold">Erstellen</button>
             </div>
         </div>
     </div>
 
-    <div id="joinGroupModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-[#202c33] w-full max-w-sm rounded-2xl p-6">
+    <div id="joinGroupModal" class="hidden fixed inset-0 z-[60] bg-black/80 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#202c33] w-full max-w-sm rounded-2xl p-6 shadow-2xl">
             <h3 class="text-xl font-bold mb-4 dark:text-white">Gruppe beitreten</h3>
             <input id="jgId" type="text" placeholder="8-stellige ID" class="w-full bg-gray-100 dark:bg-[#2a3942] p-3 rounded-lg mb-3 dark:text-white outline-none font-mono uppercase">
             <input id="jgPass" type="password" placeholder="Passwort" class="w-full bg-gray-100 dark:bg-[#2a3942] p-3 rounded-lg mb-6 dark:text-white outline-none">
             <div class="flex justify-end gap-3">
-                <button onclick="window.toggleModal('joinGroupModal')" class="text-red-500 font-bold">Abbrechen</button>
-                <button onclick="window.joinGroup()" class="bg-wa-accent px-6 py-2 rounded-lg text-white font-bold">Join</button>
+                <button onclick="window.toggleModal('joinGroupModal')" class="text-red-500 font-bold px-4 py-2">Abbrechen</button>
+                <button onclick="window.joinGroup()" class="bg-wa-accent px-6 py-2 rounded-lg text-white font-bold">Beitreten</button>
             </div>
         </div>
     </div>
 
-    <div id="groupInfoModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-[#202c33] w-full max-w-sm rounded-2xl p-6 relative">
-            <button onclick="window.toggleModal('groupInfoModal')" class="absolute top-4 right-4"><i data-lucide="x" class="text-gray-500"></i></button>
+    <div id="groupInfoModal" class="hidden fixed inset-0 z-[60] bg-black/80 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#202c33] w-full max-w-sm rounded-2xl p-6 relative shadow-2xl">
+            <button onclick="window.toggleModal('groupInfoModal')" class="absolute top-4 right-4 p-2"><i data-lucide="x" class="text-gray-500 w-5 h-5"></i></button>
             <h3 class="text-xl font-bold mb-1 dark:text-white" id="infoName">Info</h3>
             <p class="text-sm text-wa-accent font-mono mb-4 select-all font-bold" id="infoId">ID: ---</p>
             <p class="text-sm font-bold uppercase text-gray-500 mb-2">Mitglieder</p>
-            <div id="memberList" class="max-h-40 overflow-y-auto mb-4 space-y-2"></div>
+            <div id="memberList" class="max-h-40 overflow-y-auto mb-4 space-y-2 custom-scrollbar"></div>
         </div>
     </div>
 
@@ -195,48 +204,43 @@
         const auth = getAuth(app);
         const IMGBB_KEY = "bd8f03312d551a4e7c4973f6af975396";
 
-        let currentUser = null;
-        let activeGroupId = null;
-        let myNickname = "Gast";
-        let messageUnsub = null;
-
+        let currentUser = null, activeGroupId = null, myNickname = "Gast", messageUnsub = null;
         lucide.createIcons();
 
-        // 1. GENERATE FIXED 8-CHAR ID (Buchstaben + Zahlen)
+        // 8-CHAR ID GEN
         const generateShortId = () => {
             const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            let result = "";
-            for (let i = 0; i < 8; i++) {
-                result += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return result;
+            let res = ""; for(let i=0;i<8;i++) res += chars.charAt(Math.floor(Math.random()*chars.length));
+            return res;
         };
 
-        // --- GLOBAL UI ---
-        window.toggleTheme = () => {
-            document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-        };
+        // UI HELPERS
+        window.toggleTheme = () => { document.documentElement.classList.toggle('dark'); localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light'); };
         if(localStorage.getItem('theme') === 'light') document.documentElement.classList.remove('dark');
 
-        window.toggleModal = (id) => { document.getElementById(id).classList.toggle('hidden'); };
+        window.toggleModal = (id) => document.getElementById(id).classList.toggle('hidden');
         
         window.switchTab = (tab) => {
+            // Mobile & Desktop Switch Logic
             ['chats','status','friends','settings'].forEach(t => {
                 document.getElementById('tab-'+t).classList.add('hidden');
+                // Mobile Nav
                 document.getElementById('nav-'+t).classList.replace('text-wa-accent', 'text-gray-500');
+                // Desktop Nav
+                document.getElementById('dsk-'+t).classList.replace('text-wa-accent', 'text-gray-500');
             });
             document.getElementById('tab-'+tab).classList.remove('hidden');
             document.getElementById('nav-'+tab).classList.replace('text-gray-500', 'text-wa-accent');
+            document.getElementById('dsk-'+tab).classList.replace('text-gray-500', 'text-wa-accent');
         };
 
         window.closeChatMobile = () => {
             document.getElementById('chatArea').classList.add('hidden');
-            document.getElementById('mainSidebar').classList.remove('hidden');
-            activeGroupId = null;
+            // Remove 'flex' class just to be safe on toggling
+            document.getElementById('chatArea').classList.remove('flex'); 
         };
 
-        // --- AUTH & INIT ---
+        // FIREBASE LOGIC
         signInAnonymously(auth);
         onAuthStateChanged(auth, async (u) => {
             if(u) {
@@ -246,258 +250,115 @@
                 if(!snap.exists()) {
                     myNickname = "User-" + Math.floor(Math.random()*1000);
                     await setDoc(ref, { uid: u.uid, nickname: myNickname, friends: [], incomingRequests: [] });
-                } else {
-                    myNickname = snap.data().nickname;
-                }
+                } else { myNickname = snap.data().nickname; }
                 document.getElementById('myAvatar').innerText = myNickname.substring(0,2).toUpperCase();
                 document.getElementById('myIdDisplay').innerText = u.uid;
                 document.getElementById('editNick').value = myNickname;
-                loadGroups();
-                loadStatus();
-                loadFriends(); // Freunde laden
+                loadGroups(); loadStatus(); loadFriends();
             }
         });
 
-        // --- GROUPS ---
+        // GROUPS
         window.createGroup = async () => {
-            const name = document.getElementById('ngName').value;
-            const pass = document.getElementById('ngPass').value;
+            const name = document.getElementById('ngName').value, pass = document.getElementById('ngPass').value;
             if(!name) return;
-            
-            const shortId = generateShortId(); // FIX: Nutzt jetzt die 8-Zeichen Funktion
-            
-            await setDoc(doc(db, "groups", shortId), {
-                name, password: pass || null, creator: currentUser.uid, members: [currentUser.uid], lastActivity: serverTimestamp()
-            });
-            window.toggleModal('newGroupModal');
-            openChat(shortId, name);
+            const shortId = generateShortId();
+            await setDoc(doc(db, "groups", shortId), { name, password: pass||null, creator: currentUser.uid, members: [currentUser.uid], lastActivity: serverTimestamp() });
+            window.toggleModal('newGroupModal'); openChat(shortId, name);
         };
 
         window.joinGroup = async () => {
-            const id = document.getElementById('jgId').value.toUpperCase(); // FIX: Immer Großbuchstaben
-            const pass = document.getElementById('jgPass').value;
+            const id = document.getElementById('jgId').value.toUpperCase(), pass = document.getElementById('jgPass').value;
             const snap = await getDoc(doc(db, "groups", id));
             if(snap.exists()) {
                 const g = snap.data();
                 if(g.password && g.password !== pass) return alert("Falsches Passwort!");
                 await updateDoc(doc(db, "groups", id), { members: arrayUnion(currentUser.uid) });
-                window.toggleModal('joinGroupModal');
-                openChat(id, g.name);
-            } else { alert("Gruppe nicht gefunden"); }
+                window.toggleModal('joinGroupModal'); openChat(id, g.name);
+            } else { alert("Nicht gefunden"); }
         };
 
         function loadGroups() {
             onSnapshot(query(collection(db, "groups"), orderBy("lastActivity", "desc")), snap => {
-                const list = document.getElementById('tab-chats');
-                list.innerHTML = "";
+                const list = document.getElementById('tab-chats'); list.innerHTML = "";
                 snap.forEach(d => {
-                    const g = d.data();
-                    if(g.members.includes(currentUser.uid)) {
+                    if(d.data().members.includes(currentUser.uid)) {
                         const div = document.createElement('div');
                         div.className = "flex items-center gap-3 p-3 hover:bg-gray-100 dark:hover:bg-[#202c33] cursor-pointer rounded-lg transition-colors";
-                        div.innerHTML = `
-                            <div class="w-12 h-12 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center font-bold text-lg text-white">${g.name.substring(0,1)}</div>
-                            <div class="flex-1 border-b dark:border-gray-800 pb-3">
-                                <div class="flex justify-between">
-                                    <h4 class="font-bold dark:text-white">${g.name}</h4>
-                                    <span class="text-[10px] text-gray-400">#${d.id}</span>
-                                </div>
-                                <p class="text-xs text-gray-500 truncate">Klicke zum Chatten...</p>
-                            </div>
-                        `;
-                        div.onclick = () => openChat(d.id, g.name);
+                        div.innerHTML = `<div class="w-12 h-12 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center font-bold text-lg text-white">${d.data().name.substring(0,1)}</div><div class="flex-1 border-b dark:border-gray-800 pb-3"><div class="flex justify-between"><h4 class="font-bold dark:text-white">${d.data().name}</h4></div><p class="text-xs text-gray-500 truncate">Öffnen...</p></div>`;
+                        div.onclick = () => openChat(d.id, d.data().name);
                         list.appendChild(div);
                     }
                 });
             });
         }
 
-        // --- FRIENDS SYSTEM (FIXED) ---
-        window.sendFriendRequest = async () => {
-            const targetId = document.getElementById('friendIdInput').value.trim();
-            if(!targetId || targetId === currentUser.uid) return alert("Ungültige ID");
-            
-            const targetRef = doc(db, "users", targetId);
-            const targetSnap = await getDoc(targetRef);
-            
-            if(targetSnap.exists()) {
-                await updateDoc(targetRef, { incomingRequests: arrayUnion(currentUser.uid) });
-                alert("Anfrage gesendet!");
-                document.getElementById('friendIdInput').value = "";
-            } else {
-                alert("User nicht gefunden!");
-            }
-        };
-
-        window.acceptFriend = async (requesterId) => {
-            const myRef = doc(db, "users", currentUser.uid);
-            const otherRef = doc(db, "users", requesterId);
-            
-            // Remove request locally first to look fast
-            const mySnap = await getDoc(myRef);
-            const newRequests = mySnap.data().incomingRequests.filter(id => id !== requesterId);
-            
-            await updateDoc(myRef, { friends: arrayUnion(requesterId), incomingRequests: newRequests });
-            await updateDoc(otherRef, { friends: arrayUnion(currentUser.uid) });
-        };
-
-        function loadFriends() {
-            onSnapshot(doc(db, "users", currentUser.uid), async (snap) => {
-                const data = snap.data();
-                
-                // 1. Requests
-                const reqList = document.getElementById('requestsList');
-                const reqContainer = document.getElementById('requestsContainer');
-                
-                if(data.incomingRequests && data.incomingRequests.length > 0) {
-                    reqContainer.classList.remove('hidden');
-                    reqList.innerHTML = "";
-                    for(let reqId of data.incomingRequests) {
-                        const rUser = await getDoc(doc(db, "users", reqId));
-                        const div = document.createElement('div');
-                        div.className = "flex justify-between items-center bg-gray-200 dark:bg-[#202c33] p-2 rounded-lg";
-                        div.innerHTML = `
-                            <span class="text-sm font-bold dark:text-white">${rUser.data()?.nickname || 'Unbekannt'}</span>
-                            <button onclick="window.acceptFriend('${reqId}')" class="bg-wa-accent text-white px-2 py-1 rounded text-xs">Annehmen</button>
-                        `;
-                        reqList.appendChild(div);
-                    }
-                } else {
-                    reqContainer.classList.add('hidden');
-                }
-
-                // 2. Friend List
-                const fList = document.getElementById('friendsList');
-                if(data.friends && data.friends.length > 0) {
-                    fList.innerHTML = "";
-                    for(let fId of data.friends) {
-                        const fUser = await getDoc(doc(db, "users", fId));
-                        const div = document.createElement('div');
-                        div.className = "flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-[#202c33] rounded-lg";
-                        div.innerHTML = `
-                            <div class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs font-bold">${fUser.data()?.nickname.substring(0,1)}</div>
-                            <div>
-                                <p class="text-sm font-bold dark:text-white">${fUser.data()?.nickname}</p>
-                                <p class="text-[9px] text-gray-500 font-mono">ID: ${fId.substring(0,8)}...</p>
-                            </div>
-                        `;
-                        fList.appendChild(div);
-                    }
-                } else {
-                    fList.innerText = "Noch keine Freunde hinzugefügt.";
-                }
-            });
-        }
-
-        // --- CHAT LOGIC ---
+        // CHAT
         function openChat(id, name) {
             activeGroupId = id;
             document.getElementById('chatName').innerText = name;
             document.getElementById('chatHeaderAvatar').innerText = name.substring(0,1);
             document.getElementById('infoName').innerText = name;
-            document.getElementById('infoId').innerText = id; // Show fixed ID
-            document.getElementById('chatSub').innerText = "Tippen für Info";
-
-            document.getElementById('mainSidebar').classList.add('hidden');
-            document.getElementById('chatArea').classList.remove('hidden');
-            document.getElementById('chatArea').classList.add('flex');
+            document.getElementById('infoId').innerText = id;
             
-            getDoc(doc(db, "groups", id)).then(snap => {
-                 const mList = document.getElementById('memberList'); mList.innerHTML = "";
-                 snap.data().members.forEach(uid => {
-                     getDoc(doc(db,"users",uid)).then(u => {
-                         const p = document.createElement('p'); p.className = "text-xs p-2 bg-gray-100 dark:bg-[#2a3942] rounded dark:text-white flex justify-between";
-                         p.innerHTML = `<span>${u.data()?.nickname || 'Gast'}</span> ${uid === currentUser.uid ? '<span class="font-bold text-wa-accent">DU</span>' : ''}`;
-                         mList.appendChild(p);
-                     });
-                 });
-            });
+            // UI Logic: Show chat
+            const chatArea = document.getElementById('chatArea');
+            chatArea.classList.remove('hidden');
+            chatArea.classList.add('flex');
 
+            // Load Messages
             if(messageUnsub) messageUnsub();
-            const q = query(collection(db, `groups/${id}/messages`), orderBy("timestamp", "asc"));
-            messageUnsub = onSnapshot(q, snap => {
+            messageUnsub = onSnapshot(query(collection(db, `groups/${id}/messages`), orderBy("timestamp", "asc")), snap => {
                 const c = document.getElementById('messagesList'); c.innerHTML = "";
                 snap.forEach(d => {
-                    const m = d.data();
-                    const isMe = m.senderId === currentUser.uid;
+                    const m = d.data(), isMe = m.senderId === currentUser.uid;
                     const div = document.createElement('div');
                     div.className = `flex ${isMe ? 'justify-end' : 'justify-start'} msg-anim`;
-                    const time = m.timestamp ? new Date(m.timestamp.seconds*1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '...';
-                    div.innerHTML = `
-                        <div class="max-w-[80%] rounded-lg p-2 shadow-sm text-sm relative ${isMe ? 'bg-wa-bubbleOut dark:bg-wa-bubbleDarkOut text-black dark:text-white rounded-tr-none' : 'bg-white dark:bg-wa-bubbleDarkIn text-black dark:text-white rounded-tl-none'}">
-                            ${!isMe ? `<p class="text-[10px] font-bold text-orange-500 mb-1">${m.senderName}</p>` : ''}
-                            ${m.img ? `<img src="${m.img}" class="rounded mb-1 max-w-full">` : ''}
-                            <p class="mr-4 pb-2">${m.text || ''}</p>
-                            <div class="absolute bottom-1 right-2 flex items-center gap-1">
-                                <span class="text-[9px] text-gray-500 dark:text-gray-300">${time}</span>
-                                ${isMe ? '<i data-lucide="check-check" class="w-3 h-3 text-blue-500"></i>' : ''}
-                            </div>
-                        </div>
-                    `;
+                    const time = m.timestamp ? new Date(m.timestamp.seconds*1000).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
+                    div.innerHTML = `<div class="max-w-[85%] md:max-w-[65%] rounded-lg p-2 shadow-sm text-sm relative ${isMe ? 'bg-wa-bubbleOut dark:bg-wa-bubbleDarkOut text-black dark:text-white rounded-tr-none' : 'bg-white dark:bg-wa-bubbleDarkIn text-black dark:text-white rounded-tl-none'}">${!isMe ? `<p class="text-[10px] font-bold text-orange-500 mb-1">${m.senderName}</p>` : ''}${m.img ? `<img src="${m.img}" class="rounded mb-1 max-w-full cursor-pointer" onclick="window.open(this.src)">` : ''}<p class="mr-4 pb-2 text-[15px] leading-relaxed">${m.text || ''}</p><div class="absolute bottom-1 right-2 flex items-center gap-1"><span class="text-[9px] text-gray-500 dark:text-gray-400">${time}</span>${isMe ? '<i data-lucide="check-check" class="w-3 h-3 text-blue-500"></i>' : ''}</div></div>`;
                     c.appendChild(div);
                 });
                 c.scrollTop = c.scrollHeight;
                 lucide.createIcons();
             });
+            // Load Members
+            getDoc(doc(db,"groups",id)).then(s=>{ const ml=document.getElementById('memberList');ml.innerHTML="";s.data().members.forEach(uid=>{getDoc(doc(db,"users",uid)).then(u=>{const p=document.createElement('div');p.className="flex justify-between text-xs p-2 bg-gray-100 dark:bg-[#2a3942] rounded dark:text-white";p.innerHTML=`<span>${u.data()?.nickname||'Gast'}</span>`;ml.appendChild(p)})})});
         }
 
         window.sendMessage = async () => {
-            const txt = document.getElementById('msgInput').value;
-            const file = document.getElementById('chatImgInput').files[0];
+            const txt = document.getElementById('msgInput').value, file = document.getElementById('chatImgInput').files[0];
             if(!txt && !file) return;
             let url = null;
             if(file) {
                 const fd = new FormData(); fd.append("image", file);
-                try {
-                    const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method: "POST", body: fd });
-                    const d = await res.json(); url = d.data.url;
-                } catch(e) { console.error(e); }
+                try { const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method: "POST", body: fd }); const d = await res.json(); url = d.data.url; } catch(e){}
             }
-            await addDoc(collection(db, `groups/${activeGroupId}/messages`), {
-                text: txt, senderId: currentUser.uid, senderName: myNickname, img: url, timestamp: serverTimestamp()
-            });
+            await addDoc(collection(db, `groups/${activeGroupId}/messages`), { text: txt, senderId: currentUser.uid, senderName: myNickname, img: url, timestamp: serverTimestamp() });
             await updateDoc(doc(db, "groups", activeGroupId), { lastActivity: serverTimestamp() });
-            document.getElementById('msgInput').value = ""; document.getElementById('chatImgInput').value = "";
-            document.getElementById('imgPreviewFooter').classList.add('hidden');
+            document.getElementById('msgInput').value = ""; document.getElementById('chatImgInput').value = ""; document.getElementById('imgPreviewFooter').classList.add('hidden');
         };
+        window.previewChatImage = () => { const f=document.getElementById('chatImgInput').files[0]; if(f) {document.getElementById('previewImgElement').src=URL.createObjectURL(f); document.getElementById('imgPreviewFooter').classList.remove('hidden');}};
 
-        window.previewChatImage = () => {
-            const f = document.getElementById('chatImgInput').files[0];
-            if(f) { document.getElementById('previewImgElement').src = URL.createObjectURL(f); document.getElementById('imgPreviewFooter').classList.remove('hidden'); }
+        // SOCIAL & STATUS
+        window.sendFriendRequest = async () => {
+            const tId = document.getElementById('friendIdInput').value.trim(); if(!tId || tId===currentUser.uid) return alert("Fehler");
+            const tRef = doc(db, "users", tId); const s = await getDoc(tRef);
+            if(s.exists()) { await updateDoc(tRef, { incomingRequests: arrayUnion(currentUser.uid) }); alert("Gesendet"); document.getElementById('friendIdInput').value=""; } else alert("Nicht gefunden");
         };
-
-        // --- STATUS & SETTINGS ---
-        window.uploadStatus = async () => {
-            const f = document.getElementById('statusInput').files[0];
-            if(!f) return;
-            const fd = new FormData(); fd.append("image", f);
-            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method: "POST", body: fd });
-            const d = await res.json();
-            await addDoc(collection(db, "status"), { uid: currentUser.uid, name: myNickname, img: d.data.url, timestamp: serverTimestamp() });
-            alert("Status hochgeladen!");
-        };
-
-        function loadStatus() {
-            const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-            onSnapshot(query(collection(db, "status"), orderBy("timestamp", "desc")), snap => {
-                const list = document.getElementById('statusList'); list.innerHTML = "";
-                snap.forEach(d => {
-                    const s = d.data();
-                    if(s.timestamp && s.timestamp.toDate() > yesterday) {
-                        const div = document.createElement('div');
-                        div.className = "flex items-center gap-3 cursor-pointer";
-                        div.innerHTML = `<div class="w-12 h-12 rounded-full border-2 border-wa-accent p-[2px]"><img src="${s.img}" class="w-full h-full rounded-full object-cover"></div><div><h4 class="font-bold dark:text-white text-sm">${s.name}</h4><p class="text-xs text-gray-500">${s.timestamp.toDate().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</p></div>`;
-                        div.onclick = () => window.open(s.img, '_blank');
-                        list.appendChild(div);
-                    }
-                });
+        function loadFriends() {
+            onSnapshot(doc(db,"users",currentUser.uid), async s => {
+                const d=s.data(), rl=document.getElementById('requestsList'), rc=document.getElementById('requestsContainer'), fl=document.getElementById('friendsList');
+                if(d.incomingRequests?.length){rc.classList.remove('hidden');rl.innerHTML="";for(let id of d.incomingRequests){const u=await getDoc(doc(db,"users",id));const b=document.createElement('div');b.className="flex justify-between bg-gray-200 dark:bg-[#202c33] p-2 rounded";b.innerHTML=`<span class="dark:text-white text-sm font-bold">${u.data()?.nickname}</span><button onclick="window.accept('${id}')" class="bg-wa-accent text-white px-2 rounded text-xs">OK</button>`;rl.appendChild(b);}}else rc.classList.add('hidden');
+                if(d.friends?.length){fl.innerHTML="";for(let id of d.friends){const u=await getDoc(doc(db,"users",id));const b=document.createElement('div');b.className="flex gap-2 p-2 hover:bg-gray-100 dark:hover:bg-[#202c33] rounded cursor-pointer";b.innerHTML=`<div class="w-8 h-8 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold text-xs">${u.data()?.nickname[0]}</div><div><p class="text-sm font-bold dark:text-white">${u.data()?.nickname}</p></div>`;fl.appendChild(b);}}else fl.innerText="Keine Freunde";
             });
         }
-
-        window.updateNick = async () => {
-            const n = document.getElementById('editNick').value;
-            if(n) { await updateDoc(doc(db, "users", currentUser.uid), { nickname: n }); location.reload(); }
+        window.accept = async id => { 
+            const mRef=doc(db,"users",currentUser.uid), oRef=doc(db,"users",id), s=await getDoc(mRef);
+            await updateDoc(mRef,{friends:arrayUnion(id), incomingRequests: s.data().incomingRequests.filter(x=>x!==id)}); await updateDoc(oRef,{friends:arrayUnion(currentUser.uid)}); 
         };
+        window.uploadStatus = async () => { const f=document.getElementById('statusInput').files[0]; if(!f)return; const fd=new FormData(); fd.append("image",f); const res=await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`,{method:"POST",body:fd}); const d=await res.json(); await addDoc(collection(db,"status"),{uid:currentUser.uid,name:myNickname,img:d.data.url,timestamp:serverTimestamp()}); alert("Status OK"); };
+        function loadStatus(){ const y=new Date();y.setDate(y.getDate()-1); onSnapshot(query(collection(db,"status"),orderBy("timestamp","desc")),s=>{const l=document.getElementById('statusList');l.innerHTML="";s.forEach(d=>{const x=d.data();if(x.timestamp?.toDate()>y){const b=document.createElement('div');b.className="flex gap-3 cursor-pointer";b.innerHTML=`<div class="w-10 h-10 rounded-full border-2 border-wa-accent p-[1px]"><img src="${x.img}" class="rounded-full w-full h-full object-cover"></div><div><p class="text-sm font-bold dark:text-white">${x.name}</p><p class="text-xs text-gray-500">Neu</p></div>`;b.onclick=()=>window.open(x.img);l.appendChild(b)}})});}
+        window.updateNick = async () => { const n=document.getElementById('editNick').value; if(n) await updateDoc(doc(db,"users",currentUser.uid),{nickname:n}); location.reload(); };
         window.copyId = () => { navigator.clipboard.writeText(currentUser.uid); alert("ID kopiert!"); };
     </script>
 </body>
