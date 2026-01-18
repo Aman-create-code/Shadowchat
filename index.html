@@ -3,132 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ShadowChat Pro | Final</title>
+    <title>ShadowChat Pro | Mobile Optimized</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { background-color: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; }
-        .glass { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); }
+        body { background-color: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; overflow: hidden; }
+        .glass { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); border-right: 1px solid rgba(255,255,255,0.08); }
+        .mobile-sidebar { position: fixed; left: -100%; transition: 0.3s; z-index: 50; width: 85%; height: 100%; }
+        .mobile-sidebar.active { left: 0; }
+        @media (min-width: 768px) { .mobile-sidebar { position: relative; left: 0; width: 320px; } .menu-btn { display: none; } }
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        .msg-bubble { word-break: break-word; }
     </style>
 </head>
-<body class="h-screen flex overflow-hidden">
+<body class="h-screen flex">
 
-    <aside class="w-20 md:w-80 glass h-full flex flex-col border-r border-slate-800 transition-all z-20">
-        <div class="p-6 border-b border-slate-800">
-            <h1 class="hidden md:block font-black text-2xl bg-gradient-to-br from-indigo-400 to-purple-600 bg-clip-text text-transparent">SHADOW PRO</h1>
-            <div class="flex gap-2 mt-4">
-                <button onclick="toggleModal('groupModal')" class="flex-1 p-2 bg-indigo-600 rounded-lg text-xs font-bold hover:bg-indigo-500 transition-all flex items-center justify-center gap-1">
-                    <i data-lucide="plus" class="w-4 h-4"></i> <span class="hidden md:block">Neu</span>
-                </button>
-                <button onclick="toggleModal('joinModal')" class="flex-1 p-2 bg-slate-800 rounded-lg text-xs font-bold hover:bg-slate-700 transition-all flex items-center justify-center gap-1 border border-slate-700">
-                    <i data-lucide="hash" class="w-4 h-4"></i> <span class="hidden md:block">Join</span>
-                </button>
-            </div>
+    <aside id="sidebar" class="mobile-sidebar glass flex flex-col">
+        <div class="p-6 border-b border-slate-800 flex justify-between items-center">
+            <h1 class="font-black text-xl bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent">SHADOW PRO</h1>
+            <button onclick="toggleMenu()" class="md:hidden text-slate-400"><i data-lucide="x"></i></button>
+        </div>
+
+        <div class="p-4 flex gap-2">
+            <button onclick="toggleModal('groupModal')" class="flex-1 bg-indigo-600 p-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2">
+                <i data-lucide="plus" class="w-4 h-4"></i> Neu
+            </button>
+            <button onclick="toggleModal('joinModal')" class="flex-1 bg-slate-800 p-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border border-slate-700">
+                <i data-lucide="hash" class="w-4 h-4"></i> Join
+            </button>
         </div>
 
         <div class="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-6">
-            <section>
-                <p class="text-[10px] text-slate-500 uppercase font-black px-2 mb-3 tracking-widest">Deine Gruppen</p>
+            <div>
+                <p class="text-[10px] text-slate-500 uppercase font-black px-2 mb-3 tracking-widest">Gruppen</p>
                 <div id="groupList" class="space-y-2"></div>
-            </section>
-            
-            <section>
-                <p class="text-[10px] text-indigo-400 uppercase font-black px-2 mb-3 tracking-widest">Freunde & Anfragen</p>
+            </div>
+            <div>
+                <p class="text-[10px] text-indigo-400 uppercase font-black px-2 mb-3 tracking-widest">Kontakte</p>
                 <div id="friendList" class="space-y-2"></div>
-            </section>
+            </div>
         </div>
 
         <div class="p-4 border-t border-slate-800">
-            <div onclick="copyMyId()" class="flex items-center gap-3 bg-slate-950 p-3 rounded-2xl border border-white/5 cursor-pointer hover:bg-slate-900 transition-all group">
-                <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-xs font-bold">ME</div>
-                <div class="hidden md:block flex-1 truncate">
+            <div onclick="copyMyId()" class="flex items-center gap-3 bg-slate-950 p-4 rounded-2xl border border-white/5 cursor-pointer hover:bg-slate-900 transition-all">
+                <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center font-bold">ME</div>
+                <div class="flex-1 truncate">
                     <p class="text-xs font-bold" id="myNickname">...</p>
-                    <p class="text-[9px] text-indigo-500 font-mono" id="myIdDisplay">Klicken zum Kopieren</p>
+                    <p class="text-[9px] text-indigo-400">ID KOPIEREN</p>
                 </div>
-                <button onclick="event.stopPropagation(); toggleModal('settingsModal')"><i data-lucide="settings" class="w-4 h-4 text-slate-500 hover:text-white"></i></button>
+                <button onclick="event.stopPropagation(); toggleModal('settingsModal')"><i data-lucide="settings" class="w-5 h-5 text-slate-500"></i></button>
             </div>
         </div>
     </aside>
 
-    <main class="flex-1 flex flex-col bg-slate-950">
-        <header class="h-20 glass flex items-center px-8 border-b border-white/5 justify-between z-10">
-            <div onclick="showMembers()" class="cursor-pointer">
-                <h2 id="currentGroupName" class="font-black text-xl">Wähle einen Chat</h2>
-                <p class="text-[9px] text-slate-500 uppercase font-bold">Mitglieder anzeigen <i data-lucide="chevron-down" class="inline w-3 h-3"></i></p>
-            </div>
-            <div id="activeGroupInfo" class="hidden text-right">
-                <p class="text-[9px] text-slate-500 font-bold uppercase">Gruppen-ID</p>
-                <p class="text-xs font-mono text-indigo-400 select-all" id="displayGroupId">---</p>
+    <main class="flex-1 flex flex-col min-w-0">
+        <header class="h-16 glass flex items-center px-4 justify-between border-b border-white/5 shrink-0">
+            <div class="flex items-center gap-3 truncate">
+                <button onclick="toggleMenu()" class="menu-btn p-2 text-indigo-400"><i data-lucide="menu"></i></button>
+                <div onclick="showMembers()" class="cursor-pointer truncate">
+                    <h2 id="currentGroupName" class="font-bold text-sm md:text-lg truncate">Wähle einen Chat</h2>
+                    <p class="text-[10px] text-indigo-500 font-mono" id="displayGroupId"></p>
+                </div>
             </div>
         </header>
 
-        <div id="chatMessages" class="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar flex flex-col"></div>
+        <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar"></div>
 
-        <footer class="p-6">
-            <div id="previewContainer" class="hidden mb-3 p-2 bg-slate-800 rounded-xl w-fit relative border border-indigo-500/30">
-                <img id="imagePreview" src="" class="h-24 rounded-lg">
-                <button onclick="cancelImage()" class="absolute -top-2 -right-2 bg-red-500 rounded-full p-1"><i data-lucide="x" class="w-3 h-3"></i></button>
+        <footer class="p-4 bg-slate-950/50">
+            <div id="previewContainer" class="hidden mb-2 p-2 bg-slate-800 rounded-xl w-fit relative">
+                <img id="imagePreview" src="" class="h-20 rounded-lg">
+                <button onclick="cancelImage()" class="absolute -top-2 -right-2 bg-red-500 p-1 rounded-full"><i data-lucide="x" class="w-3 h-3"></i></button>
             </div>
-            <div class="max-w-5xl mx-auto flex items-center gap-3 bg-slate-900 p-3 rounded-2xl border border-slate-700">
-                <label class="cursor-pointer p-3 hover:bg-slate-800 rounded-xl transition-all"><i data-lucide="image" class="text-slate-400"></i><input type="file" id="imageInput" class="hidden" accept="image/*" onchange="previewFile()"></label>
-                <input type="text" id="msgInput" placeholder="Sende Nachricht..." class="flex-1 bg-transparent border-none outline-none text-sm">
-                <button id="sendBtn" class="bg-indigo-600 p-3 rounded-xl hover:bg-indigo-500"><i data-lucide="send"></i></button>
+            <div class="max-w-4xl mx-auto flex items-center gap-2 bg-slate-900 p-2 rounded-2xl border border-slate-800 shadow-xl">
+                <label class="p-3 text-slate-400 cursor-pointer"><i data-lucide="image"></i><input type="file" id="imageInput" class="hidden" accept="image/*" onchange="previewFile()"></label>
+                <input type="text" id="msgInput" placeholder="Nachricht..." class="flex-1 bg-transparent border-none outline-none text-sm text-white px-2">
+                <button id="sendBtn" class="bg-indigo-600 p-3 rounded-xl text-white shadow-lg"><i data-lucide="send-horizontal"></i></button>
             </div>
         </footer>
     </main>
 
-    <div id="groupModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
-        <div class="glass w-full max-w-sm p-8 rounded-[2rem]">
-            <h3 class="text-2xl font-black mb-4">Neue Gruppe</h3>
-            <input type="text" id="newGroupName" placeholder="Name..." class="w-full bg-slate-950 border border-slate-800 p-4 rounded-xl mb-4 text-white">
-            <input type="password" id="newGroupPass" placeholder="Passwort (optional)" class="w-full bg-slate-950 border border-slate-800 p-4 rounded-xl mb-6 text-white">
-            <button id="confirmCreateGroup" class="w-full p-4 bg-indigo-600 rounded-xl font-bold">Erstellen</button>
-            <button onclick="toggleModal('groupModal')" class="w-full mt-4 text-slate-500 font-bold">Abbrechen</button>
+    <div id="groupModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/90 p-4">
+        <div class="glass w-full max-w-sm p-6 rounded-3xl">
+            <h3 class="text-xl font-bold mb-4">Gruppe erstellen</h3>
+            <input type="text" id="newGroupName" placeholder="Gruppenname" class="w-full bg-slate-950 border border-slate-800 p-4 rounded-xl mb-4 outline-none">
+            <input type="password" id="newGroupPass" placeholder="Passwort (optional)" class="w-full bg-slate-950 border border-slate-800 p-4 rounded-xl mb-6 outline-none">
+            <div class="flex gap-2">
+                <button onclick="toggleModal('groupModal')" class="flex-1 p-4 text-slate-500">Abbrechen</button>
+                <button id="confirmCreateGroup" class="flex-1 bg-indigo-600 p-4 rounded-xl font-bold">Erstellen</button>
+            </div>
         </div>
     </div>
 
-    <div id="joinModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
-        <div class="glass w-full max-w-sm p-8 rounded-[2rem]">
-            <h3 class="text-2xl font-black mb-4 text-indigo-400">Beitreten</h3>
-            <input type="text" id="joinId" placeholder="Gruppen-ID" class="w-full bg-slate-950 border border-slate-800 p-4 rounded-xl mb-4 text-white font-mono">
-            <input type="password" id="joinPass" placeholder="Passwort (falls nötig)" class="w-full bg-slate-950 border border-slate-800 p-4 rounded-xl mb-6 text-white font-mono">
-            <button id="confirmJoinGroup" class="w-full p-4 bg-indigo-600 rounded-xl font-bold">Gruppe beitreten</button>
-            <button onclick="toggleModal('joinModal')" class="w-full mt-4 text-slate-500 font-bold">Abbrechen</button>
+    <div id="joinModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/90 p-4">
+        <div class="glass w-full max-w-sm p-6 rounded-3xl">
+            <h3 class="text-xl font-bold mb-4">Gruppe beitreten</h3>
+            <input type="text" id="joinId" placeholder="8-Stellige ID" class="w-full bg-slate-950 border border-slate-800 p-4 rounded-xl mb-4 font-mono">
+            <input type="password" id="joinPass" placeholder="Passwort" class="w-full bg-slate-950 border border-slate-800 p-4 rounded-xl mb-6 font-mono">
+            <button id="confirmJoinGroup" class="w-full bg-indigo-600 p-4 rounded-xl font-bold">Join</button>
+            <button onclick="toggleModal('joinModal')" class="w-full mt-2 text-slate-500">Abbrechen</button>
         </div>
     </div>
 
-    <div id="settingsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
-        <div class="glass w-full max-w-sm p-8 rounded-[2rem]">
-            <h3 class="text-2xl font-black mb-6">Profil & Filter</h3>
-            <div class="mb-6">
-                <label class="text-[10px] text-slate-500 font-black uppercase tracking-widest px-1">Nickname</label>
-                <div class="flex gap-2 mt-2">
-                    <input type="text" id="editNickname" class="flex-1 bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none">
-                    <button onclick="updateNickname()" class="bg-indigo-600 px-4 rounded-xl text-xs font-bold">Update</button>
+    <div id="settingsModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/90 p-4">
+        <div class="glass w-full max-w-sm p-6 rounded-3xl">
+            <h3 class="text-xl font-bold mb-6">Einstellungen</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[10px] text-slate-500 uppercase font-black">Nickname</label>
+                    <div class="flex gap-2 mt-1">
+                        <input type="text" id="editNickname" class="flex-1 bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm">
+                        <button onclick="updateNickname()" class="bg-indigo-600 px-4 rounded-xl text-xs font-bold">OK</button>
+                    </div>
+                    <p id="nicknameError" class="text-[9px] text-red-500 mt-1 hidden"></p>
                 </div>
-                <p id="nicknameError" class="text-[9px] text-red-400 mt-2 font-bold hidden"></p>
             </div>
-            <div class="flex items-center justify-between p-4 bg-slate-950 rounded-2xl border border-slate-800 mb-6">
-                <span class="text-sm font-bold">Schimpfwort-Filter</span>
-                <input type="checkbox" id="filterToggle" checked class="w-5 h-5 accent-indigo-600">
-            </div>
-            <button onclick="toggleModal('settingsModal')" class="w-full p-4 bg-white text-black font-black rounded-xl">Fertig</button>
-        </div>
-    </div>
-
-    <div id="memberModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
-        <div class="glass w-full max-w-md p-8 rounded-[2rem]">
-            <h3 class="text-2xl font-black mb-6 flex items-center gap-2"><i data-lucide="users"></i> Mitglieder</h3>
-            <div id="memberList" class="space-y-3 max-h-96 overflow-y-auto custom-scrollbar"></div>
-            <button onclick="toggleModal('memberModal')" class="w-full mt-8 p-4 bg-slate-800 rounded-xl font-bold">Schließen</button>
+            <button onclick="toggleModal('settingsModal')" class="w-full mt-8 p-4 bg-slate-800 rounded-xl font-bold">Schließen</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, getDoc, setDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, getDoc, setDoc, arrayUnion, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
@@ -144,104 +140,88 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
         const IMGBB_KEY = "bd8f03312d551a4e7c4973f6af975396";
-        let currentUser = null, activeGroupId = null, myNickname = "";
-        
+        let currentUser, activeGroupId, myNickname;
+
         lucide.createIcons();
 
-        // AUTH & PROFILE
-        signInAnonymously(auth);
-        onAuthStateChanged(auth, async (user) => {
-            if(user) {
-                currentUser = user;
-                const userRef = doc(db, "users", user.uid);
-                const userSnap = await getDoc(userRef);
-                if(!userSnap.exists()) {
-                    myNickname = "User-" + Math.floor(Math.random()*9999);
-                    await setDoc(userRef, { uid: user.uid, nickname: myNickname, friends: [], incomingRequests: [], lastNicknameChange: null });
-                } else { myNickname = userSnap.data().nickname; }
+        // NICKNAME GEN
+        const genNick = () => "Ghost-" + Math.random().toString(36).substring(2,6).toUpperCase();
+        
+        // 8-STELLIGE ID GEN
+        const genShortId = () => Math.random().toString(36).substring(2,10);
+
+        onAuthStateChanged(auth, async u => {
+            if(u) {
+                currentUser = u;
+                const ref = doc(db, "users", u.uid);
+                const snap = await getDoc(ref);
+                if(!snap.exists()) {
+                    myNickname = genNick();
+                    await setDoc(ref, { uid: u.uid, nickname: myNickname, friends: [], incomingRequests: [], lastNickChange: 0 });
+                } else { myNickname = snap.data().nickname; }
                 document.getElementById('myNickname').innerText = myNickname;
-                document.getElementById('myIdDisplay').innerText = `ID: ${user.uid.substring(0,10)}...`;
                 loadSocial();
             }
         });
 
-        // NICKNAME CHANGE WITH 7 DAY LIMIT
-        window.updateNickname = async () => {
-            const newName = document.getElementById('editNickname').value.trim();
-            const errorEl = document.getElementById('nicknameError');
-            if(newName.length < 3) return;
-            
-            const userRef = doc(db, "users", currentUser.uid);
-            const userSnap = await getDoc(userRef);
-            const lastChange = userSnap.data().lastNicknameChange?.toMillis() || 0;
-            const now = Date.now();
-            const sevenDays = 7 * 24 * 60 * 60 * 1000;
-
-            if(now - lastChange < sevenDays) {
-                const left = Math.ceil((sevenDays - (now - lastChange)) / (24*60*60*1000));
-                errorEl.innerText = `Noch ${left} Tage Sperre!`;
-                errorEl.classList.remove('hidden');
-                return;
-            }
-
-            await updateDoc(userRef, { nickname: newName, lastNicknameChange: serverTimestamp() });
-            myNickname = newName;
-            document.getElementById('myNickname').innerText = newName;
-            toggleModal('settingsModal');
-        };
+        // UI HELPERS
+        window.toggleMenu = () => { document.getElementById('sidebar').classList.toggle('active'); };
+        window.toggleModal = id => document.getElementById(id).classList.toggle('hidden');
 
         // GROUP LOGIC
         document.getElementById('confirmCreateGroup').onclick = async () => {
             const name = document.getElementById('newGroupName').value;
             const pass = document.getElementById('newGroupPass').value;
             if(!name) return;
-            const gRef = await addDoc(collection(db, "groups"), { name: name, password: pass || null, lastActivity: serverTimestamp(), members: [currentUser.uid] });
+            const shortId = genShortId();
+            // Wir nutzen die shortId als Dokumenten-ID
+            await setDoc(doc(db, "groups", shortId), {
+                name, password: pass || null, creator: currentUser.uid, members: [currentUser.uid], lastActivity: serverTimestamp()
+            });
             toggleModal('groupModal');
-            selectGroup(gRef.id, name);
+            selectGroup(shortId, name);
         };
 
         document.getElementById('confirmJoinGroup').onclick = async () => {
             const id = document.getElementById('joinId').value;
             const pass = document.getElementById('joinPass').value;
             const snap = await getDoc(doc(db, "groups", id));
-            if(snap.exists()) {
+            if(snap.exists()){
                 const g = snap.data();
-                if(g.password && g.password !== pass) return alert("Falsches Passwort!");
+                if(g.password && g.password !== pass) return alert("Falsches Passwort");
                 await updateDoc(doc(db, "groups", id), { members: arrayUnion(currentUser.uid) });
                 toggleModal('joinModal');
                 selectGroup(id, g.name);
-            }
+            } else { alert("Nicht gefunden"); }
         };
 
         onSnapshot(collection(db, "groups"), snap => {
             const list = document.getElementById('groupList'); list.innerHTML = "";
             snap.forEach(d => {
-                const g = d.data();
-                if(g.members.includes(currentUser?.uid)) {
+                if(d.data().members.includes(currentUser?.uid)) {
                     const div = document.createElement('div');
-                    div.className = `p-3 rounded-xl cursor-pointer ${activeGroupId === d.id ? 'bg-indigo-600' : 'bg-slate-900'}`;
-                    div.innerHTML = `<p class="text-xs font-bold truncate">${g.name}</p>`;
-                    div.onclick = () => selectGroup(d.id, g.name);
+                    div.className = `p-4 rounded-2xl cursor-pointer ${activeGroupId === d.id ? 'bg-indigo-600' : 'bg-slate-900 border border-white/5'}`;
+                    div.innerHTML = `<p class="text-sm font-bold truncate">${d.data().name}</p>`;
+                    div.onclick = () => { selectGroup(d.id, d.data().name); toggleMenu(); };
                     list.appendChild(div);
                 }
             });
         });
 
-        // CHAT & SOCIAL
-        let chatUnsub = null;
+        // CHAT
+        let chatSub = null;
         const selectGroup = (id, name) => {
             activeGroupId = id;
             document.getElementById('currentGroupName').innerText = name;
-            document.getElementById('displayGroupId').innerText = id;
-            document.getElementById('activeGroupInfo').classList.remove('hidden');
-            if(chatUnsub) chatUnsub();
-            chatUnsub = onSnapshot(query(collection(db, `groups/${id}/messages`), orderBy("timestamp", "asc")), snap => {
+            document.getElementById('displayGroupId').innerText = "#" + id;
+            if(chatSub) chatSub();
+            chatSub = onSnapshot(query(collection(db, `groups/${id}/messages`), orderBy("timestamp", "asc")), snap => {
                 const c = document.getElementById('chatMessages'); c.innerHTML = "";
                 snap.forEach(d => {
                     const m = d.data(); const isMe = m.senderId === currentUser.uid;
                     const div = document.createElement('div');
-                    div.className = `max-w-[85%] p-3 rounded-xl ${isMe ? 'self-end bg-indigo-600' : 'self-start bg-slate-800'}`;
-                    div.innerHTML = `<p class="text-[9px] font-black opacity-50 uppercase">${m.senderName}</p>${m.imageUrl ? `<img src="${m.imageUrl}" class="rounded-lg my-1">` : ''}<p class="text-sm">${m.text || ''}</p>`;
+                    div.className = `max-w-[85%] p-3 rounded-2xl msg-bubble shadow-lg ${isMe ? 'self-end bg-indigo-600 rounded-tr-none' : 'self-start bg-slate-800 rounded-tl-none'}`;
+                    div.innerHTML = `<p class="text-[8px] font-black opacity-40 uppercase mb-1">${m.senderName}</p>${m.img ? `<img src="${m.img}" class="rounded-lg mb-2">` : ''}<p class="text-sm">${m.text || ''}</p>`;
                     c.appendChild(div);
                 });
                 c.scrollTop = c.scrollHeight;
@@ -251,62 +231,60 @@
         document.getElementById('sendBtn').onclick = async () => {
             const text = document.getElementById('msgInput').value, file = document.getElementById('imageInput').files[0];
             if(!activeGroupId || (!text && !file)) return;
-            let url = null;
+            let img = null;
             if(file) {
                 const fd = new FormData(); fd.append("image", file);
-                const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method: "POST", body: fd });
-                const d = await res.json(); url = d.data.url;
+                const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {method:"POST", body:fd});
+                const d = await res.json(); img = d.data.url;
             }
-            await addDoc(collection(db, `groups/${activeGroupId}/messages`), { text: text, senderId: currentUser.uid, senderName: myNickname, imageUrl: url, timestamp: serverTimestamp() });
+            await addDoc(collection(db, `groups/${activeGroupId}/messages`), {
+                text, senderId: currentUser.uid, senderName: myNickname, img, timestamp: serverTimestamp()
+            });
             await updateDoc(doc(db, "groups", activeGroupId), { lastActivity: serverTimestamp() });
             document.getElementById('msgInput').value = ""; cancelImage();
         };
 
-        window.showMembers = async () => {
-            if(!activeGroupId) return;
-            const list = document.getElementById('memberList'); toggleModal('memberModal'); list.innerHTML = "Lädt...";
-            const gSnap = await getDoc(doc(db, "groups", activeGroupId));
-            list.innerHTML = "";
-            for(let uid of gSnap.data().members) {
-                const uDoc = await getDoc(doc(db, "users", uid));
-                const div = document.createElement('div');
-                div.className = "flex justify-between p-3 bg-slate-900 rounded-xl border border-white/5";
-                div.innerHTML = `<span class="text-sm font-bold">${uDoc.data()?.nickname}</span> ${uid !== currentUser.uid ? `<button onclick="sendReq('${uid}')" class="text-[10px] bg-indigo-600 px-2 py-1 rounded">Anfrage</button>` : ''}`;
-                list.appendChild(div);
-            }
+        // NICKNAME & SOCIAL
+        window.updateNickname = async () => {
+            const n = document.getElementById('editNickname').value;
+            const ref = doc(db, "users", currentUser.uid);
+            const snap = await getDoc(ref);
+            const now = Date.now();
+            if(now - (snap.data().lastNickChange || 0) < 7*24*60*60*1000) return alert("Sperre aktiv!");
+            await updateDoc(ref, { nickname: n, lastNickChange: now });
+            myNickname = n; document.getElementById('myNickname').innerText = n;
+            toggleModal('settingsModal');
         };
 
-        window.sendReq = async (id) => { await updateDoc(doc(db, "users", id), { incomingRequests: arrayUnion(currentUser.uid) }); alert("Gesendet!"); };
-
         const loadSocial = () => {
-            onSnapshot(doc(db, "users", currentUser.uid), async (snap) => {
-                const u = snap.data(); const fList = document.getElementById('friendList'); fList.innerHTML = "";
-                for(let rId of u.incomingRequests) {
+            onSnapshot(doc(db, "users", currentUser.uid), async snap => {
+                const u = snap.data(); const list = document.getElementById('friendList'); list.innerHTML = "";
+                for(let rId of u.incomingRequests){
                     const rDoc = await getDoc(doc(db, "users", rId));
                     const div = document.createElement('div');
-                    div.className = "p-2 bg-indigo-600/20 border border-indigo-500/30 rounded-xl flex justify-between items-center mb-2";
+                    div.className = "p-3 bg-indigo-900/30 border border-indigo-500/30 rounded-xl flex justify-between items-center mb-2";
                     div.innerHTML = `<span class="text-xs font-bold">${rDoc.data()?.nickname}</span> <button onclick="accept('${rId}')" class="bg-indigo-600 p-1 rounded"><i data-lucide="check" class="w-3 h-3"></i></button>`;
-                    fList.appendChild(div);
+                    list.appendChild(div);
                 }
-                for(let fId of u.friends) {
+                for(let fId of u.friends){
                     const fDoc = await getDoc(doc(db, "users", fId));
                     const div = document.createElement('div');
-                    div.className = "p-2 bg-slate-900 rounded-xl text-xs font-bold mb-1";
+                    div.className = "p-3 bg-slate-900/50 rounded-xl text-xs font-bold mb-1 border border-white/5";
                     div.innerText = fDoc.data()?.nickname;
-                    fList.appendChild(div);
+                    list.appendChild(div);
                 }
                 lucide.createIcons();
             });
         };
 
-        window.accept = async (id) => {
-            await updateDoc(doc(db, "users", currentUser.uid), { friends: arrayUnion(id), incomingRequests: (await getDoc(doc(db, "users", currentUser.uid))).data().incomingRequests.filter(x => x !== id) });
+        window.accept = async id => {
+            const myRef = doc(db, "users", currentUser.uid);
+            const snap = await getDoc(myRef);
+            await updateDoc(myRef, { friends: arrayUnion(id), incomingRequests: snap.data().incomingRequests.filter(x => x !== id) });
             await updateDoc(doc(db, "users", id), { friends: arrayUnion(currentUser.uid) });
         };
 
-        // HELPERS
-        window.toggleModal = (id) => document.getElementById(id).classList.toggle('hidden');
-        window.copyMyId = () => { navigator.clipboard.writeText(currentUser.uid); alert("Deine ID kopiert!"); };
+        window.copyMyId = () => { navigator.clipboard.writeText(currentUser.uid); alert("Deine User-ID kopiert!"); };
         window.previewFile = () => {
             const f = document.getElementById('imageInput').files[0]; const r = new FileReader();
             r.onload = e => { document.getElementById('imagePreview').src = e.target.result; document.getElementById('previewContainer').classList.remove('hidden'); };
