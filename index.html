@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ShadowChat Ultimate V9 - MultiCall & Edit</title>
+    <title>ShadowChat V10 - Stable & Secure</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -67,14 +67,13 @@
             0% { transform: scale(1); opacity: 0.6; }
             100% { transform: scale(2.2); opacity: 0; }
         }
-        .edited-tag { font-size: 10px; color: #8696a0; font-style: italic; margin-left: 4px; }
+        .edited-tag { font-size: 10px; color: #8696a0; font-style: italic; margin-left: 4px; display: inline-block; }
     </style>
 </head>
 <body class="text-gray-900 dark:text-gray-100 flex flex-col md:flex-row">
 
-    <div id="audioContainer" class="hidden">
-        <audio id="localAudio" muted autoplay playsinline></audio>
-        </div>
+    <audio id="remoteAudio" autoplay playsinline></audio>
+    <audio id="localAudio" muted autoplay playsinline></audio>
 
     <aside id="mainSidebar" class="flex flex-col w-full md:w-[350px] lg:w-[420px] h-full border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-wa-dark z-20 shrink-0 overflow-hidden transition-all">
         <header class="h-[64px] bg-wa-light dark:bg-wa-panel flex items-center justify-between px-4 shrink-0">
@@ -82,7 +81,7 @@
                 <div id="myAvatar" class="w-10 h-10 rounded-full bg-wa-accent flex items-center justify-center font-bold text-white cursor-pointer hover:opacity-80 transition" onclick="window.switchTab('settings')">?</div>
                 <div class="hidden sm:block">
                     <p class="font-bold text-sm leading-none" id="myDisplayNick">Loading...</p>
-                    <p class="text-[10px] text-wa-accent font-bold mt-1">ShadowChat V9</p>
+                    <p class="text-[10px] text-wa-accent font-bold mt-1">ShadowChat V10</p>
                 </div>
             </div>
             <div class="flex items-center gap-1">
@@ -144,17 +143,17 @@
                         </div>
                     </div>
                     
-                    <div class="bg-gray-50 dark:bg-wa-panel p-4 rounded-xl">
-                        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-tighter mb-2 block"><i data-lucide="shield" class="w-3 h-3 inline mr-1"></i>Sicherheit & Recovery</label>
+                    <div class="bg-gray-50 dark:bg-wa-panel p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-tighter mb-3 block flex items-center gap-1"><i data-lucide="shield" class="w-3 h-3"></i> Sicherheit & Recovery</label>
                         <div class="mb-4">
-                            <p class="text-xs text-gray-500 mb-1">Deine ID (zum Teilen)</p>
-                            <p id="myFullId" class="font-mono text-xs bg-black/5 dark:bg-black/20 p-2 rounded cursor-pointer select-all" onclick="window.copyMyId()">---</p>
+                            <p class="text-xs text-gray-400 mb-1">Deine ID (zum Teilen)</p>
+                            <p id="myFullId" class="font-mono text-xs bg-black/5 dark:bg-black/20 p-2 rounded cursor-pointer select-all hover:bg-black/10 transition" onclick="window.copyMyId()">---</p>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-500 mb-1">Dein Geheim-Passwort (zum Wiederherstellen)</p>
-                            <div class="flex gap-2">
-                                <p id="mySecretPass" class="font-mono text-xs bg-red-500/10 text-red-500 p-2 rounded flex-1 filter blur-[3px] hover:blur-0 transition cursor-pointer select-all">********</p>
-                                <button onclick="document.getElementById('mySecretPass').classList.toggle('blur-[3px]')" class="p-1"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                            <p class="text-xs text-gray-400 mb-1">Dein Geheim-Passwort (zum Login)</p>
+                            <div class="flex gap-2 items-center">
+                                <p id="mySecretPass" class="font-mono text-xs bg-red-500/10 text-red-500 p-2 rounded flex-1 filter blur-[4px] hover:blur-0 transition cursor-pointer select-all">********</p>
+                                <button onclick="document.getElementById('mySecretPass').classList.toggle('blur-[4px]')" class="p-1 text-gray-400"><i data-lucide="eye" class="w-4 h-4"></i></button>
                             </div>
                         </div>
                     </div>
@@ -217,7 +216,7 @@
         
         <div class="relative z-10 text-center w-full flex flex-col items-center mt-8">
             <div class="flex items-center gap-2 text-gray-300 text-sm font-semibold mb-8 opacity-80">
-                <i data-lucide="shield-check" class="w-4 h-4 text-green-400"></i> <span>Shadow Multi-Grid Secure</span>
+                <i data-lucide="lock" class="w-4 h-4 text-green-400"></i> <span>Shadow Secure Call</span>
             </div>
             <div class="relative mb-8">
                 <div id="callRipple" class="hidden ripple"></div>
@@ -225,7 +224,6 @@
             </div>
             <h2 id="callName" class="text-4xl font-bold tracking-tight mb-2">Unbekannt</h2>
             <p id="callStatus"  class="text-lg font-medium text-grey-400 animate-pulse">Verbinden...</p>
-            <div id="participantsList" class="mt-4 flex gap-2 justify-center flex-wrap"></div>
         </div>
 
         <div id="activeCallControls" class="relative z-10 w-full max-w-sm hidden">
@@ -292,7 +290,7 @@
             <div class="text-center mb-6">
                 <div class="w-16 h-16 bg-wa-accent rounded-full mx-auto flex items-center justify-center text-white mb-2"><i data-lucide="user-check" class="w-8 h-8"></i></div>
                 <h3 class="text-2xl font-black">Account Login</h3>
-                <p class="text-xs text-gray-500 mt-1">Hast du schon ein anderes Konto?</p>
+                <p class="text-xs text-gray-500 mt-1">Stelle deinen alten Account wieder her.</p>
             </div>
             <div class="space-y-4">
                 <div>
@@ -301,7 +299,7 @@
                 </div>
                 <div>
                     <label class="text-[10px] font-bold text-gray-500 uppercase px-1">Dein Passwort</label>
-                    <input id="login_pass" type="text" placeholder="8-Stelliges Passwort" class="w-full bg-gray-100 dark:bg-wa-dark p-4 rounded-2xl outline-none font-mono text-center">
+                    <input id="login_pass" type="text" placeholder="Dein Geheim-Passwort" class="w-full bg-gray-100 dark:bg-wa-dark p-4 rounded-2xl outline-none font-mono text-center">
                 </div>
             </div>
             <button onclick="window.recoverAccount()" class="w-full bg-wa-accent mt-8 py-4 rounded-2xl text-white font-black shadow-lg hover:scale-[1.02] transition">Account wiederherstellen</button>
@@ -345,17 +343,17 @@
         const auth = getAuth(app);
         const IMGBB_KEY = "bd8f03312d551a4e7c4973f6af975396";
 
-        let currentUser = null; // Das Firebase Auth Objekt
-        let myRealUid = null;   // Die ID, die wir logisch nutzen (für Account Recovery Switch)
+        let currentUser = null; 
+        let myRealUid = null;   // Für Account Switch
         let activeChatId = null;
         let isPrivate = false;
         let myNick = "Gast";
         let myCustomNames = {}; 
         let messageUnsub = null;
         
-        // Multi-User WebRTC Vars
+        // --- STABLE CALL VARIABLES (REVERTED) ---
+        let peerConnection = null;
         let localStream = null;
-        let peerConnections = {}; // Map: { userId: RTCPeerConnection }
         let callUnsub = null;
         let currentCallId = null;
 
@@ -366,7 +364,7 @@
 
         lucide.createIcons();
 
-        // --- HELPER FUNCTIONS ---
+        // --- HELPER ---
         function generatePassword() {
             const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!?#@";
             let pass = "";
@@ -374,25 +372,22 @@
             return pass;
         }
 
-        // --- AUTH & INITIALISIERUNG ---
-        // Prüfen ob wir einen "wiederhergestellten" User im LocalStorage haben
+        // --- AUTH & RECOVERY ---
         const savedUid = localStorage.getItem('shadow_simulated_uid');
-
         signInAnonymously(auth);
         
         onAuthStateChanged(auth, async (u) => {
             if(u) {
                 currentUser = u;
-                // Logik: Wenn wir eine savedUid haben, tun wir so, als wären wir dieser User für DB operationen
+                // Wenn wir eine gespeicherte ID haben (Login), nutzen wir diese
                 myRealUid = savedUid ? savedUid : u.uid;
 
                 const uRef = doc(db, "users", myRealUid);
                 const snap = await getDoc(uRef);
                 
                 if(!snap.exists()) {
-                    // Neuer User
+                    // Falls die Saved ID nicht existiert (gelöscht?), fallback auf echte
                     if(savedUid) {
-                        // Falls die Saved ID nicht existiert (gelöscht?), fallback auf echte ID
                         localStorage.removeItem('shadow_simulated_uid');
                         myRealUid = u.uid;
                         location.reload();
@@ -403,7 +398,7 @@
                     await setDoc(doc(db, "users", myRealUid), { 
                         uid: myRealUid, 
                         nickname: myNick, 
-                        password: newPass, // Hier wird das generierte PW gespeichert
+                        password: newPass,
                         friends: [], 
                         incoming: [], 
                         customNames: {}, 
@@ -414,7 +409,6 @@
                     const d = snap.data();
                     myNick = d.nickname;
                     myCustomNames = d.customNames || {};
-                    // Check if password exists (for old users), if not create one
                     if(!d.password) {
                         const newPass = generatePassword();
                         await updateDoc(uRef, { password: newPass });
@@ -439,7 +433,6 @@
             }
         });
 
-        // --- ACCOUNT RECOVERY ---
         window.recoverAccount = async () => {
             const id = document.getElementById('login_id').value.trim();
             const pass = document.getElementById('login_pass').value.trim();
@@ -459,13 +452,10 @@
                 } else {
                     alert("User ID nicht gefunden.");
                 }
-            } catch(e) {
-                console.error(e);
-                alert("Fehler beim Login.");
-            }
+            } catch(e) { console.error(e); alert("Fehler beim Login."); }
         };
 
-        // --- MESSAGING ---
+        // --- MESSAGING (MIT EDIT) ---
         window.sendMsg = async () => {
             const inp = document.getElementById('msgIn'); 
             const file = document.getElementById('imgIn').files[0];
@@ -516,7 +506,6 @@
                     const div = document.createElement('div');
                     div.className = `flex ${isMe ? 'justify-end' : 'justify-start'} mb-1 relative group/msg`;
                     
-                    // Edit & Delete Buttons
                     let controls = "";
                     if(isMe) {
                         controls = `
@@ -554,14 +543,11 @@
         window.editMessage = async (msgId, oldText) => {
             const newText = prompt("Nachricht bearbeiten:", oldText);
             if(newText !== null && newText !== oldText) {
-                await updateDoc(doc(db, `chats/${activeChatId}/messages`, msgId), {
-                    text: newText,
-                    edited: true
-                });
+                await updateDoc(doc(db, `chats/${activeChatId}/messages`, msgId), { text: newText, edited: true });
             }
         };
 
-        // --- GRUPPEN FUNKTIONEN ---
+        // --- GRUPPEN ---
         window.createGrp = async () => {
             const n = document.getElementById('ng_name').value.trim();
             const p = document.getElementById('ng_pass').value.trim();
@@ -569,12 +555,8 @@
             const gid = "GRP-" + Math.random().toString(36).substring(2,9).toUpperCase();
             
             await setDoc(doc(db, "chats", gid), { 
-                type: 'group', 
-                name: n, 
-                password: p || null, 
-                creator: myRealUid, 
-                members: [myRealUid], 
-                lastActivity: serverTimestamp() 
+                type: 'group', name: n, password: p || null, creator: myRealUid, 
+                members: [myRealUid], lastActivity: serverTimestamp() 
             });
             alert("Gruppe erstellt! ID: " + gid);
             window.toggleModal('newGroupModal'); 
@@ -598,17 +580,11 @@
         window.leaveChat = async () => {
             if(!activeChatId || isPrivate) return;
             if(confirm("Gruppe wirklich verlassen?")) {
-                try {
-                    await updateDoc(doc(db, "chats", activeChatId), {
-                        members: arrayRemove(myRealUid)
-                    });
-                    document.getElementById('chatArea').classList.add('hidden');
-                    if(window.innerWidth < 768) document.getElementById('mainSidebar').classList.remove('hidden');
-                    window.toggleModal('infoModal');
-                    activeChatId = null;
-                } catch(e) {
-                    alert("Fehler beim Verlassen: " + e.message);
-                }
+                await updateDoc(doc(db, "chats", activeChatId), { members: arrayRemove(myRealUid) });
+                document.getElementById('chatArea').classList.add('hidden');
+                if(window.innerWidth < 768) document.getElementById('mainSidebar').classList.remove('hidden');
+                window.toggleModal('infoModal');
+                activeChatId = null;
             }
         };
 
@@ -635,7 +611,7 @@
             });
         }
 
-        // --- KONTAKTE & FREUNDE ---
+        // --- KONTAKTE ---
         function loadFriendsTab() {
             onSnapshot(doc(db, "users", myRealUid), async (s) => {
                 const data = s.data(); if(!data) return;
@@ -712,7 +688,7 @@
 
         window.copyMyId = () => { navigator.clipboard.writeText(myRealUid); alert("ID kopiert!"); };
 
-        // --- MULTI-USER CALLS (MESH STRUKTUR) ---
+        // --- STABLE CALLS (REVERTED TO 100% WORKING STATE) ---
         async function setupLocalStream() {
             try {
                 localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -721,93 +697,59 @@
             } catch(e) { alert("Mikrofonfehler!"); return false; }
         }
 
-        // Anruf starten (Geht nun für Privat & Gruppe)
         window.initiateCall = async () => {
             if(!activeChatId) return;
-            setupCallUI(true, document.getElementById('activeTitle').innerText);
+            const targetId = isPrivate ? activeChatId.split("_").find(p => p !== myRealUid) : activeChatId; 
+            const targetName = document.getElementById('activeTitle').innerText;
+
+            setupCallUI(true, targetName);
             if(!(await setupLocalStream())) return;
 
-            // Call Document erstellen
             const callDoc = doc(collection(db, "calls"));
             currentCallId = callDoc.id;
+            peerConnection = new RTCPeerConnection(servers);
             
-            // Call Daten speichern (targetGroupId ist neu für Gruppen)
-            const callData = { 
+            localStream.getTracks().forEach(t => peerConnection.addTrack(t, localStream));
+            
+            peerConnection.ontrack = e => { 
+                if(e.streams[0]) { 
+                    document.getElementById('remoteAudio').srcObject = e.streams[0]; 
+                    updateCallStatusUI("Verbunden"); 
+                } 
+            };
+            
+            peerConnection.onicecandidate = e => { 
+                if(e.candidate) addDoc(collection(callDoc, 'offerCandidates'), e.candidate.toJSON()); 
+            };
+
+            const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+            
+            // WICHTIG: Das hier ist der "alte" stabile Weg.
+            await setDoc(callDoc, { 
                 callerId: myRealUid, 
                 callerName: myNick, 
-                status: 'ringing',
-                isGroup: !isPrivate,
-                targetId: isPrivate ? activeChatId.split("_").find(p => p !== myRealUid) : activeChatId, // In Group: Chat ID, In Private: User ID
-                participants: [myRealUid]
-            };
-            await setDoc(callDoc, callData);
-
-            // Listener auf Call Status
-            callUnsub = onSnapshot(callDoc, async (s) => {
-                const d = s.data();
-                if(!d) return;
-                
-                // Wenn jemand joint (bei Gruppen wichtig)
-                if(d.participants && d.participants.length > 1) {
-                    updateCallStatusUI("Verbunden (" + d.participants.length + ")");
-                    // Hier müsste nun die Logik für Mesh-Verbindungen zu neuen Teilnehmern hin
-                    // Vereinfachung: Wir warten auf Angebote im "offers" Subcollection
-                }
-
-                if(d.status === 'ended') window.hangUpCall();
+                targetId: targetId,
+                isGroup: !isPrivate, // Flag für Gruppenanrufe (klingelt bei allen)
+                offer: {sdp: offer.sdp, type: offer.type}, 
+                status: 'ringing' 
             });
 
-            // Wir hören auf "Angebote" von anderen, die beitreten
-            onSnapshot(collection(callDoc, "offers"), snapshot => {
-                snapshot.docChanges().forEach(async change => {
-                    if(change.type === 'added') {
-                        const offerData = change.doc.data();
-                        if(offerData.to === myRealUid) {
-                            await handleOffer(callDoc, change.doc.id, offerData);
-                        }
-                    }
+            callUnsub = onSnapshot(callDoc, s => {
+                const d = s.data();
+                if(!peerConnection.currentRemoteDescription && d?.answer) {
+                    peerConnection.setRemoteDescription(new RTCSessionDescription(d.answer));
+                }
+                if(d?.status === 'ended') window.hangUpCall();
+            });
+
+            onSnapshot(collection(callDoc, 'answerCandidates'), s => {
+                s.docChanges().forEach(c => { 
+                    if(c.type === 'added') peerConnection.addIceCandidate(new RTCIceCandidate(c.doc.data())); 
                 });
             });
         };
 
-        // Hilfsfunktion: Angebot annehmen und antworten
-        async function handleOffer(callDocRef, offerId, offerData) {
-            const pc = new RTCPeerConnection(servers);
-            const peerId = offerData.from;
-            peerConnections[peerId] = pc;
-            
-            localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
-            
-            pc.ontrack = e => {
-                const aud = document.createElement('audio');
-                aud.srcObject = e.streams[0];
-                aud.autoplay = true;
-                aud.id = `audio-${peerId}`;
-                document.getElementById('audioContainer').appendChild(aud);
-            };
-
-            pc.onicecandidate = e => {
-                if(e.candidate) {
-                    addDoc(collection(callDocRef, "candidates"), {
-                        candidate: e.candidate.toJSON(),
-                        from: myRealUid,
-                        to: peerId
-                    });
-                }
-            };
-
-            await pc.setRemoteDescription(new RTCSessionDescription(offerData.offer));
-            const answer = await pc.createAnswer();
-            await pc.setLocalDescription(answer);
-
-            await addDoc(collection(callDocRef, "answers"), {
-                answer: { type: answer.type, sdp: answer.sdp },
-                from: myRealUid,
-                to: peerId
-            });
-        }
-
-        // Eingehenden Anruf annehmen
         window.answerIncomingCall = async () => {
             const callDoc = doc(db, "calls", currentCallId);
             const d = (await getDoc(callDoc)).data();
@@ -816,106 +758,36 @@
             document.getElementById('activeCallControls').classList.remove('hidden');
             
             if(!(await setupLocalStream())) return;
+            peerConnection = new RTCPeerConnection(servers);
+            localStream.getTracks().forEach(t => peerConnection.addTrack(t, localStream));
+            
+            peerConnection.ontrack = e => { 
+                if(e.streams[0]) { 
+                    document.getElementById('remoteAudio').srcObject = e.streams[0]; 
+                    updateCallStatusUI("Verbunden"); 
+                } 
+            };
+            peerConnection.onicecandidate = e => { 
+                if(e.candidate) addDoc(collection(callDoc, 'answerCandidates'), e.candidate.toJSON()); 
+            };
 
-            // Mich selbst zur Teilnehmerliste hinzufügen
-            await updateDoc(callDoc, { participants: arrayUnion(myRealUid), status: 'connected' });
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(d.offer));
+            const answer = await peerConnection.createAnswer();
+            await peerConnection.setLocalDescription(answer);
+            
+            await updateDoc(callDoc, { answer: {type: answer.type, sdp: answer.sdp}, status: 'connected' });
 
-            // Allen bisherigen Teilnehmern ein Angebot machen
-            const participants = d.participants || [];
-            participants.forEach(async pId => {
-                if(pId === myRealUid) return;
-                createOfferForPeer(callDoc, pId);
-            });
-
-            // Auf Antworten hören
-            onSnapshot(collection(callDoc, "answers"), snapshot => {
-                snapshot.docChanges().forEach(change => {
-                    if(change.type === 'added') {
-                        const ans = change.doc.data();
-                        if(ans.to === myRealUid && peerConnections[ans.from]) {
-                            peerConnections[ans.from].setRemoteDescription(new RTCSessionDescription(ans.answer));
-                        }
-                    }
+            onSnapshot(collection(callDoc, 'offerCandidates'), s => {
+                s.docChanges().forEach(c => { 
+                    if(c.type === 'added') peerConnection.addIceCandidate(new RTCIceCandidate(c.doc.data())); 
                 });
             });
-
-            // Auf neue Kandidaten hören
-            onSnapshot(collection(callDoc, "candidates"), snapshot => {
-                snapshot.docChanges().forEach(change => {
-                    if(change.type === 'added') {
-                        const cand = change.doc.data();
-                        if(cand.to === myRealUid && peerConnections[cand.from]) {
-                            peerConnections[cand.from].addIceCandidate(new RTCIceCandidate(cand.candidate));
-                        }
-                    }
-                });
-            });
-
-            // Auf weitere Angebote hören (wenn noch wer joint)
-            onSnapshot(collection(callDoc, "offers"), snapshot => {
-                snapshot.docChanges().forEach(async change => {
-                    if(change.type === 'added') {
-                        const offerData = change.doc.data();
-                        if(offerData.to === myRealUid) await handleOffer(callDoc, change.doc.id, offerData);
-                    }
-                });
-            });
-
             callUnsub = onSnapshot(callDoc, s => { if(s.data()?.status === 'ended') window.hangUpCall(); });
         };
 
-        async function createOfferForPeer(callDocRef, targetPeerId) {
-            const pc = new RTCPeerConnection(servers);
-            peerConnections[targetPeerId] = pc;
-
-            localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
-
-            pc.ontrack = e => {
-                const aud = document.createElement('audio');
-                aud.srcObject = e.streams[0];
-                aud.autoplay = true;
-                aud.id = `audio-${targetPeerId}`;
-                document.getElementById('audioContainer').appendChild(aud);
-            };
-
-            pc.onicecandidate = e => {
-                if(e.candidate) {
-                    addDoc(collection(callDocRef, "candidates"), {
-                        candidate: e.candidate.toJSON(),
-                        from: myRealUid,
-                        to: targetPeerId
-                    });
-                }
-            };
-
-            const offer = await pc.createOffer();
-            await pc.setLocalDescription(offer);
-
-            await addDoc(collection(callDocRef, "offers"), {
-                offer: { type: offer.type, sdp: offer.sdp },
-                from: myRealUid,
-                to: targetPeerId
-            });
-        }
-
         window.hangUpCall = async () => {
-            if(currentCallId) { 
-                try { 
-                    // Wenn ich der Caller bin, beende für alle, sonst nur mich entfernen
-                    const d = (await getDoc(doc(db, "calls", currentCallId))).data();
-                    if(d && d.callerId === myRealUid) {
-                        await updateDoc(doc(db, "calls", currentCallId), { status: 'ended' }); 
-                    } else {
-                        await updateDoc(doc(db, "calls", currentCallId), { participants: arrayRemove(myRealUid) });
-                    }
-                } catch(e){} 
-            }
-            
-            // Clean up WebRTC
-            Object.values(peerConnections).forEach(pc => pc.close());
-            peerConnections = {};
-            document.getElementById('audioContainer').innerHTML = '<audio id="localAudio" muted autoplay playsinline></audio>';
-
+            if(currentCallId) { try { await updateDoc(doc(db, "calls", currentCallId), { status: 'ended' }); } catch(e){} }
+            if(peerConnection) { peerConnection.close(); peerConnection = null; }
             if(localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
             if(callUnsub) callUnsub();
             document.getElementById('callOverlay').classList.add('hidden');
@@ -923,21 +795,20 @@
         };
 
         function startIncomingCallListener() {
-            // Höre auf Anrufe, wo ich das Ziel bin ODER wo meine Gruppe das Ziel ist
-            // Firestore Query limitation: OR queries are tricky. We simplify:
-            // Wir hören auf ALLE Calls wo status == ringing und checken client side
+            // Hört auf Anrufe, die 'ringing' sind
             const q = query(collection(db, "calls"), where("status", "==", "ringing"));
             onSnapshot(q, s => {
                 s.docChanges().forEach(async c => {
                     if(c.type === 'added') {
                         const d = c.doc.data();
-                        if(d.callerId === myRealUid) return; // Mein eigener Anruf
+                        if(d.callerId === myRealUid) return; // Nicht meinen eigenen Anruf anzeigen
 
                         let shouldRing = false;
-                        if(!d.isGroup && d.targetId === myRealUid) shouldRing = true;
+                        if(!d.isGroup && d.targetId === myRealUid) shouldRing = true; // Privatanruf an MICH
                         
                         if(d.isGroup) {
-                            // Check ob ich in der Gruppe bin
+                            // Wenn Gruppenanruf: Prüfen ob ich in der Gruppe bin
+                            // Da wir keine server-seitige Logik haben, holen wir kurz die Chat-Daten
                             const chatSnap = await getDoc(doc(db, "chats", d.targetId));
                             if(chatSnap.exists() && chatSnap.data().members.includes(myRealUid)) {
                                 shouldRing = true;
@@ -946,7 +817,7 @@
 
                         if(shouldRing) {
                             currentCallId = c.doc.id;
-                            setupCallUI(false, d.callerName + (d.isGroup ? " (Gruppe)" : ""));
+                            setupCallUI(false, d.callerName);
                         }
                     }
                 });
@@ -966,7 +837,7 @@
         function updateCallStatusUI(txt) {
             const s = document.getElementById('callStatus');
             s.innerText = txt;
-            if(txt.includes("Verbunden")) {
+            if(txt === "Verbunden") {
                 s.classList.add('text-green-400');
                 document.getElementById('callRipple').classList.add('hidden');
             }
