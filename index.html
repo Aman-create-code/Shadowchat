@@ -207,7 +207,7 @@
                 <div id="callAvatar" class="w-36 h-36 rounded-full bg-[#202c33] flex items-center justify-center text-5xl font-bold shadow-2xl border border-white/10 relative z-10">?</div>
             </div>
             <h2 id="callName" class="text-4xl font-bold tracking-tight mb-2">Unbekannt</h2>
-            <p id="callStatus"  class="text-lg font-medium text-green-400 animate-pulse">Verbunden</p>
+            <p id="callStatus"  class="text-lg font-medium text-grey-400 animate-pulse">Verbinden...</p>
         </div>
 
         <div id="activeCallControls" class="relative z-10 w-full max-w-sm hidden">
@@ -354,84 +354,10 @@
             }
         });
 
-        // --- FREUNDE & KONTAKTE (VOLLSTÄNDIG) ---
-        function loadFriendsTab() {
-            onSnapshot(doc(db, "users", currentUser.uid), async (s) => {
-                const data = s.data(); if(!data) return;
-                myCustomNames = data.customNames || {};
-                
-                // Eingehende Anfragen
-                const pL = document.getElementById('pendingList');
-                const pContainer = document.getElementById('pendingContainer');
-                if(data.incoming?.length > 0) {
-                    pContainer.classList.remove('hidden'); pL.innerHTML = "";
-                    for(const rid of data.incoming) {
-                        const rU = await getDoc(doc(db, "users", rid));
-                        if(rU.exists()){
-                            const div = document.createElement('div');
-                            div.className = "flex items-center justify-between bg-white dark:bg-wa-panel p-3 rounded-xl shadow-sm border dark:border-gray-800 mb-2";
-                            div.innerHTML = `<span class="font-bold text-sm">${rU.data().nickname}</span><div class="flex gap-2"><button onclick="window.acceptFriend('${rid}')" class="bg-wa-accent text-white p-2 rounded-lg"><i data-lucide="check" class="w-4 h-4"></i></button></div>`;
-                            pL.appendChild(div);
-                        }
-                    }
-                } else pContainer.classList.add('hidden');
+        // ==========================================
+        // 🔥 AUDIO CALL LOGIC (UI FIXES)
+        // ==========================================
 
-                // Kontaktliste
-                const cL = document.getElementById('contactsList'); cL.innerHTML = "";
-                if(data.friends?.length > 0) {
-                    for(const fid of data.friends) {
-                        const fU = await getDoc(doc(db, "users", fid));
-                        if(fU.exists()){
-                            const fd = fU.data();
-                            const dispName = myCustomNames[fid] || fd.nickname;
-                            const div = document.createElement('div');
-                            div.className = "flex items-center justify-between p-3 hover:bg-gray-100 dark:hover:bg-wa-panel rounded-xl transition group";
-                            div.innerHTML = `
-                                <div class="flex items-center gap-3 cursor-pointer flex-1" onclick="window.startPrivateChat('${fid}', '${dispName}')">
-                                    <div class="w-10 h-10 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold">${dispName[0]}</div>
-                                    <div><p class="font-bold text-sm">${dispName}</p>${myCustomNames[fid] ? `<p class='text-[10px] text-gray-400'>Original: ${fd.nickname}</p>` : ''}</div>
-                                </div>
-                                <div class="flex gap-1">
-                                    <button onclick="window.renameContact('${fid}', '${dispName}')" class="p-2 text-gray-400 hover:text-blue-500"><i data-lucide="pencil" class="w-4 h-4"></i></button>
-                                    <button onclick="window.deleteContact('${fid}')" class="p-2 text-gray-400 hover:text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                                </div>`;
-                            cL.appendChild(div);
-                        }
-                    }
-                } else cL.innerHTML = `<div class="text-center py-10 text-gray-500 text-xs">Keine Kontakte.</div>`;
-                lucide.createIcons();
-            });
-        }
-
-        window.sendRequest = async () => {
-            const id = document.getElementById('friendSearchInput').value.trim();
-            if(!id || id === currentUser.uid) return alert("Ungültige ID");
-            const tRef = doc(db, "users", id); const tSnap = await getDoc(tRef);
-            if(tSnap.exists()) { await updateDoc(tRef, { incoming: arrayUnion(currentUser.uid) }); alert("Anfrage gesendet!"); }
-            else alert("ID nicht gefunden.");
-        };
-
-        window.acceptFriend = async (rid) => {
-            await updateDoc(doc(db, "users", currentUser.uid), { friends: arrayUnion(rid), incoming: arrayRemove(rid) });
-            await updateDoc(doc(db, "users", rid), { friends: arrayUnion(currentUser.uid) });
-        };
-
-        window.renameContact = async (fid, currentName) => {
-            const newName = prompt("Neuer Name:", currentName);
-            if(newName) {
-                const update = {}; update[`customNames.${fid}`] = newName;
-                await updateDoc(doc(db, "users", currentUser.uid), update);
-            }
-        };
-
-        window.deleteContact = async (fid) => {
-            if(confirm("Kontakt löschen?")) {
-                await updateDoc(doc(db, "users", currentUser.uid), { friends: arrayRemove(fid) });
-                await updateDoc(doc(db, "users", fid), { friends: arrayRemove(currentUser.uid) });
-            }
-        };
-
-        // --- AUDIO CALLS ---
         async function setupLocalStream() {
             try {
                 localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -451,7 +377,13 @@
             peerConnection = new RTCPeerConnection(servers);
             localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
             
-            peerConnection.ontrack = (e) => { if(e.streams[0]) document.getElementById('remoteAudio').srcObject = e.streams[0]; };
+            peerConnection.ontrack = (e) => { 
+                if(e.streams[0]) {
+                    document.getElementById('remoteAudio').srcObject = e.streams[0];
+                    updateCallUIStatus("Verbunden", "text-green-400");
+                }
+            };
+
             peerConnection.onicecandidate = (e) => { if(e.candidate) addDoc(collection(callDoc, 'offerCandidates'), e.candidate.toJSON()); };
 
             const offer = await peerConnection.createOffer();
@@ -460,9 +392,13 @@
 
             callUnsub = onSnapshot(callDoc, (s) => {
                 const d = s.data();
-                if(!peerConnection.currentRemoteDescription && d?.answer) peerConnection.setRemoteDescription(new RTCSessionDescription(d.answer));
+                if(!peerConnection.currentRemoteDescription && d?.answer) {
+                    peerConnection.setRemoteDescription(new RTCSessionDescription(d.answer));
+                }
                 if(d?.status === 'ended') window.hangUpCall();
+                if(d?.status === 'connected') updateCallUIStatus("Verbunden", "text-green-400");
             });
+
             onSnapshot(collection(callDoc, 'answerCandidates'), (s) => {
                 s.docChanges().forEach(c => { if(c.type === 'added') peerConnection.addIceCandidate(new RTCIceCandidate(c.doc.data())); });
             });
@@ -470,13 +406,26 @@
 
         window.answerIncomingCall = async () => {
             const callDoc = doc(db, "calls", currentCallId);
-            const callData = (await getDoc(callDoc)).data();
+            const callSnap = await getDoc(callDoc);
+            const callData = callSnap.data();
+
             setupCallUI(false, callData.callerName);
+            // Wechsel zu aktiven Controls
+            document.getElementById('incomingCallControls').classList.add('hidden');
+            document.getElementById('activeCallControls').classList.remove('hidden');
+
             if(!(await setupLocalStream())) return;
 
             peerConnection = new RTCPeerConnection(servers);
             localStream.getTracks().forEach(t => peerConnection.addTrack(t, localStream));
-            peerConnection.ontrack = e => { if(e.streams[0]) document.getElementById('remoteAudio').srcObject = e.streams[0]; };
+            
+            peerConnection.ontrack = e => { 
+                if(e.streams[0]) {
+                    document.getElementById('remoteAudio').srcObject = e.streams[0];
+                    updateCallUIStatus("Verbunden", "text-green-400");
+                }
+            };
+
             peerConnection.onicecandidate = e => { if(e.candidate) addDoc(collection(callDoc, 'answerCandidates'), e.candidate.toJSON()); };
 
             await peerConnection.setRemoteDescription(new RTCSessionDescription(callData.offer));
@@ -491,13 +440,46 @@
         };
 
         window.hangUpCall = async () => {
-            if(currentCallId) { try { await updateDoc(doc(db, "calls", currentCallId), { status: 'ended' }); } catch(e){} }
+            if(currentCallId) { 
+                try { await updateDoc(doc(db, "calls", currentCallId), { status: 'ended' }); } catch(e){} 
+            }
             if(peerConnection) { peerConnection.close(); peerConnection = null; }
             if(localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
             if(callUnsub) callUnsub();
+            
+            // UI Reset
             document.getElementById('callOverlay').classList.add('hidden');
+            document.getElementById('callRipple').classList.add('hidden');
+            document.getElementById('remoteAudio').srcObject = null;
             currentCallId = null;
         };
+
+        function updateCallUIStatus(txt, colorClass) {
+            const s = document.getElementById('callStatus');
+            s.innerText = txt;
+            s.className = `text-lg font-medium transition-colors ${colorClass}`;
+            if(txt === "Verbunden") {
+                s.classList.remove('animate-pulse');
+                document.getElementById('callRipple').classList.add('hidden');
+            }
+        }
+
+        function setupCallUI(isCaller, name) {
+            document.getElementById('callOverlay').classList.remove('hidden');
+            document.getElementById('callName').innerText = name;
+            document.getElementById('callAvatar').innerText = name[0];
+            document.getElementById('callStatus').innerText = isCaller ? "Wählen..." : "Verbinden...";
+            document.getElementById('callStatus').classList.add('animate-pulse');
+            document.getElementById('callRipple').classList.remove('hidden');
+            
+            if(isCaller) {
+                document.getElementById('activeCallControls').classList.remove('hidden');
+                document.getElementById('incomingCallControls').classList.add('hidden');
+            } else {
+                document.getElementById('activeCallControls').classList.add('hidden');
+                document.getElementById('incomingCallControls').classList.remove('hidden');
+            }
+        }
 
         function startIncomingCallListener() {
             const q = query(collection(db, "calls"), where("targetId", "==", currentUser.uid), where("status", "==", "ringing"));
@@ -505,16 +487,83 @@
                 s.docChanges().forEach(c => {
                     if(c.type === 'added') {
                         currentCallId = c.doc.id;
-                        document.getElementById('callOverlay').classList.remove('hidden');
-                        document.getElementById('incomingCallControls').classList.remove('hidden');
-                        document.getElementById('activeCallControls').classList.add('hidden');
-                        document.getElementById('callName').innerText = c.doc.data().callerName;
+                        const d = c.doc.data();
+                        setupCallUI(false, d.callerName);
                     }
                 });
             });
         }
 
-        // --- MESSAGING & CHATS ---
+        // --- FRIENDS, MESSAGES, STATUS (REST) ---
+        function loadFriendsTab() {
+            onSnapshot(doc(db, "users", currentUser.uid), async (s) => {
+                const data = s.data(); if(!data) return;
+                myCustomNames = data.customNames || {};
+                const pL = document.getElementById('pendingList');
+                const pContainer = document.getElementById('pendingContainer');
+                if(data.incoming?.length > 0) {
+                    pContainer.classList.remove('hidden'); pL.innerHTML = "";
+                    for(const rid of data.incoming) {
+                        const rU = await getDoc(doc(db, "users", rid));
+                        const div = document.createElement('div');
+                        div.className = "flex items-center justify-between bg-white dark:bg-wa-panel p-3 rounded-xl mb-2";
+                        div.innerHTML = `<span class="font-bold text-sm">${rU.data().nickname}</span><button onclick="window.acceptFriend('${rid}')" class="bg-wa-accent text-white p-2 rounded-lg"><i data-lucide="check" class="w-4 h-4"></i></button>`;
+                        pL.appendChild(div);
+                    }
+                } else pContainer.classList.add('hidden');
+
+                const cL = document.getElementById('contactsList'); cL.innerHTML = "";
+                if(data.friends?.length > 0) {
+                    for(const fid of data.friends) {
+                        const fU = await getDoc(doc(db, "users", fid));
+                        if(fU.exists()){
+                            const fd = fU.data(); const dispName = myCustomNames[fid] || fd.nickname;
+                            const div = document.createElement('div');
+                            div.className = "flex items-center justify-between p-3 hover:bg-gray-100 dark:hover:bg-wa-panel rounded-xl group";
+                            div.innerHTML = `
+                                <div class="flex items-center gap-3 cursor-pointer flex-1" onclick="window.startPrivateChat('${fid}', '${dispName}')">
+                                    <div class="w-10 h-10 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold">${dispName[0]}</div>
+                                    <p class="font-bold text-sm">${dispName}</p>
+                                </div>
+                                <div class="flex gap-1">
+                                    <button onclick="window.renameContact('${fid}', '${dispName}')" class="p-2 text-gray-400 hover:text-blue-500"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                                    <button onclick="window.deleteContact('${fid}')" class="p-2 text-gray-400 hover:text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                </div>`;
+                            cL.appendChild(div);
+                        }
+                    }
+                } else cL.innerHTML = `<div class="text-center py-10 text-gray-500 text-xs">Keine Kontakte.</div>`;
+                lucide.createIcons();
+            });
+        }
+
+        window.acceptFriend = async (rid) => {
+            await updateDoc(doc(db, "users", currentUser.uid), { friends: arrayUnion(rid), incoming: arrayRemove(rid) });
+            await updateDoc(doc(db, "users", rid), { friends: arrayUnion(currentUser.uid) });
+        };
+
+        window.sendRequest = async () => {
+            const id = document.getElementById('friendSearchInput').value.trim();
+            if(!id || id === currentUser.uid) return alert("Ungültige ID");
+            const tRef = doc(db, "users", id); const tSnap = await getDoc(tRef);
+            if(tSnap.exists()) { await updateDoc(tRef, { incoming: arrayUnion(currentUser.uid) }); alert("Anfrage gesendet!"); }
+            else alert("ID nicht gefunden.");
+        };
+
+        window.renameContact = async (fid, currentName) => {
+            const newName = prompt("Neuer Name:", currentName);
+            if(newName) {
+                const update = {}; update[`customNames.${fid}`] = newName;
+                await updateDoc(doc(db, "users", currentUser.uid), update);
+            }
+        };
+
+        window.deleteContact = async (fid) => {
+            if(confirm("Kontakt löschen?")) {
+                await updateDoc(doc(db, "users", currentUser.uid), { friends: arrayRemove(fid) });
+            }
+        };
+
         function openChat(id, name, isPriv) {
             activeChatId = id; isPrivate = isPriv;
             document.getElementById('chatHeader').classList.replace('hidden', 'flex');
@@ -529,12 +578,11 @@
                 snap.forEach(doc => {
                     const m = doc.data(); const isMe = m.senderId === currentUser.uid;
                     const div = document.createElement('div');
-                    div.className = `flex ${isMe ? 'justify-end' : 'justify-start'} mb-1 group relative`;
+                    div.className = `flex ${isMe ? 'justify-end' : 'justify-start'} mb-1 relative group`;
                     div.innerHTML = `
-                        <div class="max-w-[85%] p-2 rounded-xl shadow-sm ${isMe ? 'bg-wa-bubbleOut dark:bg-wa-bubbleDarkOut' : 'bg-white dark:bg-wa-bubbleDarkIn'}">
-                            ${!isMe && !isPriv ? `<p class="text-[10px] font-black text-wa-accent mb-1">${m.senderName}</p>` : ''}
+                        <div class="max-w-[85%] p-2 rounded-xl ${isMe ? 'bg-wa-bubbleOut dark:bg-wa-bubbleDarkOut' : 'bg-white dark:bg-wa-bubbleDarkIn'}">
                             ${m.img ? `<img src="${m.img}" class="rounded-lg mb-1 max-w-full">` : ''}
-                            <p class="text-[14.5px] whitespace-pre-wrap">${m.text || ''}</p>
+                            <p class="text-[14px]">${m.text || ''}</p>
                             ${isMe ? `<button onclick="window.deleteMessage('${doc.id}')" class="absolute -left-8 top-2 opacity-0 group-hover:opacity-100 text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
                         </div>`;
                     list.appendChild(div);
@@ -542,7 +590,6 @@
                 list.scrollTop = list.scrollHeight;
                 lucide.createIcons();
             });
-            updateInfoModal(id, name, isPriv);
         }
 
         window.sendMsg = async () => {
@@ -563,29 +610,11 @@
             if(confirm("Löschen?")) await deleteDoc(doc(db, `chats/${activeChatId}/messages`, msgId));
         };
 
-        // --- ANDERE FUNKTIONEN ---
-        window.upStatus = async () => {
-            const f = document.getElementById('stIn').files[0]; if(!f) return;
-            const fd = new FormData(); fd.append("image", f);
-            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method: "POST", body: fd });
-            const d = await res.json();
-            await addDoc(collection(db, "status"), { uid: currentUser.uid, name: myNick, img: d.data.url, timestamp: serverTimestamp() });
-            alert("Status gepostet!");
+        window.startPrivateChat = async (oId, oNick) => {
+            const id = [currentUser.uid, oId].sort().join("_");
+            await setDoc(doc(db, "chats", id), { type: 'private', participants: [currentUser.uid, oId], lastActivity: serverTimestamp(), names: { [currentUser.uid]: myNick, [oId]: oNick } }, { merge: true });
+            openChat(id, oNick, true);
         };
-
-        function loadStatusTab() {
-            const dayAgo = new Date(Date.now() - 24*60*60*1000);
-            onSnapshot(query(collection(db, "status"), orderBy("timestamp", "desc")), snap => {
-                const list = document.getElementById('globalStatusList'); list.innerHTML = "";
-                snap.forEach(d => {
-                    const s = d.data(); if(s.timestamp?.toDate() > dayAgo) {
-                        const div = document.createElement('div'); div.className = "flex items-center gap-4 p-2 cursor-pointer";
-                        div.innerHTML = `<img src="${s.img}" class="w-12 h-12 rounded-full border-2 border-wa-accent object-cover"><div><h4 class="font-bold text-sm">${s.name}</h4></div>`;
-                        div.onclick = () => window.open(s.img); list.appendChild(div);
-                    }
-                });
-            });
-        }
 
         function loadChats() {
             const q = query(collection(db, "chats"), orderBy("lastActivity", "desc"));
@@ -596,7 +625,7 @@
                         let n = c.name; if(c.type === 'private') { const oId = c.participants.find(p => p !== currentUser.uid); n = myCustomNames[oId] || c.names[oId]; }
                         const div = document.createElement('div');
                         div.className = "flex items-center gap-4 p-4 hover:bg-gray-100 dark:hover:bg-wa-panel cursor-pointer";
-                        div.innerHTML = `<div class="w-12 h-12 rounded-full bg-wa-accent flex items-center justify-center text-white font-bold">${n ? n[0] : '?'}</div><div><h4 class="font-bold">${n}</h4><p class="text-xs text-gray-500">Nachricht schreiben...</p></div>`;
+                        div.innerHTML = `<div class="w-12 h-12 rounded-full bg-wa-accent flex items-center justify-center text-white font-bold">${n ? n[0] : '?'}</div><div><h4 class="font-bold">${n}</h4></div>`;
                         div.onclick = () => openChat(d.id, n, c.type==='private');
                         cont.appendChild(div);
                     }
@@ -610,47 +639,23 @@
             snap.forEach(d => batch.delete(d.ref)); await batch.commit();
         }
 
-        function updateInfoModal(id, name, isPriv) {
-            document.getElementById('infoTit').innerText = name;
-            const ml = document.getElementById('infoMemberList'); ml.innerHTML = "";
-            if(isPriv) ml.innerHTML = "<p class='text-xs text-gray-500'>Privater Chat.</p>";
-            else {
-                getDoc(doc(db, "chats", id)).then(s => {
-                    s.data().members.forEach(async mid => {
-                        const u = await getDoc(doc(db, "users", mid));
-                        const div = document.createElement('div'); div.className = "p-2 bg-gray-100 dark:bg-wa-dark rounded-lg mb-1 text-sm";
-                        div.innerText = u.data().nickname; ml.appendChild(div);
-                    });
+        function loadStatusTab() {
+            onSnapshot(query(collection(db, "status"), orderBy("timestamp", "desc")), snap => {
+                const list = document.getElementById('globalStatusList'); list.innerHTML = "";
+                snap.forEach(d => {
+                    const s = d.data();
+                    const div = document.createElement('div'); div.className = "flex items-center gap-4 p-2 cursor-pointer";
+                    div.innerHTML = `<img src="${s.img}" class="w-12 h-12 rounded-full border-2 border-wa-accent object-cover"><div><h4 class="font-bold text-sm">${s.name}</h4></div>`;
+                    div.onclick = () => window.open(s.img); list.appendChild(div);
                 });
-            }
+            });
         }
 
-        window.startPrivateChat = async (oId, oNick) => {
-            const id = [currentUser.uid, oId].sort().join("_");
-            await setDoc(doc(db, "chats", id), { type: 'private', participants: [currentUser.uid, oId], lastActivity: serverTimestamp(), names: { [currentUser.uid]: myNick, [oId]: oNick } }, { merge: true });
-            openChat(id, oNick, true);
-        };
-
-        window.createGrp = async () => {
-            const n = document.getElementById('ng_name').value; if(!n) return;
-            const id = Math.random().toString(36).substring(2,10).toUpperCase();
-            await setDoc(doc(db, "chats", id), { type: 'group', name: n, members: [currentUser.uid], lastActivity: serverTimestamp() });
-            window.toggleModal('newGroupModal'); openChat(id, n, false);
-        };
-
-        window.saveProfile = async () => { const n = document.getElementById('nickIn').value; if(n) { await updateDoc(doc(db, "users", currentUser.uid), { nickname: n }); location.reload(); } };
-        window.copyMyId = () => { navigator.clipboard.writeText(currentUser.uid); alert("ID kopiert!"); };
         window.switchTab = (t) => { ['chats', 'friends', 'status', 'settings'].forEach(x => document.getElementById('tab-'+x).classList.add('hidden')); document.getElementById('tab-'+t).classList.remove('hidden'); lucide.createIcons(); };
         window.toggleTheme = () => document.documentElement.classList.toggle('dark');
         window.toggleModal = (id) => document.getElementById(id).classList.toggle('hidden');
+        window.copyMyId = () => { navigator.clipboard.writeText(currentUser.uid); alert("ID kopiert!"); };
         window.handleFile = () => { const f = document.getElementById('imgIn').files[0]; if(f) { document.getElementById('prevImg').src = URL.createObjectURL(f); document.getElementById('attachmentPreview').classList.remove('hidden'); } };
         window.clearAttachment = () => { document.getElementById('imgIn').value = ""; document.getElementById('attachmentPreview').classList.add('hidden'); };
-        window.closeChatMobile = () => { document.getElementById('chatArea').classList.add('hidden'); document.getElementById('mainSidebar').classList.remove('hidden'); activeChatId = null; };
-
-        function setupCallUI(isCaller, name) {
-            document.getElementById('callOverlay').classList.remove('hidden');
-            document.getElementById('activeCallControls').classList.toggle('hidden', !isCaller);
-            document.getElementById('incomingCallControls').classList.toggle('hidden', isCaller);
-            document.getElementById('callName').innerText = name;
-        }
+        window.closeChatMobile = () => { document.getElementById('chatArea').classList.add('hidden'); document.getElementById('mainSidebar').classList.remove('hidden'); };
     </script>
