@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ShadowChat -  By Aman Jangra</title>
+    <title>ShadowChat V12 - God Mode Enterprise</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -37,36 +38,33 @@
         :root { --sat: env(safe-area-inset-top); --sab: env(safe-area-inset-bottom); }
         body { font-family: 'SF Pro Display', sans-serif; overflow: hidden; height: 100dvh; background-color: #0b141a; color: #e9edef; margin: 0; }
         
-        /* Custom UI Elements */
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #374151; border-radius: 10px; }
-        .glass-modal { backdrop-filter: blur(30px) saturate(180%); -webkit-backdrop-filter: blur(30px) saturate(180%); background-color: rgba(10, 10, 10, 0.85); }
-        .ios-blur { backdrop-filter: blur(50px) brightness(0.6); -webkit-backdrop-filter: blur(50px) brightness(0.6); }
+        .glass-modal { backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%); background-color: rgba(10, 10, 10, 0.9); }
+        .ios-blur { backdrop-filter: blur(60px) brightness(0.5); -webkit-backdrop-filter: blur(60px) brightness(0.5); }
         
-        /* Message Layouts */
-        .msg-in { border-radius: 0 18px 18px 18px; }
-        .msg-out { border-radius: 18px 0 18px 18px; }
+        .msg-in { border-radius: 4px 18px 18px 18px; position: relative; }
+        .msg-out { border-radius: 18px 4px 18px 18px; position: relative; }
         
-        /* Animations */
         @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        @keyframes ripple { 0% { box-shadow: 0 0 0 0 rgba(0, 168, 132, 0.4); } 100% { box-shadow: 0 0 0 30px rgba(0, 168, 132, 0); } }
+        @keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes ripple { 0% { box-shadow: 0 0 0 0 rgba(0, 168, 132, 0.4); } 100% { box-shadow: 0 0 0 40px rgba(0, 168, 132, 0); } }
+        @keyframes scanLine { 0% { top: 0%; } 100% { top: 100%; } }
         
         .animate-slide-up { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .animate-scale-in { animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        .calling-active { animation: ripple 1.5s infinite; }
+        .calling-active { animation: ripple 1.8s infinite; }
+        .scan-line { position: absolute; width: 100%; height: 2px; background: rgba(0, 168, 132, 0.5); animation: scanLine 2s linear infinite; }
 
-        /* Status Ring */
-        .status-ring { padding: 2px; background: linear-gradient(45deg, #00a884, #34c759); border-radius: 50%; }
-        
         .chat-wallpaper { 
             background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
-            background-size: 400px; opacity: 0.05; position: absolute; inset: 0; pointer-events: none; z-index: 0; 
+            background-size: 500px; opacity: 0.04; position: absolute; inset: 0; pointer-events: none; z-index: 0; 
         }
-
-        /* Safe Areas for Mobile */
         .pb-safe { padding-bottom: var(--sab); }
         .pt-safe { padding-top: var(--sat); }
+
+        .shimmer { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); background-size: 200% 100%; animation: shimmer 2s infinite; }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
     </style>
 </head>
 <body class="bg-wa-dark select-none">
@@ -74,354 +72,299 @@
     <audio id="snd_msg_in" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3" preload="auto"></audio>
     <audio id="snd_msg_out" src="https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3" preload="auto"></audio>
     <audio id="snd_call_loop" src="https://assets.mixkit.co/active_storage/sfx/1359/1359-preview.mp3" loop preload="auto"></audio>
+    <audio id="snd_call_connect" src="https://assets.mixkit.co/active_storage/sfx/2569/2569-preview.mp3" preload="auto"></audio>
 
-    <div id="notiBanner" class="hidden fixed top-0 left-0 right-0 z-[3000] p-4 bg-wa-accent text-white flex items-center justify-between shadow-2xl animate-slide-up">
-        <div class="flex items-center gap-3">
-            <i data-lucide="bell-ring" class="w-6 h-6"></i>
+    <div id="notiBanner" class="hidden fixed top-0 left-0 right-0 z-[6000] p-5 bg-wa-panel border-b border-wa-accent text-white flex items-center justify-between shadow-2xl animate-slide-up">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-wa-accent/20 rounded-2xl flex items-center justify-center text-wa-accent"><i data-lucide="shield-alert"></i></div>
             <div>
-                <p class="font-bold text-sm">Push-Benachrichtigungen aktivieren?</p>
-                <p class="text-[10px] opacity-80">Erfahre sofort, wenn dir jemand schreibt.</p>
+                <p class="font-black text-sm tracking-tight">Verschlüsselte Push-Dienste</p>
+                <p class="text-[10px] text-gray-400 uppercase font-bold">Erforderlich für Echtzeit-Kommunikation</p>
             </div>
         </div>
-        <div class="flex gap-2">
-            <button onclick="window.requestNotificationPerm()" class="bg-white text-wa-accent px-4 py-1.5 rounded-full font-black text-xs uppercase shadow-sm">Ja, erlauben</button>
-            <button onclick="document.getElementById('notiBanner').remove()" class="px-3 py-1.5 text-xs font-bold uppercase">Nein</button>
+        <div class="flex gap-3">
+            <button onclick="window.requestNotificationPerm()" class="bg-wa-accent hover:bg-emerald-600 text-white px-6 py-2 rounded-xl font-black text-xs transition-all uppercase">Aktivieren</button>
+            <button onclick="document.getElementById('notiBanner').remove()" class="text-gray-500 font-bold text-xs p-2 uppercase">Ignorieren</button>
         </div>
     </div>
 
     <div class="flex h-full w-full overflow-hidden relative">
         
-        <aside id="mainSidebar" class="flex flex-col w-full md:w-[480px] h-full border-r border-gray-800 bg-wa-dark z-20 shrink-0">
+        <aside id="mainSidebar" class="flex flex-col w-full md:w-[450px] h-full border-r border-gray-800 bg-wa-dark z-20 shrink-0">
             
-            <header class="h-16 bg-wa-panel flex items-center justify-between px-5 shrink-0 border-b border-gray-900 pt-safe">
+            <header class="h-20 bg-wa-panel flex items-center justify-between px-6 shrink-0 border-b border-gray-900 pt-safe">
                 <div class="flex items-center gap-4">
-                    <div id="userAvatar" onclick="window.switchTab('settings')" class="w-10 h-10 rounded-full bg-wa-accent flex items-center justify-center font-black text-white cursor-pointer shadow-lg hover:rotate-6 transition-transform text-lg border-2 border-white/10">?</div>
+                    <div id="userAvatar" onclick="window.switchTab('settings')" class="w-11 h-11 rounded-[16px] bg-gradient-to-br from-wa-accent to-emerald-700 flex items-center justify-center font-black text-white cursor-pointer shadow-xl hover:rotate-3 transition-transform text-xl border border-white/20">?</div>
                     <div class="hidden sm:block">
-                        <h1 id="userNickHeader" class="text-sm font-bold leading-none mb-1 text-gray-100">Synchronisierung...</h1>
+                        <h1 id="userNickHeader" class="text-[15px] font-black text-gray-100 leading-none mb-1">...</h1>
                         <div class="flex items-center gap-1.5">
                             <span class="w-2 h-2 bg-wa-accent rounded-full animate-pulse"></span>
-                            <span class="text-[9px] font-black text-wa-accent uppercase tracking-widest">Shadow V12 Online</span>
+                            <span id="globalNetworkStatus" class="text-[10px] font-black text-wa-accent uppercase tracking-[0.15em]">Mainframe Online</span>
                         </div>
                     </div>
                 </div>
                 <div class="flex items-center gap-1">
-                    <button onclick="window.showModal('loginModal')" class="p-2.5 rounded-full hover:bg-white/5 text-blue-400 transition" title="Login"><i data-lucide="fingerprint" class="w-5 h-5"></i></button>
-                    <button onclick="window.showModal('createGroupModal')" class="p-2.5 rounded-full hover:bg-white/5 text-gray-400 transition"><i data-lucide="users" class="w-5 h-5"></i></button>
-                    <button onclick="window.showModal('joinGroupModal')" class="p-2.5 rounded-full hover:bg-white/5 text-wa-accent transition"><i data-lucide="plus-square" class="w-5 h-5"></i></button>
-                    <button onclick="window.switchTab('settings')" class="p-2.5 rounded-full hover:bg-white/5 text-gray-400 transition"><i data-lucide="settings" class="w-5 h-5"></i></button>
+                    <button onclick="window.showModal('loginModal')" class="p-3 rounded-2xl hover:bg-white/5 text-blue-400 transition" title="Identität wechseln"><i data-lucide="fingerprint" class="w-5 h-5"></i></button>
+                    <button onclick="window.showModal('createGroupModal')" class="p-3 rounded-2xl hover:bg-white/5 text-gray-400 transition"><i data-lucide="users" class="w-5 h-5"></i></button>
+                    <button onclick="window.showModal('joinGroupModal')" class="p-3 rounded-2xl hover:bg-white/5 text-wa-accent transition"><i data-lucide="plus-square" class="w-5 h-5"></i></button>
+                    <button onclick="window.switchTab('settings')" class="p-3 rounded-2xl hover:bg-white/5 text-gray-400 transition"><i data-lucide="settings" class="w-5 h-5"></i></button>
                 </div>
             </header>
 
-            <div class="px-4 py-3 bg-wa-dark border-b border-gray-800/50">
-                <div class="bg-wa-panel flex items-center px-4 py-2.5 rounded-2xl border border-gray-700/50 focus-within:border-wa-accent focus-within:ring-1 focus-within:ring-wa-accent/30 transition-all">
+            <div class="px-5 py-4 bg-wa-dark border-b border-gray-800/50">
+                <div class="bg-wa-panel flex items-center px-5 py-3 rounded-2xl border border-gray-700/50 focus-within:border-wa-accent focus-within:ring-2 focus-within:ring-wa-accent/10 transition-all">
                     <i data-lucide="search" class="w-4 h-4 text-gray-500"></i>
-                    <input type="text" id="mainSearch" placeholder="Chats, Gruppen oder IDs suchen..." class="bg-transparent text-sm w-full outline-none px-3 text-gray-200 placeholder:text-gray-600">
+                    <input type="text" id="mainSearch" placeholder="Verschlüsselte Suche..." class="bg-transparent text-sm w-full outline-none px-4 text-gray-200 placeholder:text-gray-600">
                 </div>
             </div>
 
             <nav class="flex bg-wa-dark border-b border-gray-800">
-                <button onclick="window.switchTab('chats')" id="btn-chats" class="flex-1 py-4 text-[11px] font-black uppercase tracking-[0.2em] border-b-2 border-wa-accent text-wa-accent transition-all duration-300">Chats</button>
-                <button onclick="window.switchTab('friends')" id="btn-friends" class="flex-1 py-4 text-[11px] font-black uppercase tracking-[0.2em] border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition-all duration-300">Kontakte</button>
-                <button onclick="window.switchTab('status')" id="btn-status" class="flex-1 py-4 text-[11px] font-black uppercase tracking-[0.2em] border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition-all duration-300 text-center flex items-center justify-center gap-2">Status <span class="w-1.5 h-1.5 bg-wa-accent rounded-full animate-bounce"></span></button>
+                <button onclick="window.switchTab('chats')" id="btn-chats" class="flex-1 py-5 text-[10px] font-black uppercase tracking-[0.25em] border-b-2 border-wa-accent text-wa-accent transition-all duration-300">Nachrichten</button>
+                <button onclick="window.switchTab('friends')" id="btn-friends" class="flex-1 py-5 text-[10px] font-black uppercase tracking-[0.25em] border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition-all duration-300">Netzwerk</button>
+                <button onclick="window.switchTab('status')" id="btn-status" class="flex-1 py-5 text-[10px] font-black uppercase tracking-[0.25em] border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition-all duration-300">Pipeline</button>
             </nav>
 
             <div class="flex-1 overflow-y-auto custom-scrollbar bg-wa-dark relative">
-                
                 <section id="tab-chats" class="tab-pane block animate-scale-in">
                     <div id="chatList" class="divide-y divide-gray-800/30">
-                        <div class="p-20 text-center">
-                            <div class="inline-block p-5 bg-wa-panel rounded-full mb-4 opacity-20"><i data-lucide="message-square" class="w-10 h-10"></i></div>
-                            <p class="text-xs text-gray-600 font-bold uppercase tracking-widest">Keine aktiven Instanzen</p>
+                        <div class="p-6 space-y-4">
+                            <div class="flex items-center gap-4 shimmer h-16 rounded-2xl"></div>
+                            <div class="flex items-center gap-4 shimmer h-16 rounded-2xl"></div>
                         </div>
                     </div>
                 </section>
 
-                <section id="tab-friends" class="tab-pane hidden p-6 animate-scale-in">
-                    <div class="space-y-8">
-                        <div class="bg-gradient-to-br from-wa-panel to-gray-900 p-6 rounded-[32px] border border-gray-700/50 shadow-2xl">
-                            <h4 class="text-[10px] font-black text-wa-accent uppercase tracking-[0.25em] mb-4">Netzwerk-Erweiterung</h4>
-                            <div class="flex gap-3">
-                                <input id="friendUidIn" type="text" placeholder="Shadow-UID einfügen..." class="flex-1 bg-wa-dark border border-gray-700 p-4 rounded-2xl text-sm font-mono outline-none focus:border-wa-accent transition">
-                                <button onclick="window.sendFriendRequest()" class="bg-wa-accent hover:bg-emerald-600 text-white px-6 rounded-2xl shadow-lg transition active:scale-95"><i data-lucide="user-plus" class="w-5 h-5"></i></button>
+                <section id="tab-friends" class="tab-pane hidden p-8 animate-scale-in">
+                    <div class="space-y-10">
+                        <div class="bg-wa-panel p-8 rounded-[40px] border border-gray-700/50 shadow-2xl relative overflow-hidden">
+                            <div class="scan-line"></div>
+                            <h4 class="text-[10px] font-black text-wa-accent uppercase tracking-widest mb-6">UID Handshake anfordern</h4>
+                            <div class="flex flex-col gap-4">
+                                <input id="friendUidIn" type="text" placeholder="SHADOW-UID-XXXX" class="w-full bg-wa-dark border border-gray-700 p-5 rounded-2xl text-sm font-mono outline-none focus:border-wa-accent">
+                                <button onclick="window.sendFriendRequest()" class="w-full bg-wa-accent hover:bg-emerald-600 text-white py-4 rounded-2xl font-black shadow-lg transition active:scale-95 flex items-center justify-center gap-2">
+                                    <i data-lucide="user-plus" class="w-5 h-5"></i> PIPELINE STARTEN
+                                </button>
                             </div>
                         </div>
-
-                        <div id="requestsBox" class="hidden">
-                            <h4 class="text-[10px] font-black text-orange-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                <span class="w-2 h-2 bg-orange-500 rounded-full animate-ping"></span> Ausstehende Anfragen
-                            </h4>
-                            <div id="requestsList" class="space-y-3"></div>
+                        <div id="requestsBox" class="hidden animate-bounce">
+                            <h4 class="text-[10px] font-black text-orange-500 uppercase tracking-widest mb-4">Eingehende Signale</h4>
+                            <div id="requestsList" class="space-y-4"></div>
                         </div>
-
                         <div>
-                            <h4 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Gespeicherte Kontakte</h4>
-                            <div id="friendsList" class="space-y-2"></div>
+                            <h4 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-6 px-2">Verifizierte Kontakte</h4>
+                            <div id="friendsList" class="space-y-3"></div>
                         </div>
                     </div>
                 </section>
 
-                <section id="tab-status" class="tab-pane hidden p-6 animate-scale-in">
-                    <div class="flex items-center gap-5 mb-12 p-4 bg-wa-panel rounded-3xl border border-dashed border-gray-600 hover:border-wa-accent transition cursor-pointer group" onclick="document.getElementById('statusUploadIn').click()">
-                        <div class="w-16 h-16 rounded-full border-2 border-wa-accent p-1">
-                            <div class="w-full h-full rounded-full bg-gray-800 flex items-center justify-center overflow-hidden">
-                                <i data-lucide="camera" class="text-gray-500 group-hover:scale-125 transition-transform duration-500"></i>
+                <section id="tab-status" class="tab-pane hidden p-8 animate-scale-in">
+                    <div class="mb-12 p-6 bg-gradient-to-br from-wa-panel to-black rounded-[35px] border-2 border-dashed border-gray-700 hover:border-wa-accent transition-all cursor-pointer group" onclick="document.getElementById('statusUploadIn').click()">
+                        <div class="flex items-center gap-6">
+                            <div class="w-20 h-20 rounded-[25px] border-2 border-wa-accent p-1">
+                                <div class="w-full h-full rounded-[20px] bg-gray-800 flex items-center justify-center overflow-hidden">
+                                    <i data-lucide="aperture" class="w-8 h-8 text-wa-accent group-hover:rotate-90 transition-transform duration-500"></i>
+                                </div>
                             </div>
-                        </div>
-                        <div>
-                            <h3 class="font-black text-gray-100">Mein Status</h3>
-                            <p class="text-xs text-gray-500">Teile verschlüsselte Momente</p>
+                            <div>
+                                <h3 class="font-black text-white text-lg">Status-Update</h3>
+                                <p class="text-xs text-gray-500">Temporäre Datenpakete senden</p>
+                            </div>
                         </div>
                         <input type="file" id="statusUploadIn" class="hidden" accept="image/*" onchange="window.handleStatusUpload()">
                     </div>
-
-                    <h4 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-6">Updates von Kontakten</h4>
-                    <div id="globalStatusGrid" class="grid grid-cols-2 gap-4"></div>
+                    <div id="globalStatusGrid" class="grid grid-cols-2 gap-5"></div>
                 </section>
 
-                <section id="tab-settings" class="tab-pane hidden pb-20 animate-scale-in">
-                    <div class="h-44 bg-gradient-to-br from-wa-accent via-emerald-900 to-black relative">
-                        <div class="absolute -bottom-14 left-8">
-                            <div id="profileAvaLarge" class="w-32 h-32 rounded-[40px] bg-wa-panel border-[8px] border-wa-dark flex items-center justify-center text-5xl font-black text-white shadow-2xl overflow-hidden relative group">
+                <section id="tab-settings" class="tab-pane hidden animate-scale-in pb-20">
+                    <div class="h-48 bg-gradient-to-br from-wa-accent via-emerald-900 to-black relative">
+                        <div class="absolute -bottom-16 left-10">
+                            <div id="profileAvaLarge" class="w-36 h-36 rounded-[45px] bg-wa-panel border-[10px] border-wa-dark flex items-center justify-center text-6xl font-black text-white shadow-2xl relative group overflow-hidden">
                                 <span id="profileAvaChar">?</span>
-                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition cursor-pointer">
-                                    <i data-lucide="refresh-cw" class="w-8 h-8 text-white"></i>
-                                </div>
+                                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition cursor-pointer"><i data-lucide="camera" class="w-10 h-10"></i></div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="mt-20 px-8 space-y-8">
+                    <div class="mt-24 px-10 space-y-10">
                         <div>
-                            <h2 id="profileNick" class="text-3xl font-black text-white mb-1">...</h2>
-                            <div class="flex items-center gap-2">
-                                <span class="bg-wa-accent/20 text-wa-accent px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-tighter">Verified Shadow User</span>
-                                <span class="text-[10px] text-gray-600 font-mono" id="profileUidDisplay">---</span>
+                            <h2 id="profileNick" class="text-4xl font-black text-white mb-2">...</h2>
+                            <div class="flex items-center gap-3">
+                                <span class="bg-wa-accent/10 text-wa-accent px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border border-wa-accent/20">Identity Verified</span>
+                                <span id="profileUidDisplay" class="text-[10px] font-mono text-gray-600 truncate max-w-[150px]">---</span>
                             </div>
                         </div>
-
-                        <div class="bg-wa-panel p-6 rounded-[35px] border border-gray-800 space-y-6 shadow-xl">
-                            <div class="space-y-2">
-                                <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-2">Profil Name</label>
-                                <div class="flex gap-2">
-                                    <input id="editNickIn" type="text" class="flex-1 bg-wa-dark border border-gray-700 p-4 rounded-2xl outline-none focus:border-wa-accent transition font-bold text-sm">
-                                    <button onclick="window.updateNickname()" class="bg-wa-accent text-white px-6 rounded-2xl font-black text-xs hover:bg-emerald-600 shadow-lg">UPDATE</button>
-                                </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-wa-panel p-6 rounded-[30px] border border-gray-800">
+                                <p class="text-[10px] font-black text-gray-600 uppercase mb-2">Uptime</p>
+                                <p class="text-xl font-black text-white">99.9%</p>
                             </div>
-
-                            <div class="pt-6 border-t border-gray-800">
-                                <div class="flex justify-between items-center mb-3">
-                                    <label class="text-[10px] font-black text-orange-400 uppercase tracking-widest ml-2">Sicherheits-Schlüssel</label>
-                                    <button onclick="window.rebuildSecretKey()" class="text-[9px] bg-wa-accent/10 text-wa-accent border border-wa-accent/30 px-3 py-1 rounded-full font-black uppercase hover:bg-wa-accent hover:text-white transition">Erneuern</button>
-                                </div>
-                                <div class="bg-wa-dark p-5 rounded-2xl border border-gray-800 flex items-center justify-between group">
-                                    <span id="secretKeyDisplay" class="font-mono text-sm tracking-[0.4em] text-orange-200">********</span>
-                                    <button onclick="window.copyToClipboard('secretKeyDisplay')" class="text-gray-600 group-hover:text-wa-accent transition"><i data-lucide="copy" class="w-5 h-5"></i></button>
-                                </div>
-                                <p class="text-[9px] text-gray-600 mt-4 leading-relaxed px-2">Dieser Schlüssel wird benötigt, um dein Konto auf anderen Geräten mit deiner UID wiederherzustellen. Teile ihn niemals!</p>
+                            <div class="bg-wa-panel p-6 rounded-[30px] border border-gray-800">
+                                <p class="text-[10px] font-black text-gray-600 uppercase mb-2">Messages</p>
+                                <p id="statMsgCount" class="text-xl font-black text-white">---</p>
                             </div>
                         </div>
-
-                        <div class="space-y-3">
-                            <button onclick="window.toggleDarkMode()" class="w-full flex items-center justify-between p-5 bg-wa-panel rounded-2xl border border-gray-800 hover:bg-gray-800 transition shadow-md">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-11 h-11 bg-blue-500/10 text-blue-500 rounded-2xl flex items-center justify-center"><i data-lucide="moon" class="w-6 h-6"></i></div>
-                                    <span class="font-black text-sm">Dark Mode</span>
-                                </div>
-                                <div class="w-12 h-6 bg-wa-accent rounded-full relative"><div class="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div></div>
-                            </button>
-                            <button onclick="window.exportIdentity()" class="w-full flex items-center justify-between p-5 bg-wa-panel rounded-2xl border border-gray-800 hover:bg-gray-800 transition shadow-md">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-11 h-11 bg-purple-500/10 text-purple-500 rounded-2xl flex items-center justify-center"><i data-lucide="hard-drive" class="w-6 h-6"></i></div>
-                                    <span class="font-black text-sm">Daten-Export (Backup)</span>
-                                </div>
-                                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-600"></i>
-                            </button>
-                            <button onclick="window.deleteMyAccount()" class="w-full flex items-center justify-between p-5 bg-wa-panel rounded-2xl border border-red-500/20 hover:bg-red-500/5 transition shadow-md group">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-11 h-11 bg-red-500/10 text-red-500 rounded-2xl flex items-center justify-center group-hover:bg-red-500 group-hover:text-white transition"><i data-lucide="trash-2" class="w-6 h-6"></i></div>
-                                    <span class="font-black text-sm text-red-500">Account löschen</span>
-                                </div>
-                            </button>
+                        <div class="bg-wa-panel p-8 rounded-[40px] border border-gray-800 space-y-8 shadow-2xl">
+                            <div class="space-y-3">
+                                <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-4">Codename ändern</label>
+                                <input id="editNickIn" type="text" class="w-full bg-wa-dark border border-gray-700 p-5 rounded-2xl outline-none focus:border-wa-accent transition font-bold text-gray-200">
+                                <button onclick="window.updateNickname()" class="w-full bg-wa-accent text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg">Daten synchronisieren</button>
+                            </div>
+                            <div class="pt-8 border-t border-gray-800">
+                                <button onclick="window.copyMyId()" class="w-full flex items-center justify-between p-5 bg-wa-dark rounded-2xl border border-gray-700 hover:bg-gray-800 transition group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center"><i data-lucide="copy" class="w-5 h-5"></i></div>
+                                        <span class="font-black text-xs uppercase text-gray-300">Meine UID kopieren</span>
+                                    </div>
+                                    <i data-lucide="chevron-right" class="w-4 h-4 text-gray-600"></i>
+                                </button>
+                            </div>
                         </div>
+                        <button onclick="window.deleteMyAccount()" class="w-full py-5 rounded-3xl border border-red-500/30 text-red-500 font-black uppercase text-[10px] tracking-widest hover:bg-red-500 hover:text-white transition-all">Account Terminieren</button>
                     </div>
                 </section>
             </div>
-
-            <nav class="md:hidden h-24 bg-wa-panel border-t border-gray-800 flex justify-around items-center px-4 shrink-0 pb-safe">
-                <button onclick="window.switchTab('chats')" class="flex flex-col items-center gap-2 text-wa-accent w-20">
-                    <i data-lucide="message-circle" class="w-7 h-7"></i>
-                    <span class="text-[9px] font-black uppercase tracking-tighter">Chats</span>
-                </button>
-                <button onclick="window.switchTab('status')" class="flex flex-col items-center gap-2 text-gray-500 w-20">
-                    <i data-lucide="aperture" class="w-7 h-7"></i>
-                    <span class="text-[9px] font-black uppercase tracking-tighter">Status</span>
-                </button>
-                <button onclick="window.switchTab('friends')" class="flex flex-col items-center gap-2 text-gray-500 w-20">
-                    <i data-lucide="users" class="w-7 h-7"></i>
-                    <span class="text-[9px] font-black uppercase tracking-tighter">Netzwerk</span>
-                </button>
-                <button onclick="window.switchTab('settings')" class="flex flex-col items-center gap-2 text-gray-500 w-20">
-                    <i data-lucide="shield" class="w-7 h-7"></i>
-                    <span class="text-[9px] font-black uppercase tracking-tighter">Safe</span>
-                </button>
-            </nav>
         </aside>
 
         <main id="chatArea" class="hidden md:flex flex-1 flex-col h-full relative overflow-hidden bg-wa-dark z-30">
             <div class="chat-wallpaper"></div>
 
-            <header id="chatHeader" class="hidden h-16 bg-wa-panel flex items-center justify-between px-5 shrink-0 z-40 border-b border-gray-900 pt-safe shadow-xl">
+            <header id="chatHeader" class="hidden h-20 bg-wa-panel flex items-center justify-between px-6 shrink-0 z-40 border-b border-gray-900 pt-safe shadow-2xl">
                 <div class="flex items-center gap-4">
-                    <button onclick="window.closeChatMobile()" class="md:hidden p-2 text-gray-400 hover:text-white transition"><i data-lucide="chevron-left" class="w-7 h-7"></i></button>
-                    <div id="activeChatAvatar" class="w-10 h-10 rounded-2xl bg-wa-accent flex items-center justify-center text-white font-black shadow-lg">?</div>
+                    <button onclick="window.closeChatMobile()" class="md:hidden p-3 text-gray-500"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+                    <div id="activeChatAvatar" class="w-12 h-12 rounded-2xl bg-wa-accent flex items-center justify-center text-white font-black shadow-lg text-lg">?</div>
                     <div class="cursor-pointer" onclick="window.showModal('chatInfoModal')">
-                        <h2 id="activeChatTitle" class="font-black text-gray-100 leading-none mb-1">...</h2>
+                        <h2 id="activeChatTitle" class="font-black text-gray-100 leading-none mb-1 text-lg">...</h2>
                         <div class="flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 bg-wa-accent rounded-full animate-pulse"></span>
-                            <p id="activeChatSub" class="text-[9px] text-wa-accent font-black uppercase tracking-widest">Ende-zu-Ende verschlüsselt</p>
+                            <span class="w-2 h-2 bg-wa-accent rounded-full animate-pulse"></span>
+                            <p id="activeChatSub" class="text-[10px] text-wa-accent font-black uppercase tracking-[0.2em]">P2P Pipeline aktiv</p>
                         </div>
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button onclick="window.startVoiceCall()" class="p-3 rounded-2xl hover:bg-white/5 text-wa-accent transition" title="Voice Call"><i data-lucide="phone" class="w-5 h-5"></i></button>
-                    <button onclick="window.startVideoCall()" class="p-3 rounded-2xl hover:bg-white/5 text-wa-accent transition" title="Video Call"><i data-lucide="video" class="w-5 h-5"></i></button>
-                    <button onclick="window.showModal('chatInfoModal')" class="p-3 rounded-2xl hover:bg-white/5 text-gray-500 transition"><i data-lucide="info" class="w-5 h-5"></i></button>
+                    <button onclick="window.startVoiceCall()" class="w-12 h-12 rounded-2xl hover:bg-white/5 text-wa-accent flex items-center justify-center transition-all"><i data-lucide="phone" class="w-6 h-6"></i></button>
+                    <button onclick="window.startVideoCall()" class="w-12 h-12 rounded-2xl hover:bg-white/5 text-wa-accent flex items-center justify-center transition-all"><i data-lucide="video" class="w-6 h-6"></i></button>
+                    <button onclick="window.showModal('chatInfoModal')" class="w-12 h-12 rounded-2xl hover:bg-white/5 text-gray-500 flex items-center justify-center transition-all"><i data-lucide="more-vertical" class="w-6 h-6"></i></button>
                 </div>
             </header>
 
-            <div id="messagesList" class="flex-1 overflow-y-auto p-4 md:px-12 space-y-3 relative z-10 custom-scrollbar flex flex-col">
-                <div class="flex-1 flex flex-col items-center justify-center text-gray-700 opacity-40">
-                    <div class="w-24 h-24 bg-wa-panel rounded-[40px] flex items-center justify-center mb-6 border border-gray-800 shadow-2xl">
-                        <i data-lucide="shield-check" class="w-10 h-10"></i>
+            <div id="messagesList" class="flex-1 overflow-y-auto p-6 md:px-16 space-y-4 relative z-10 custom-scrollbar flex flex-col">
+                <div class="flex-1 flex flex-col items-center justify-center opacity-20 pointer-events-none">
+                    <div class="w-32 h-32 bg-wa-panel rounded-[50px] flex items-center justify-center mb-8 border border-gray-800 shadow-3xl">
+                        <i data-lucide="shield-check" class="w-14 h-14"></i>
                     </div>
-                    <p class="text-xs font-black uppercase tracking-[0.4em]">Wähle eine sichere Pipeline</p>
+                    <p class="text-xs font-black uppercase tracking-[0.5em]">Initializing Secure Channel</p>
                 </div>
             </div>
 
-            <footer id="chatInputArea" class="hidden p-4 bg-wa-panel flex items-end gap-3 shrink-0 z-40 border-t border-gray-900 pb-safe shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
-                <div id="attachmentPreview" class="hidden absolute bottom-24 left-6 right-6 bg-wa-panel p-5 rounded-[35px] border-2 border-wa-accent shadow-[0_0_60px_rgba(0,168,132,0.3)] animate-slide-up">
-                    <div class="relative inline-block group">
-                        <img id="prevImg" class="max-h-72 rounded-2xl border border-gray-700 shadow-2xl transition-transform group-hover:scale-[1.02]">
-                        <button onclick="window.clearAttachment()" class="absolute -top-4 -right-4 bg-red-500 text-white rounded-full p-2.5 shadow-xl hover:bg-red-600 transition-all hover:scale-110 active:scale-90"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <footer id="chatInputArea" class="hidden p-6 bg-wa-panel flex items-end gap-4 shrink-0 z-40 border-t border-gray-900 pb-safe shadow-[0_-15px_40px_rgba(0,0,0,0.6)]">
+                <div id="attachmentPreview" class="hidden absolute bottom-28 left-8 right-8 bg-wa-panel p-6 rounded-[40px] border-2 border-wa-accent shadow-[0_0_80px_rgba(0,168,132,0.4)] animate-slide-up z-50">
+                    <div class="relative inline-block">
+                        <img id="prevImg" class="max-h-[400px] rounded-3xl border border-gray-700 shadow-2xl">
+                        <button onclick="window.clearAttachment()" class="absolute -top-4 -right-4 bg-red-500 text-white rounded-full p-3 shadow-xl hover:scale-110 active:scale-90 transition-all"><i data-lucide="x" class="w-6 h-6"></i></button>
                     </div>
                 </div>
 
-                <button onclick="document.getElementById('msgFileIn').click()" class="p-3.5 text-gray-500 hover:text-wa-accent transition-all hover:rotate-90">
-                    <i data-lucide="paperclip" class="w-6 h-6"></i>
+                <button onclick="document.getElementById('msgFileIn').click()" class="p-4 text-gray-500 hover:text-wa-accent transition-all hover:rotate-45">
+                    <i data-lucide="plus-circle" class="w-7 h-7"></i>
                 </button>
                 <input type="file" id="msgFileIn" class="hidden" accept="image/*" onchange="window.handleMsgFile()">
                 
-                <div class="flex-1 bg-wa-dark rounded-[25px] flex items-center px-5 py-3 border border-gray-700 focus-within:border-wa-accent focus-within:ring-2 focus-within:ring-wa-accent/10 transition-all">
-                    <textarea id="msgInput" placeholder="Deine verschlüsselte Nachricht..." class="w-full bg-transparent outline-none text-[15px] text-gray-200 resize-none py-1 custom-scrollbar max-h-40" rows="1"></textarea>
+                <div class="flex-1 bg-wa-dark rounded-[28px] flex items-center px-6 py-4 border border-gray-700 focus-within:border-wa-accent transition-all shadow-inner">
+                    <textarea id="msgInput" placeholder="Sichere Nachricht senden..." class="w-full bg-transparent outline-none text-[16px] text-gray-200 resize-none py-1 custom-scrollbar max-h-48" rows="1"></textarea>
                 </div>
                 
-                <div class="flex items-center gap-2">
-                    <button id="sendBtn" onclick="window.sendMessage()" class="bg-wa-accent text-white p-4.5 rounded-[22px] shadow-xl hover:scale-105 active:scale-90 transition-all duration-300">
-                        <i data-lucide="send-horizontal" class="w-6 h-6"></i>
-                    </button>
-                </div>
+                <button id="sendBtn" onclick="window.sendMessage()" class="bg-wa-accent text-white p-5 rounded-[24px] shadow-2xl hover:scale-105 active:scale-90 transition-all duration-300 ring-4 ring-emerald-500/10">
+                    <i data-lucide="send-horizontal" class="w-7 h-7"></i>
+                </button>
             </footer>
         </main>
     </div>
 
-    <div id="callOverlay" class="hidden fixed inset-0 z-[5000] ios-blur flex flex-col items-center justify-between py-24 px-10 text-white animate-scale-in">
-        <div class="text-center w-full relative">
-            <div id="callAvatarIcon" class="w-48 h-48 rounded-[60px] bg-wa-panel mx-auto flex items-center justify-center text-7xl font-black border-4 border-wa-accent shadow-[0_0_100px_rgba(0,168,132,0.3)] mb-12 calling-active">?</div>
-            <h2 id="callTargetName" class="text-5xl font-black tracking-tight mb-3">...</h2>
-            <div class="flex items-center justify-center gap-3">
-                <span class="w-2 h-2 bg-wa-accent rounded-full animate-ping"></span>
-                <p id="callStatusText" class="text-wa-accent font-black uppercase tracking-[0.4em] text-xs">Aufbau der Pipeline...</p>
+    <div id="callOverlay" class="hidden fixed inset-0 z-[7000] ios-blur flex flex-col items-center justify-between py-24 px-10 text-white animate-scale-in">
+        <div class="text-center w-full">
+            <div class="relative inline-block mb-12">
+                <div id="callAvatarIcon" class="w-56 h-56 rounded-[70px] bg-wa-panel flex items-center justify-center text-8xl font-black border-4 border-wa-accent shadow-[0_0_120px_rgba(0,168,132,0.4)] calling-active relative z-10 overflow-hidden">?</div>
+                <div class="absolute -inset-10 bg-wa-accent/10 rounded-full animate-ping opacity-20"></div>
+            </div>
+            <h2 id="callTargetName" class="text-5xl font-black tracking-tighter mb-4">Pipeline Root</h2>
+            <div class="flex items-center justify-center gap-4">
+                <div class="flex gap-1"><span class="w-2 h-2 bg-wa-accent rounded-full animate-bounce"></span><span class="w-2 h-2 bg-wa-accent rounded-full animate-bounce [animation-delay:0.2s]"></span><span class="w-2 h-2 bg-wa-accent rounded-full animate-bounce [animation-delay:0.4s]"></span></div>
+                <p id="callStatusText" class="text-wa-accent font-black uppercase tracking-[0.5em] text-xs">Synchronisierung</p>
             </div>
         </div>
-        <div class="flex gap-16 relative z-10">
-            <button onclick="window.endCall()" class="w-24 h-24 rounded-full bg-wa-iosRed flex items-center justify-center shadow-2xl hover:scale-110 active:scale-90 transition-all duration-300 ring-8 ring-red-500/10">
-                <i data-lucide="phone-off" class="w-10 h-10 fill-current"></i>
+        
+        <div class="flex gap-20 relative z-20">
+            <button onclick="window.endCall()" class="w-24 h-24 rounded-full bg-wa-iosRed flex items-center justify-center shadow-[0_20px_60px_rgba(255,59,48,0.4)] hover:scale-110 active:scale-90 transition-all ring-8 ring-red-500/10">
+                <i data-lucide="phone-off" class="w-10 h-10"></i>
             </button>
-            <button id="answerCallBtn" onclick="window.acceptCall()" class="hidden w-24 h-24 rounded-full bg-wa-iosGreen flex items-center justify-center shadow-2xl hover:scale-110 active:scale-90 transition-all duration-300 ring-8 ring-emerald-500/10 animate-bounce">
-                <i data-lucide="phone" class="w-10 h-10 fill-current"></i>
+            <button id="answerCallBtn" onclick="window.acceptCall()" class="hidden w-24 h-24 rounded-full bg-wa-iosGreen flex items-center justify-center shadow-[0_20px_60px_rgba(52,199,89,0.4)] hover:scale-110 active:scale-90 transition-all ring-8 ring-emerald-500/10 animate-bounce">
+                <i data-lucide="phone" class="w-10 h-10"></i>
             </button>
         </div>
+
+        <div class="absolute bottom-10 text-[9px] font-black uppercase tracking-[0.8em] text-gray-600">Encrypted Voip Layer V12</div>
     </div>
 
-    <div id="loginModal" class="hidden fixed inset-0 z-[4000] glass-modal flex items-center justify-center p-6">
-        <div class="bg-wa-panel w-full max-w-md rounded-[50px] p-12 border border-gray-700 shadow-[0_40px_100px_rgba(0,0,0,0.8)] animate-scale-in">
-            <div class="w-24 h-24 bg-blue-500/10 text-blue-500 rounded-[35px] flex items-center justify-center mb-10 mx-auto">
-                <i data-lucide="key-round" class="w-12 h-12"></i>
+    <div id="loginModal" class="hidden fixed inset-0 z-[8000] glass-modal flex items-center justify-center p-6">
+        <div class="bg-wa-panel w-full max-w-md rounded-[60px] p-12 border border-gray-700 shadow-3xl animate-scale-in relative overflow-hidden">
+            <div class="scan-line"></div>
+            <div class="w-24 h-24 bg-blue-600/20 text-blue-500 rounded-[35px] flex items-center justify-center mb-10 mx-auto border border-blue-500/30">
+                <i data-lucide="fingerprint" class="w-12 h-12"></i>
             </div>
-            <h3 class="text-3xl font-black text-center mb-3">Identität laden</h3>
-            <p class="text-sm text-gray-500 text-center mb-10 px-4">Gib deine Shadow-UID und deinen 8-stelligen Sicherheitsschlüssel ein.</p>
-            <div class="space-y-5">
-                <div class="space-y-2">
-                    <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-4">Shadow UID</label>
-                    <input id="loginUid" type="text" placeholder="UID einfügen..." class="w-full bg-wa-dark border border-gray-700 p-5 rounded-3xl outline-none focus:border-blue-500 transition-all font-mono">
-                </div>
-                <div class="space-y-2">
-                    <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-4">Secret Key</label>
-                    <input id="loginKey" type="password" placeholder="Passwort eingeben..." class="w-full bg-wa-dark border border-gray-700 p-5 rounded-3xl outline-none focus:border-blue-500 transition-all font-mono tracking-widest">
-                </div>
-            </div>
-            <button onclick="window.processLogin()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-5 rounded-3xl mt-12 shadow-2xl transition-all active:scale-95 text-lg">LOGIN STARTEN</button>
-            <button onclick="window.hideModal('loginModal')" class="w-full mt-6 text-gray-600 font-bold uppercase text-xs tracking-widest">Abbrechen</button>
-        </div>
-    </div>
-
-    <div id="createGroupModal" class="hidden fixed inset-0 z-[4000] glass-modal flex items-center justify-center p-6">
-        <div class="bg-wa-panel w-full max-w-md rounded-[50px] p-12 border border-gray-700 shadow-2xl animate-scale-in">
-            <div class="w-20 h-20 bg-wa-accent/10 text-wa-accent rounded-[30px] flex items-center justify-center mb-10 mx-auto">
-                <i data-lucide="plus-circle" class="w-10 h-10"></i>
-            </div>
-            <h3 class="text-3xl font-black text-center mb-10 tracking-tight">Neue Pipeline gründen</h3>
+            <h3 class="text-3xl font-black text-center mb-4 tracking-tight">System Login</h3>
+            <p class="text-xs text-gray-500 text-center mb-10 uppercase font-bold tracking-widest">Identität über UID & Key validieren</p>
             <div class="space-y-6">
-                <input id="newGroupName" type="text" placeholder="Name der Gruppe..." class="w-full bg-wa-dark border border-gray-700 p-5 rounded-3xl outline-none focus:border-wa-accent font-bold text-lg">
-                <input id="newGroupPass" type="password" placeholder="Optionales Passwort..." class="w-full bg-wa-dark border border-gray-700 p-5 rounded-3xl outline-none focus:border-wa-accent">
+                <input id="loginUid" type="text" placeholder="SHADOW-UID" class="w-full bg-wa-dark border border-gray-700 p-5 rounded-3xl outline-none focus:border-blue-500 transition-all font-mono text-center">
+                <input id="loginKey" type="password" placeholder="SECURITY-KEY" class="w-full bg-wa-dark border border-gray-700 p-5 rounded-3xl outline-none focus:border-blue-500 transition-all font-mono text-center">
             </div>
-            <button onclick="window.processCreateGroup()" class="w-full bg-wa-accent hover:bg-emerald-600 text-white font-black py-5 rounded-3xl mt-12 shadow-2xl transition-all active:scale-95 text-lg uppercase tracking-widest">ERSTELLEN</button>
-            <button onclick="window.hideModal('createGroupModal')" class="w-full mt-6 text-gray-600 font-bold uppercase text-xs tracking-widest">Schließen</button>
+            <button onclick="window.processLogin()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-5 rounded-3xl mt-12 shadow-2xl transition-all active:scale-95 text-sm uppercase tracking-widest">Initialisierung</button>
+            <button onclick="window.hideModal('loginModal')" class="w-full mt-6 text-gray-600 font-black uppercase text-[10px] tracking-widest">Abbrechen</button>
         </div>
     </div>
 
-    <div id="joinGroupModal" class="hidden fixed inset-0 z-[4000] glass-modal flex items-center justify-center p-6">
-        <div class="bg-wa-panel w-full max-w-md rounded-[50px] p-12 border border-gray-700 animate-scale-in">
-            <h3 class="text-2xl font-black mb-10 flex items-center gap-4"><i data-lucide="hash" class="text-wa-accent"></i> Pipeline beitreten</h3>
-            <div class="space-y-6">
-                <input id="joinGroupId" type="text" placeholder="Gruppen-ID (GRP-XXXX)" class="w-full bg-wa-dark border border-gray-700 p-5 rounded-3xl outline-none font-mono text-wa-accent focus:border-wa-accent uppercase">
-                <input id="joinGroupPass" type="password" placeholder="Passwort (falls nötig)" class="w-full bg-wa-dark border border-gray-700 p-5 rounded-3xl outline-none focus:border-wa-accent">
+    <div id="createGroupModal" class="hidden fixed inset-0 z-[8000] glass-modal flex items-center justify-center p-6">
+        <div class="bg-wa-panel w-full max-w-md rounded-[60px] p-14 border border-gray-700 shadow-3xl animate-scale-in">
+            <h3 class="text-3xl font-black mb-12 flex items-center gap-4"><i data-lucide="plus-square" class="text-wa-accent"></i> Neue Pipeline</h3>
+            <div class="space-y-8">
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-4">Pipeline Name</label>
+                    <input id="newGroupName" type="text" placeholder="z.B. OPS-Center" class="w-full bg-wa-dark border border-gray-700 p-5 rounded-3xl outline-none focus:border-wa-accent font-bold text-lg">
+                </div>
             </div>
-            <button onclick="window.processJoinGroup()" class="w-full bg-wa-accent hover:bg-emerald-600 text-white font-black py-5 rounded-3xl mt-12 shadow-2xl transition active:scale-95">BEITRETEN</button>
-            <button onclick="window.hideModal('joinGroupModal')" class="w-full mt-6 text-gray-500 font-bold uppercase text-xs">Abbrechen</button>
+            <button onclick="window.processCreateGroup()" class="w-full bg-wa-accent hover:bg-emerald-600 text-white font-black py-5 rounded-3xl mt-12 shadow-2xl transition active:scale-95 text-xs uppercase tracking-widest">Pipeline Erstellen</button>
+            <button onclick="window.hideModal('createGroupModal')" class="w-full mt-6 text-gray-600 font-bold uppercase text-[10px] tracking-widest">Schließen</button>
         </div>
     </div>
 
-    <div id="chatInfoModal" class="hidden fixed inset-0 z-[4000] glass-modal flex items-center justify-center p-6">
-        <div class="bg-wa-panel w-full max-w-lg rounded-[60px] overflow-hidden border border-gray-800 shadow-2xl animate-scale-in">
-            <div class="h-56 bg-gradient-to-br from-wa-accent/20 to-wa-dark border-b border-gray-900 flex flex-col items-center justify-center relative">
-                <div id="infoAvaBig" class="w-28 h-28 rounded-[40px] bg-wa-accent text-white flex items-center justify-center text-5xl font-black shadow-[0_20px_50px_rgba(0,168,132,0.4)]">?</div>
-                <button onclick="window.hideModal('chatInfoModal')" class="absolute top-8 right-8 p-2 bg-black/20 text-white rounded-full"><i data-lucide="x" class="w-6 h-6"></i></button>
+    <div id="chatInfoModal" class="hidden fixed inset-0 z-[8000] glass-modal flex items-center justify-center p-6">
+        <div class="bg-wa-panel w-full max-w-lg rounded-[60px] overflow-hidden border border-gray-800 shadow-3xl animate-scale-in">
+            <div class="h-60 bg-gradient-to-br from-wa-accent/20 to-black border-b border-gray-900 flex flex-col items-center justify-center relative">
+                <div id="infoAvaBig" class="w-32 h-32 rounded-[40px] bg-wa-accent text-white flex items-center justify-center text-5xl font-black shadow-2xl">?</div>
+                <button onclick="window.hideModal('chatInfoModal')" class="absolute top-10 right-10 p-3 bg-black/40 text-white rounded-full"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
             <div class="p-12">
-                <h3 id="infoName" class="text-3xl font-black mb-2 tracking-tight">...</h3>
-                <div id="infoType" class="text-[10px] font-black text-wa-accent uppercase tracking-[0.3em] mb-10">...</div>
+                <h3 id="infoName" class="text-3xl font-black mb-1">...</h3>
+                <div id="infoType" class="text-[10px] font-black text-wa-accent uppercase tracking-[0.4em] mb-10">...</div>
                 
-                <div class="space-y-8">
-                    <div class="bg-wa-dark p-6 rounded-[35px] border border-gray-800 relative">
-                        <label class="text-[10px] font-black text-gray-600 uppercase block mb-3 ml-2">Pipeline-Invite-ID</label>
+                <div class="space-y-10">
+                    <div class="bg-wa-dark p-6 rounded-[35px] border border-gray-800">
+                        <label class="text-[10px] font-black text-gray-600 uppercase block mb-3 ml-2">Channel-ID (Invite)</label>
                         <div class="flex items-center gap-4">
                             <input id="infoCopyId" readonly class="bg-transparent text-sm font-mono text-wa-accent outline-none flex-1 truncate" value="---">
                             <button onclick="window.copyToClipboard('infoCopyId')" class="text-gray-500 hover:text-wa-accent transition p-2"><i data-lucide="copy" class="w-5 h-5"></i></button>
                         </div>
                     </div>
                     
-                    <div>
-                        <div class="flex justify-between items-center mb-5 px-2">
-                            <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Teilnehmer</label>
-                            <span id="memberCount" class="text-[10px] bg-wa-accent/10 text-wa-accent px-2 py-0.5 rounded-full font-black">0</span>
+                    <div class="space-y-6">
+                        <div class="flex justify-between items-center px-4">
+                            <h4 class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Autorisierte Teilnehmer</h4>
+                            <span id="memberCount" class="text-[10px] bg-wa-accent/20 text-wa-accent px-3 py-1 rounded-full font-black">0</span>
                         </div>
-                        <div id="infoMemberList" class="max-h-56 overflow-y-auto space-y-3 custom-scrollbar px-1"></div>
+                        <div id="infoMemberList" class="max-h-60 overflow-y-auto space-y-3 custom-scrollbar pr-2"></div>
                     </div>
                 </div>
 
-                <div class="mt-12 flex flex-col gap-3">
-                    <button id="leaveActionBtn" onclick="window.processLeaveChat()" class="w-full py-5 rounded-[28px] border-2 border-red-500/30 text-red-500 font-black hover:bg-red-500 hover:text-white transition-all duration-300 uppercase tracking-widest text-sm shadow-lg">Pipeline verlassen</button>
+                <div class="mt-12 flex flex-col gap-4">
+                    <button id="leaveActionBtn" onclick="window.processLeaveChat()" class="w-full py-5 rounded-3xl border-2 border-red-500/20 text-red-500 font-black hover:bg-red-500 hover:text-white transition-all uppercase tracking-widest text-[10px]">Verbindung Trennen</button>
                 </div>
             </div>
         </div>
@@ -429,10 +372,10 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, getDoc, setDoc, arrayUnion, arrayRemove, where, deleteDoc, writeBatch, limit, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, getDoc, setDoc, arrayUnion, arrayRemove, where, deleteDoc, writeBatch, limit, increment, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // CONFIG
+        // CORE CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyBC_O4jysYWBVuSeLJ6-ylx8OXrHBKQjfc",
             authDomain: "shadowchat-e94f0.firebaseapp.com",
@@ -447,90 +390,166 @@
         const auth = getAuth(app);
         const IMGBB_KEY = "bd8f03312d551a4e7c4973f6af975396";
 
-        // STATE
+        // APP STATE
         let currentUser = null;
         let activeChatId = null;
         let isPrivateMode = false;
-        let myNick = "User";
+        let myNick = "Agent";
         let messageUnsub = null;
         let currentCallId = null;
-        let notificationPermitted = false;
+        let notiPermitted = false;
 
-        // --- AUTH INITIALIZATION ---
+        // --- AUTH & INITIALIZATION ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const sessionUid = localStorage.getItem("shadow_uid");
-                const finalUid = sessionUid || user.uid;
+                const storedUid = localStorage.getItem("shadow_uid");
+                const finalUid = storedUid || user.uid;
                 currentUser = { uid: finalUid };
 
                 const uRef = doc(db, "users", finalUid);
                 const uSnap = await getDoc(uRef);
 
                 if (!uSnap.exists()) {
-                    myNick = "Shadow-" + Math.floor(1000 + Math.random() * 9000);
+                    myNick = "Agent-" + Math.floor(1000 + Math.random() * 8999);
                     await setDoc(uRef, {
                         uid: finalUid,
                         nickname: myNick,
                         friends: [],
                         incoming: [],
-                        password: null,
+                        msgCount: 0,
                         lastSeen: serverTimestamp(),
                         status: 'online'
                     });
                 } else {
                     myNick = uSnap.data().nickname;
-                    if (uSnap.data().password) document.getElementById('secretKeyDisplay').innerText = uSnap.data().password;
+                    updateStats(uSnap.data().msgCount || 0);
                 }
 
-                bootstrapUI();
-                syncChatList();
-                syncFriendsList();
+                bootstrap();
+                syncMessages();
+                syncContacts();
                 syncStatusStream();
-                initializeCallListener();
-                checkNotificationSystem();
+                initCallSystem();
             } else {
                 signInAnonymously(auth);
             }
         });
 
-        // --- UI BOOTSTRAP ---
-        function bootstrapUI() {
-            document.getElementById('userAvatar').innerText = myNick[0].toUpperCase();
+        function bootstrap() {
+            document.getElementById('userAvatar').innerText = myNick[0];
             document.getElementById('userNickHeader').innerText = myNick;
             document.getElementById('profileNick').innerText = myNick;
-            document.getElementById('profileAvaChar').innerText = myNick[0].toUpperCase();
+            document.getElementById('profileAvaChar').innerText = myNick[0];
             document.getElementById('profileUidDisplay').innerText = currentUser.uid;
             document.getElementById('editNickIn').value = myNick;
+            
+            checkNotiStatus();
             lucide.createIcons();
         }
 
-        // --- NOTIFICATION ENGINE ---
-        window.checkNotificationSystem = () => {
-            if ("Notification" in window) {
-                if (Notification.permission === "default") {
-                    setTimeout(() => document.getElementById('notiBanner').classList.remove('hidden'), 5000);
-                } else if (Notification.permission === "granted") {
-                    notificationPermitted = true;
+        function updateStats(count) {
+            document.getElementById('statMsgCount').innerText = count;
+        }
+
+        // --- CALL SYSTEM (VOIP ENGINE) ---
+        window.initCallSystem = () => {
+            // Eingehende Anrufe überwachen
+            const q = query(collection(db, "calls"), where("status", "in", ["ringing", "connecting"]));
+            onSnapshot(q, async (snap) => {
+                for (const change of snap.docChanges()) {
+                    if (change.type === "added" || change.type === "modified") {
+                        const call = change.doc.data();
+                        if (call.callerId === currentUser.uid) continue;
+
+                        // Gehört der User zu diesem Chat?
+                        const chatRef = doc(db, "chats", call.chatId);
+                        const chatSnap = await getDoc(chatRef);
+                        
+                        if (chatSnap.exists()) {
+                            const chatData = chatSnap.data();
+                            const isAuth = chatData.type === 'private' ? 
+                                chatData.participants.includes(currentUser.uid) : 
+                                chatData.members.includes(currentUser.uid);
+
+                            if (isAuth) {
+                                currentCallId = change.doc.id;
+                                handleIncomingCall(call);
+                            }
+                        }
+                    }
+                    if (change.type === "removed") {
+                        if (change.doc.id === currentCallId) {
+                            window.endCallUI();
+                        }
+                    }
                 }
-            }
+            });
         };
 
-        window.requestNotificationPerm = async () => {
-            const permission = await Notification.requestPermission();
-            if (permission === "granted") {
-                notificationPermitted = true;
-                new Notification("ShadowChat Enterprise", { body: "Verschlüsselte Benachrichtigungen sind jetzt aktiv.", icon: "https://cdn-icons-png.flaticon.com/512/2592/2592317.png" });
-            }
-            document.getElementById('notiBanner').remove();
-        };
-
-        function sendLocalPush(title, message) {
-            if (notificationPermitted && document.hidden) {
-                new Notification(title, { body: message, icon: "https://cdn-icons-png.flaticon.com/512/2592/2592317.png" });
+        function handleIncomingCall(call) {
+            document.getElementById('callOverlay').classList.remove('hidden');
+            document.getElementById('answerCallBtn').classList.remove('hidden');
+            document.getElementById('callTargetName').innerText = call.callerName;
+            document.getElementById('callStatusText').innerText = "Signal wird empfangen...";
+            document.getElementById('snd_call_loop').play();
+            
+            if (Notification.permission === "granted") {
+                new Notification("Sicherer Anruf", { body: `${call.callerName} ruft dich an...` });
             }
         }
 
-        // --- MESSAGING SYSTEM ---
+        window.startVoiceCall = async () => {
+            if (!activeChatId) return;
+            const cid = "call_" + Date.now() + "_" + currentUser.uid.substring(0,4);
+            currentCallId = cid;
+
+            await setDoc(doc(db, "calls", cid), {
+                chatId: activeChatId,
+                callerId: currentUser.uid,
+                callerName: myNick,
+                status: 'ringing',
+                type: 'voice',
+                timestamp: serverTimestamp()
+            });
+
+            document.getElementById('callOverlay').classList.remove('hidden');
+            document.getElementById('callTargetName').innerText = document.getElementById('activeChatTitle').innerText;
+            document.getElementById('callStatusText').innerText = "Verschlüsselung wird aufgebaut...";
+            document.getElementById('answerCallBtn').classList.add('hidden');
+            
+            // Auf Antwort warten
+            onSnapshot(doc(db, "calls", cid), (s) => {
+                if (s.exists() && s.data().status === 'connected') {
+                    document.getElementById('callStatusText').innerText = "Verbunden (AES-256)";
+                    document.getElementById('snd_call_connect').play();
+                }
+            });
+        };
+
+        window.acceptCall = async () => {
+            if (!currentCallId) return;
+            await updateDoc(doc(db, "calls", currentCallId), { status: 'connected' });
+            document.getElementById('answerCallBtn').classList.add('hidden');
+            document.getElementById('callStatusText').innerText = "Datenstrom aktiv";
+            document.getElementById('snd_call_loop').pause();
+            document.getElementById('snd_call_connect').play();
+        };
+
+        window.endCall = async () => {
+            if (currentCallId) {
+                await deleteDoc(doc(db, "calls", currentCallId));
+                currentCallId = null;
+            }
+            window.endCallUI();
+        };
+
+        window.endCallUI = () => {
+            document.getElementById('callOverlay').classList.add('hidden');
+            document.getElementById('snd_call_loop').pause();
+            document.getElementById('snd_call_loop').currentTime = 0;
+        };
+
+        // --- MESSAGE LOGIC (ADVANCED) ---
         window.sendMessage = async () => {
             const input = document.getElementById('msgInput');
             const file = document.getElementById('msgFileIn').files[0];
@@ -547,21 +566,26 @@
             }
 
             const msgData = {
-                text: text,
+                text,
                 img: imgUrl,
                 senderId: currentUser.uid,
                 senderName: myNick,
                 timestamp: serverTimestamp(),
-                edited: false,
+                readBy: [currentUser.uid],
                 type: 'text'
             };
 
             await addDoc(collection(db, `chats/${activeChatId}/messages`), msgData);
-            await updateDoc(doc(db, "chats", activeChatId), { lastActivity: serverTimestamp(), lastMsg: text || "📷 Bild" });
-            
+            await updateDoc(doc(db, "chats", activeChatId), { 
+                lastActivity: serverTimestamp(), 
+                lastMsg: text ? text.substring(0,30) : "📷 Datei" 
+            });
+            await updateDoc(doc(db, "users", currentUser.uid), { msgCount: increment(1) });
+
             input.value = "";
             window.clearAttachment();
             document.getElementById('snd_msg_out').play();
+            input.focus();
         };
 
         window.openChatInstance = (id, name, isPriv) => {
@@ -571,7 +595,7 @@
             document.getElementById('chatHeader').classList.replace('hidden', 'flex');
             document.getElementById('chatInputArea').classList.replace('hidden', 'flex');
             document.getElementById('activeChatTitle').innerText = name;
-            document.getElementById('activeChatAvatar').innerText = name[0].toUpperCase();
+            document.getElementById('activeChatAvatar').innerText = name[0];
 
             if (window.innerWidth < 768) {
                 document.getElementById('mainSidebar').classList.add('hidden');
@@ -580,236 +604,94 @@
 
             if (messageUnsub) messageUnsub();
             
-            const q = query(collection(db, `chats/${id}/messages`), orderBy("timestamp", "asc"), limit(100));
+            const q = query(collection(db, `chats/${id}/messages`), orderBy("timestamp", "asc"), limit(80));
             messageUnsub = onSnapshot(q, (snap) => {
                 const container = document.getElementById('messagesList');
-                const shouldNotify = container.children.length > 0 && snap.docChanges().some(c => c.type === "added");
+                const lastMsgAdded = snap.docChanges().find(c => c.type === "added");
                 
                 container.innerHTML = "";
                 snap.forEach(d => {
                     const m = d.data();
                     const isMe = m.senderId === currentUser.uid;
                     const div = document.createElement('div');
-                    div.className = `flex ${isMe ? 'justify-end' : 'justify-start'} mb-2 animate-scale-in`;
+                    div.className = `flex ${isMe ? 'justify-end' : 'justify-start'} mb-4 animate-scale-in group`;
+                    
+                    const time = m.timestamp ? new Date(m.timestamp.seconds * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '--:--';
                     
                     div.innerHTML = `
-                        <div class="relative max-w-[80%] px-5 py-3 shadow-2xl ${isMe ? 'bg-wa-bubbleDarkOut text-white msg-out' : 'bg-wa-panel text-gray-100 msg-in border border-gray-800'}">
-                            ${!isMe && !isPriv ? `<p class="text-[9px] font-black text-wa-accent uppercase mb-1.5 tracking-tighter">${m.senderName}</p>` : ''}
-                            ${m.img ? `<img src="${m.img}" class="rounded-xl mb-3 max-w-full border border-black/20 shadow-lg cursor-pointer" onclick="window.open('${m.img}')">` : ''}
-                            <div class="flex items-end gap-5">
-                                <p class="text-[15px] whitespace-pre-wrap leading-relaxed select-text">${m.text || ''}</p>
-                                <div class="flex items-center gap-1.5 opacity-30 mb-0.5">
-                                    ${m.edited ? '<span class="text-[8px] font-black uppercase">Edited</span>' : ''}
-                                    ${isMe ? `<button onclick="window.editChatMessage('${d.id}', '${m.text}')" class="hover:text-white transition"><i data-lucide="edit-2" class="w-3.5 h-3.5"></i></button>` : ''}
-                                    <span class="text-[9px] font-bold uppercase">${m.timestamp ? new Date(m.timestamp.seconds*1000).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : ''}</span>
+                        <div class="max-w-[75%] px-5 py-3 shadow-2xl ${isMe ? 'bg-wa-bubbleDarkOut text-white msg-out' : 'bg-wa-panel text-gray-100 msg-in border border-gray-800'}">
+                            ${!isMe && !isPriv ? `<p class="text-[9px] font-black text-wa-accent uppercase mb-2 tracking-widest">${m.senderName}</p>` : ''}
+                            ${m.img ? `<img src="${m.img}" class="rounded-2xl mb-3 border border-black/20 shadow-lg cursor-pointer hover:scale-[1.01] transition" onclick="window.open('${m.img}')">` : ''}
+                            <div class="flex items-end gap-6">
+                                <p class="text-[15px] leading-relaxed select-text">${m.text || ''}</p>
+                                <div class="flex items-center gap-1 opacity-40">
+                                    <span class="text-[8px] font-black uppercase">${time}</span>
+                                    ${isMe ? `<i data-lucide="check-check" class="w-3 h-3 text-wa-accent"></i>` : ''}
                                 </div>
                             </div>
+                            <button onclick="window.deleteMessage('${d.id}')" class="absolute -top-2 -right-2 bg-wa-dark p-1.5 rounded-full border border-gray-700 opacity-0 group-hover:opacity-100 transition shadow-xl"><i data-lucide="trash-2" class="w-3 h-3 text-red-500"></i></button>
                         </div>
                     `;
                     container.appendChild(div);
                 });
 
-                if (shouldNotify) {
-                    const last = snap.docs[snap.docs.length-1].data();
-                    if (last.senderId !== currentUser.uid) {
-                        document.getElementById('snd_msg_in').play();
-                        sendLocalPush(name, last.text || "📷 Verschlüsseltes Bild");
-                    }
+                if (lastMsgAdded && lastMsgAdded.doc.data().senderId !== currentUser.uid) {
+                    document.getElementById('snd_msg_in').play();
                 }
                 container.scrollTop = container.scrollHeight;
                 lucide.createIcons();
             });
-            updateChatInfoModalData(id, name, isPriv);
+            updateInfoModal(id, name, isPriv);
         };
 
-        window.editChatMessage = async (msgId, oldContent) => {
-            const newContent = prompt("Nachricht korrigieren:", oldContent);
-            if (newContent && newContent !== oldContent) {
-                await updateDoc(doc(db, `chats/${activeChatId}/messages`, msgId), {
-                    text: newContent,
-                    edited: true
-                });
+        window.deleteMessage = async (mid) => {
+            if (confirm("Nachricht für alle löschen?")) {
+                await deleteDoc(doc(db, `chats/${activeChatId}/messages`, mid));
             }
         };
 
-        // --- ACCOUNT & RECOVERY ---
-        window.rebuildSecretKey = async () => {
-            const pool = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789!#%@&";
-            let key = "";
-            for(let i=0; i<8; i++) key += pool.charAt(Math.floor(Math.random() * pool.length));
-            await updateDoc(doc(db, "users", currentUser.uid), { password: key });
-            document.getElementById('secretKeyDisplay').innerText = key;
-            alert("Dein neuer Sicherheitsschlüssel wurde generiert!");
-        };
-
-        window.processLogin = async () => {
-            const uid = document.getElementById('loginUid').value.trim();
-            const key = document.getElementById('loginKey').value.trim();
-            if (!uid || !key) return alert("Bitte alle Felder ausfüllen.");
-
-            const snap = await getDoc(doc(db, "users", uid));
-            if (snap.exists() && snap.data().password === key) {
-                localStorage.setItem("shadow_uid", uid);
-                alert("Identität bestätigt! System wird neu geladen...");
-                location.reload();
-            } else {
-                alert("Ungültige Zugangsdaten.");
-            }
-        };
-
-        // --- GROUP ENGINE ---
-        window.processCreateGroup = async () => {
-            const name = document.getElementById('newGroupName').value.trim();
-            const pass = document.getElementById('newGroupPass').value.trim();
-            if (!name) return alert("Name wird benötigt.");
-
-            const gid = "GRP-" + Math.random().toString(36).substring(2,10).toUpperCase();
-            await setDoc(doc(db, "chats", gid), {
-                type: 'group',
-                name: name,
-                password: pass || null,
-                members: [currentUser.uid],
-                creator: currentUser.uid,
-                lastActivity: serverTimestamp(),
-                lastMsg: "Gruppe wurde erstellt"
-            });
-
-            window.hideModal('createGroupModal');
-            window.openChatInstance(gid, name, false);
-        };
-
-        window.processJoinGroup = async () => {
-            const gid = document.getElementById('joinGroupId').value.trim().toUpperCase();
-            const pass = document.getElementById('joinGroupPass').value.trim();
-            if (!gid) return;
-
-            const snap = await getDoc(doc(db, "chats", gid));
-            if (snap.exists()) {
-                const data = snap.data();
-                if (data.password && data.password !== pass) return alert("Falsches Passwort!");
-                
-                await updateDoc(doc(db, "chats", gid), {
-                    members: arrayUnion(currentUser.uid)
-                });
-                
-                window.hideModal('joinGroupModal');
-                window.openChatInstance(gid, data.name, false);
-            } else {
-                alert("Pipeline nicht gefunden.");
-            }
-        };
-
-        window.processLeaveChat = async () => {
-            if (!activeChatId || !confirm("Möchtest du diese Pipeline wirklich trennen?")) return;
-            const ref = doc(db, "chats", activeChatId);
-            if (isPrivateMode) {
-                await updateDoc(ref, { participants: arrayRemove(currentUser.uid) });
-            } else {
-                await updateDoc(ref, { members: arrayRemove(currentUser.uid) });
-            }
-            window.hideModal('chatInfoModal');
-            location.reload();
-        };
-
-        // --- CALL SYSTEM ---
-        window.startVoiceCall = async () => {
-            const cid = "call_" + Date.now() + "_" + currentUser.uid.substring(0,4);
-            currentCallId = cid;
-            await setDoc(doc(db, "calls", cid), {
-                chatId: activeChatId,
-                callerId: currentUser.uid,
-                callerName: myNick,
-                status: 'ringing',
-                type: 'voice',
-                timestamp: serverTimestamp()
-            });
-            document.getElementById('callOverlay').classList.remove('hidden');
-            document.getElementById('callTargetName').innerText = document.getElementById('activeChatTitle').innerText;
-            document.getElementById('callStatusText').innerText = "Signal wird gesendet...";
-            document.getElementById('answerCallBtn').classList.add('hidden');
-        };
-
-        function initializeCallListener() {
-            onSnapshot(query(collection(db, "calls"), where("status", "==", "ringing")), (snap) => {
-                snap.forEach(async d => {
-                    const call = d.data();
-                    if (call.callerId === currentUser.uid) return;
-
-                    const chatSnap = await getDoc(doc(db, "chats", call.chatId));
-                    if (chatSnap.exists()) {
-                        const dat = chatSnap.data();
-                        const isMember = dat.type === 'private' ? dat.participants.includes(currentUser.uid) : dat.members.includes(currentUser.uid);
-                        
-                        if (isMember) {
-                            currentCallId = d.id;
-                            document.getElementById('callOverlay').classList.remove('hidden');
-                            document.getElementById('answerCallBtn').classList.remove('hidden');
-                            document.getElementById('callTargetName').innerText = call.callerName;
-                            document.getElementById('callStatusText').innerText = "Eingehende Pipeline-Anfrage...";
-                            document.getElementById('snd_call_loop').play();
-                            sendLocalPush("Anruf", call.callerName + " möchte eine Sprachverbindung aufbauen.");
-                        }
-                    }
-                });
-            });
-        }
-
-        window.acceptCall = async () => {
-            document.getElementById('callStatusText').innerText = "Verschlüsselung synchronisiert...";
-            document.getElementById('answerCallBtn').classList.add('hidden');
-            document.getElementById('snd_call_loop').pause();
-            // Implementierung für WebRTC würde hier folgen
-        };
-
-        window.endCall = async () => {
-            if (currentCallId) await deleteDoc(doc(db, "calls", currentCallId));
-            document.getElementById('callOverlay').classList.add('hidden');
-            document.getElementById('snd_call_loop').pause();
-        };
-
-        // --- CORE LISTS & SYNC ---
-        async function syncChatList() {
+        // --- CONTACTS & GROUP SYNC ---
+        function syncMessages() {
             onSnapshot(query(collection(db, "chats"), orderBy("lastActivity", "desc")), (snap) => {
-                const container = document.getElementById('chatList');
-                container.innerHTML = "";
+                const list = document.getElementById('chatList');
+                list.innerHTML = "";
                 
                 if (snap.empty) {
-                    container.innerHTML = `<div class="p-20 text-center opacity-20"><i data-lucide="message-square" class="w-12 h-12 mx-auto mb-4"></i><p class="text-xs font-black uppercase">Keine Kanäle</p></div>`;
+                    list.innerHTML = `<div class="p-20 text-center opacity-20"><i data-lucide="shield-off" class="w-16 h-16 mx-auto mb-4"></i><p class="text-[10px] font-black uppercase">Keine aktiven Protokolle</p></div>`;
                     lucide.createIcons();
                     return;
                 }
 
                 snap.forEach(d => {
                     const c = d.data();
-                    const isMember = c.type === 'private' ? c.participants?.includes(currentUser.uid) : c.members?.includes(currentUser.uid);
+                    const isM = c.type === 'private' ? c.participants?.includes(currentUser.uid) : c.members?.includes(currentUser.uid);
                     
-                    if (isMember) {
-                        let displayName = c.name;
+                    if (isM) {
+                        let name = c.name;
                         if (c.type === 'private') {
-                            const otherId = c.participants.find(p => p !== currentUser.uid);
-                            displayName = c.names?.[otherId] || "Privater Kontakt";
+                            const other = c.participants.find(p => p !== currentUser.uid);
+                            name = c.names?.[other] || "Kontakt";
                         }
-                        
                         const div = document.createElement('div');
-                        div.className = "p-5 hover:bg-wa-panel cursor-pointer flex items-center gap-5 transition-all animate-scale-in group border-b border-gray-800/20";
+                        div.className = "p-5 hover:bg-wa-panel cursor-pointer flex items-center gap-5 transition-all group border-b border-gray-900/40";
                         div.innerHTML = `
-                            <div class="w-14 h-14 rounded-[20px] bg-wa-accent flex items-center justify-center text-white font-black shadow-lg text-xl group-hover:scale-105 transition-transform">${displayName[0]}</div>
+                            <div class="w-14 h-14 rounded-2xl bg-wa-accent flex items-center justify-center text-white font-black shadow-lg text-xl">${name[0]}</div>
                             <div class="flex-1 overflow-hidden">
                                 <div class="flex justify-between items-center mb-1">
-                                    <h4 class="font-black text-gray-200 truncate tracking-tight text-[15px]">${displayName}</h4>
+                                    <h4 class="font-black text-gray-100 truncate text-[15px]">${name}</h4>
                                     <span class="text-[8px] font-black text-gray-600 uppercase tracking-widest">${c.type}</span>
                                 </div>
-                                <p class="text-[13px] text-gray-500 truncate">${c.lastMsg || 'Ende-zu-Ende verschlüsselt'}</p>
+                                <p class="text-xs text-gray-500 truncate font-medium">${c.lastMsg || 'Ende-zu-Ende verschlüsselt'}</p>
                             </div>
                         `;
-                        div.onclick = () => window.openChatInstance(d.id, displayName, c.type === 'private');
-                        container.appendChild(div);
+                        div.onclick = () => window.openChatInstance(d.id, name, c.type === 'private');
+                        list.appendChild(div);
                     }
                 });
             });
         }
 
-        async function syncFriendsList() {
+        async function syncContacts() {
             onSnapshot(doc(db, "users", currentUser.uid), async (s) => {
                 const d = s.data(); if (!d) return;
                 
@@ -820,13 +702,16 @@
                     if (fSnap.exists()) {
                         const fdata = fSnap.data();
                         const div = document.createElement('div');
-                        div.className = "p-4 bg-wa-panel rounded-[25px] border border-gray-800 flex justify-between items-center hover:border-wa-accent transition cursor-pointer";
+                        div.className = "p-5 bg-wa-panel rounded-[30px] border border-gray-800 flex justify-between items-center hover:border-wa-accent transition cursor-pointer group shadow-lg";
                         div.innerHTML = `
                             <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 bg-wa-accent rounded-xl flex items-center justify-center font-black text-white text-sm">${fdata.nickname[0]}</div>
-                                <b class="text-sm font-black text-gray-200">${fdata.nickname}</b>
+                                <div class="w-11 h-11 bg-wa-accent rounded-2xl flex items-center justify-center font-black text-white">${fdata.nickname[0]}</div>
+                                <div>
+                                    <b class="text-sm font-black text-gray-200">${fdata.nickname}</b>
+                                    <p class="text-[9px] text-wa-accent uppercase font-black">Trusted Link</p>
+                                </div>
                             </div>
-                            <i data-lucide="message-square" class="w-5 h-5 text-wa-accent opacity-0 group-hover:opacity-100 transition"></i>
+                            <i data-lucide="message-square" class="w-5 h-5 text-wa-accent"></i>
                         `;
                         div.onclick = () => window.startPrivateConversation(fid, fdata.nickname);
                         cList.appendChild(div);
@@ -838,31 +723,40 @@
                 if (d.incoming?.length > 0) {
                     document.getElementById('requestsBox').classList.remove('hidden');
                     for (const rid of d.incoming) {
-                        const rSnap = await getDoc(doc(db, "users", rid));
-                        const rName = rSnap.exists() ? rSnap.data().nickname : rid.substring(0,8);
                         rList.innerHTML += `
-                            <div class="flex justify-between items-center p-4 bg-orange-500/10 border border-orange-500/30 rounded-2xl animate-pulse">
-                                <span class="text-xs font-black text-orange-200 uppercase">${rName}</span>
-                                <button onclick="window.acceptFriendship('${rid}')" class="text-orange-500 font-black text-[10px] uppercase hover:underline">Bestätigen</button>
+                            <div class="flex justify-between items-center p-5 bg-orange-500/10 border border-orange-500/30 rounded-3xl animate-pulse">
+                                <span class="text-xs font-black text-orange-200 uppercase tracking-widest">${rid.substring(0,12)}...</span>
+                                <button onclick="window.acceptFriendship('${rid}')" class="bg-orange-500 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase">Accept</button>
                             </div>`;
                     }
-                } else {
-                    document.getElementById('requestsBox').classList.add('hidden');
-                }
+                } else { document.getElementById('requestsBox').classList.add('hidden'); }
                 lucide.createIcons();
             });
         }
 
-        window.startPrivateConversation = async (otherId, otherNick) => {
-            const cid = [currentUser.uid, otherId].sort().join("_");
+        window.startPrivateConversation = async (oid, onick) => {
+            const cid = [currentUser.uid, oid].sort().join("_");
             await setDoc(doc(db, "chats", cid), {
                 type: 'private',
-                participants: [currentUser.uid, otherId],
-                names: { [currentUser.uid]: myNick, [otherId]: otherNick },
+                participants: [currentUser.uid, oid],
+                names: { [currentUser.uid]: myNick, [oid]: onick },
                 lastActivity: serverTimestamp(),
                 lastMsg: "Private Pipeline geöffnet"
             }, { merge: true });
-            window.openChatInstance(cid, otherNick, true);
+            window.openChatInstance(cid, onick, true);
+        };
+
+        window.sendFriendRequest = async () => {
+            const tid = document.getElementById('friendUidIn').value.trim();
+            if (!tid || tid === currentUser.uid) return;
+            const snap = await getDoc(doc(db, "users", tid));
+            if (snap.exists()) {
+                await updateDoc(doc(db, "users", tid), { incoming: arrayUnion(currentUser.uid) });
+                alert("Signalanfrage wurde übermittelt.");
+                document.getElementById('friendUidIn').value = "";
+            } else {
+                alert("Ziel-UID nicht im Mainframe gefunden.");
+            }
         };
 
         window.acceptFriendship = async (rid) => {
@@ -872,20 +766,37 @@
             await batch.commit();
         };
 
-        window.sendFriendRequest = async () => {
-            const targetId = document.getElementById('friendUidIn').value.trim();
-            if (!targetId || targetId === currentUser.uid) return alert("Ungültige UID");
-            const snap = await getDoc(doc(db, "users", targetId));
+        // --- GROUP ADMIN ---
+        window.processCreateGroup = async () => {
+            const name = document.getElementById('newGroupName').value.trim();
+            if (!name) return;
+            const gid = "GRP-" + Math.random().toString(36).substring(2,12).toUpperCase();
+            await setDoc(doc(db, "chats", gid), {
+                type: 'group',
+                name: name,
+                members: [currentUser.uid],
+                creator: currentUser.uid,
+                lastActivity: serverTimestamp(),
+                lastMsg: "Zentralrechner verbunden"
+            });
+            window.hideModal('createGroupModal');
+            window.openChatInstance(gid, name, false);
+        };
+
+        window.processJoinGroup = async () => {
+            const gid = document.getElementById('joinGroupId').value.trim().toUpperCase();
+            if (!gid) return;
+            const snap = await getDoc(doc(db, "chats", gid));
             if (snap.exists()) {
-                await updateDoc(doc(db, "users", targetId), { incoming: arrayUnion(currentUser.uid) });
-                alert("Anfrage gesendet!");
-                document.getElementById('friendUidIn').value = "";
+                await updateDoc(doc(db, "chats", gid), { members: arrayUnion(currentUser.uid) });
+                window.hideModal('joinGroupModal');
+                window.openChatInstance(gid, snap.data().name, false);
             } else {
-                alert("Ziel-Nutzer existiert nicht.");
+                alert("Pipeline-ID ungültig.");
             }
         };
 
-        // --- STATUS ENGINE ---
+        // --- STATUS SYSTEM ---
         function syncStatusStream() {
             onSnapshot(query(collection(db, "status"), orderBy("timestamp", "desc"), limit(12)), (snap) => {
                 const grid = document.getElementById('globalStatusGrid');
@@ -893,12 +804,12 @@
                 snap.forEach(d => {
                     const s = d.data();
                     grid.innerHTML += `
-                        <div class="relative rounded-[30px] overflow-hidden aspect-[3/4] cursor-pointer group shadow-xl" onclick="window.open('${s.img}')">
-                            <img src="${s.img}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-                            <div class="absolute bottom-4 left-4">
-                                <p class="text-[10px] font-black text-wa-accent uppercase tracking-widest">${s.name}</p>
-                                <p class="text-[8px] text-gray-400 uppercase">Vor kurzem</p>
+                        <div class="relative rounded-[35px] overflow-hidden aspect-[3/4] cursor-pointer group shadow-2xl" onclick="window.open('${s.img}')">
+                            <img src="${s.img}" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-125">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
+                            <div class="absolute bottom-5 left-5">
+                                <p class="text-[10px] font-black text-wa-accent uppercase tracking-widest mb-1">${s.name}</p>
+                                <p class="text-[8px] text-gray-500 font-bold uppercase">Encrypted Update</p>
                             </div>
                         </div>
                     `;
@@ -914,36 +825,25 @@
             const json = await res.json();
             if (json.success) {
                 await addDoc(collection(db, "status"), {
-                    uid: currentUser.uid,
-                    name: myNick,
-                    img: json.data.url,
-                    timestamp: serverTimestamp()
+                    uid: currentUser.uid, name: myNick, img: json.data.url, timestamp: serverTimestamp()
                 });
-                alert("Status erfolgreich geteilt!");
+                alert("Statuspaket erfolgreich hochgeladen!");
             }
         };
 
-        // --- UTILS ---
-        window.switchTab = (tab) => {
+        // --- UTILITIES ---
+        window.switchTab = (t) => {
             document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
-            document.getElementById('tab-' + tab).classList.remove('hidden');
-            ['chats', 'friends', 'status', 'settings'].forEach(t => {
-                const b = document.getElementById('btn-' + t);
-                if (b) { b.classList.remove('border-wa-accent', 'text-wa-accent'); b.classList.add('border-transparent', 'text-gray-500'); }
+            document.getElementById('tab-' + t).classList.remove('hidden');
+            ['chats', 'friends', 'status', 'settings'].forEach(b => {
+                const btn = document.getElementById('btn-' + b);
+                if(btn) {
+                    btn.classList.remove('border-wa-accent', 'text-wa-accent');
+                    btn.classList.add('border-transparent', 'text-gray-500');
+                }
             });
-            const activeB = document.getElementById('btn-' + tab);
-            if (activeB) { activeB.classList.add('border-wa-accent', 'text-wa-accent'); activeB.classList.remove('border-transparent', 'text-gray-500'); }
+            document.getElementById('btn-' + t).classList.add('border-wa-accent', 'text-wa-accent');
             lucide.createIcons();
-        };
-
-        window.showModal = (id) => document.getElementById(id).classList.remove('hidden');
-        window.hideModal = (id) => document.getElementById(id).classList.add('hidden');
-        
-        window.copyToClipboard = (id) => {
-            const el = document.getElementById(id);
-            const val = el.tagName === "INPUT" ? el.value : el.innerText;
-            navigator.clipboard.writeText(val);
-            alert("In Zwischenablage kopiert!");
         };
 
         window.updateNickname = async () => {
@@ -952,6 +852,11 @@
                 await updateDoc(doc(db, "users", currentUser.uid), { nickname: n });
                 location.reload();
             }
+        };
+
+        window.copyMyId = () => {
+            navigator.clipboard.writeText(currentUser.uid);
+            alert("Deine UID wurde kopiert.");
         };
 
         window.handleMsgFile = () => {
@@ -967,17 +872,26 @@
             document.getElementById('attachmentPreview').classList.add('hidden');
         };
 
+        window.showModal = (id) => document.getElementById(id).classList.remove('hidden');
+        window.hideModal = (id) => document.getElementById(id).classList.add('hidden');
+        
+        window.copyToClipboard = (id) => {
+            const el = document.getElementById(id);
+            navigator.clipboard.writeText(el.value || el.innerText);
+            alert("ID gesichert.");
+        };
+
         window.closeChatMobile = () => {
             document.getElementById('chatArea').classList.add('hidden');
             document.getElementById('mainSidebar').classList.remove('hidden');
             activeChatId = null;
         };
 
-        async function updateChatInfoModalData(id, name, isPriv) {
+        async function updateInfoModal(id, name, isPriv) {
             document.getElementById('infoName').innerText = name;
-            document.getElementById('infoAvaBig').innerText = name[0].toUpperCase();
+            document.getElementById('infoAvaBig').innerText = name[0];
             document.getElementById('infoCopyId').value = id;
-            document.getElementById('infoType').innerText = isPriv ? "Private P2P Pipeline" : "Multi-User Group Pipeline";
+            document.getElementById('infoType').innerText = isPriv ? "Sichere P2P Verbindung" : "Gruppen Mainframe";
             
             const list = document.getElementById('infoMemberList');
             list.innerHTML = "";
@@ -985,18 +899,63 @@
             if (!isPriv) {
                 const snap = await getDoc(doc(db, "chats", id));
                 const members = snap.data().members;
+                const creator = snap.data().creator;
                 document.getElementById('memberCount').innerText = members.length;
+                
                 for (const mid of members) {
                     const u = await getDoc(doc(db, "users", mid));
+                    const uData = u.data();
                     list.innerHTML += `
-                        <div class="flex items-center gap-4 p-4 bg-wa-dark rounded-3xl border border-gray-800">
-                            <div class="w-10 h-10 rounded-xl bg-gray-700 flex items-center justify-center text-xs font-black">${u.exists() ? u.data().nickname[0] : '?'}</div>
-                            <span class="text-sm font-bold text-gray-300">${u.exists() ? u.data().nickname : mid}</span>
+                        <div class="flex items-center justify-between p-4 bg-wa-dark rounded-2xl border border-gray-800">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-xl bg-gray-700 flex items-center justify-center font-black">${uData ? uData.nickname[0] : '?'}</div>
+                                <div>
+                                    <p class="text-xs font-bold text-gray-200">${uData ? uData.nickname : mid}</p>
+                                    ${mid === creator ? '<p class="text-[8px] text-wa-accent uppercase font-black">Admin</p>' : ''}
+                                </div>
+                            </div>
+                            ${(currentUser.uid === creator && mid !== currentUser.uid) ? 
+                                `<button onclick="window.kickMember('${mid}')" class="text-red-500 p-2"><i data-lucide="user-minus" class="w-4 h-4"></i></button>` : ''}
                         </div>`;
                 }
             } else {
                 document.getElementById('memberCount').innerText = "2";
-                list.innerHTML = `<p class="text-xs text-gray-600 italic p-4 text-center">In einer privaten Pipeline sind nur du und ${name} autorisiert.</p>`;
+                list.innerHTML = `<p class="text-[10px] text-gray-600 italic p-6 text-center tracking-widest uppercase">Direktverbindung zwischen zwei Endpunkten.</p>`;
+            }
+            lucide.createIcons();
+        }
+
+        window.kickMember = async (mid) => {
+            if(confirm("Teilnehmer aus Pipeline entfernen?")) {
+                await updateDoc(doc(db, "chats", activeChatId), { members: arrayRemove(mid) });
+                updateInfoModal(activeChatId, document.getElementById('infoName').innerText, false);
+            }
+        };
+
+        window.processLeaveChat = async () => {
+            if (!activeChatId) return;
+            const ref = doc(db, "chats", activeChatId);
+            await updateDoc(ref, isPrivateMode ? { participants: arrayRemove(currentUser.uid) } : { members: arrayRemove(currentUser.uid) });
+            window.closeChatMobile();
+            window.hideModal('chatInfoModal');
+        };
+
+        window.processLogin = async () => {
+            const uid = document.getElementById('loginUid').value.trim();
+            if (uid) { localStorage.setItem("shadow_uid", uid); location.reload(); }
+        };
+
+        window.requestNotificationPerm = async () => {
+            const permission = await Notification.requestPermission();
+            if (permission === "granted") {
+                new Notification("ShadowChat", { body: "Verschlüsselter Kanal bestätigt." });
+                document.getElementById('notiBanner').remove();
+            }
+        };
+
+        function checkNotiStatus() {
+            if ("Notification" in window && Notification.permission === "default") {
+                setTimeout(() => document.getElementById('notiBanner').classList.remove('hidden'), 3000);
             }
         }
     </script>
