@@ -3,84 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#111b21">
-    <meta name="description" content="ShadowChat Ultimate - Private, Encrypted, Fast">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>ShadowChat Ultimate V13 - Extended</title>
+    <meta name="theme-color" content="#0b141a">
+    <title>ShadowChat Ultra V13 - Ultimate</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
-    
-    <script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script> <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-                    },
                     colors: {
                         wa: { 
                             light: '#ffffff', 
-                            dark: '#0b141a', 
-                            panelLight: '#f0f2f5',
-                            panel: '#202c33',
-                            panelHover: '#2a3942',
-                            accent: '#00a884', 
-                            accentHover: '#008f6f',
-                            bubbleOut: '#d9fdd3', 
+                            dark: '#0f172a', /* Modernes Slate-Dark */
+                            panelLight: '#f1f5f9',
+                            panel: '#1e293b',
+                            accent: '#6366f1', /* Modern Indigo */
+                            accentHover: '#4f46e5',
+                            bubbleOut: '#e0e7ff', /* Soft Indigo Tint */
                             bubbleIn: '#ffffff', 
-                            bubbleDarkOut: '#005c4b', 
-                            bubbleDarkIn: '#202c33',
-                            danger: '#ef4444',
-                            success: '#22c55e',
-                            system: '#182229',
-                            separator: '#2a3942'
+                            bubbleDarkOut: '#3730a3', 
+                            bubbleDarkIn: '#1e293b',
+                            iosRed: '#ef4444',
+                            iosGreen: '#22c55e',
+                            system: '#020617'
                         }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'SF Pro Display', '-apple-system', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
                     },
                     animation: {
-                        'slide-up': 'slideUp 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards',
-                        'slide-in-right': 'slideInRight 0.3s cubic-bezier(0.19, 1, 0.22, 1) forwards',
-                        'fade-in': 'fadeIn 0.2s ease-out forwards',
-                        'fade-out': 'fadeOut 0.2s ease-in forwards',
-                        'pulse-record': 'pulseRecord 1.5s infinite',
-                        'ring': 'ringShake 1.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite',
-                        'scale-in': 'scaleIn 0.2s ease-out forwards',
+                        'slide-up': 'slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+                        'pop-in': 'popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+                        'pulse-rec': 'pulseRec 1.5s infinite',
                     },
                     keyframes: {
-                        slideUp: {
-                            '0%': { transform: 'translateY(100%)', opacity: '0' },
-                            '100%': { transform: 'translateY(0)', opacity: '1' },
-                        },
-                        slideInRight: {
-                            '0%': { transform: 'translateX(100%)' },
-                            '100%': { transform: 'translateX(0)' },
-                        },
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' },
-                        },
-                        fadeOut: {
-                            '0%': { opacity: '1' },
-                            '100%': { opacity: '0' },
-                        },
-                        scaleIn: {
-                            '0%': { transform: 'scale(0.9)', opacity: '0' },
-                            '100%': { transform: 'scale(1)', opacity: '1' },
-                        },
-                        pulseRecord: {
-                            '0%': { boxShadow: '0 0 0 0 rgba(239, 68, 68, 0.7)' },
-                            '70%': { boxShadow: '0 0 0 15px rgba(239, 68, 68, 0)' },
-                            '100%': { boxShadow: '0 0 0 0 rgba(239, 68, 68, 0)' },
-                        },
-                        ringShake: {
-                            '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
-                            '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
-                            '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
-                            '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
-                        }
+                        slideUp: { '0%': { transform: 'translateY(100%)' }, '100%': { transform: 'translateY(0)' } },
+                        popIn: { '0%': { transform: 'scale(0.9)', opacity: 0 }, '100%': { transform: 'scale(1)', opacity: 1 } },
+                        pulseRec: { '0%': { transform: 'scale(1)', boxShadow: '0 0 0 0 rgba(239, 68, 68, 0.7)' }, '70%': { transform: 'scale(1.1)', boxShadow: '0 0 0 10px rgba(239, 68, 68, 0)' }, '100%': { transform: 'scale(1)', boxShadow: '0 0 0 0 rgba(239, 68, 68, 0)' } }
                     }
                 }
             }
@@ -88,1765 +50,1041 @@
     </script>
 
     <style>
-        /* CORE VARIABLES */
-        :root { 
-            --app-height: 100dvh; 
-            --safe-top: env(safe-area-inset-top);
-            --safe-bottom: env(safe-area-inset-bottom);
-        }
+        :root { --app-height: 100dvh; }
+        body { font-family: 'Inter', sans-serif; height: var(--app-height); background-color: #020617; overflow: hidden; -webkit-tap-highlight-color: transparent; }
         
-        /* GLOBAL RESET */
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        /* Modern Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 10px; }
+
+        /* Blur UI */
+        .glass-panel { background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid rgba(255,255,255,0.05); }
+        .glass-modal { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); }
         
-        body { 
-            font-family: 'Inter', sans-serif; 
-            height: var(--app-height); 
-            background-color: #0b141a; 
-            overflow: hidden; 
-            user-select: none;
-            -webkit-user-select: none;
-            overscroll-behavior-y: none;
-        }
-
-        /* UTILITY CLASSES */
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(134, 150, 160, 0.2); border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(134, 150, 160, 0.4); }
-
-        .glass-panel { 
-            background: rgba(32, 44, 51, 0.7); 
-            backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .glass-modal {
-            background-color: rgba(0,0,0,0.6);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-        }
-
-        /* ANIMATION CLASSES */
-        .msg-enter { animation: msgEnter 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; transform-origin: left bottom; opacity: 0; }
-        .msg-enter.own { transform-origin: right bottom; }
+        /* Message Swipe Logic */
+        .msg-container { transition: transform 0.2s ease-out; touch-action: pan-y; }
+        .msg-content { position: relative; z-index: 10; }
+        .reply-icon-wrapper { position: absolute; left: -40px; top: 50%; transform: translateY(-50%); opacity: 0; transition: opacity 0.2s; }
         
-        @keyframes msgEnter { 
-            from { opacity: 0; transform: translateY(10px) scale(0.9); } 
-            to { opacity: 1; transform: translateY(0) scale(1); } 
-        }
-
-        /* RANGE SLIDER STYLING (For Audio) */
-        input[type=range] {
-            -webkit-appearance: none; width: 100%; background: transparent;
-        }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none; height: 12px; width: 12px; border-radius: 50%;
-            background: #00a884; cursor: pointer; margin-top: -4px; box-shadow: 0 0 5px rgba(0,0,0,0.3);
-        }
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%; height: 4px; cursor: pointer; background: rgba(255,255,255,0.2); border-radius: 2px;
-        }
-
-        /* CONTEXT MENU TRANSITIONS */
-        #contextMenu { transform-origin: top left; transition: opacity 0.15s ease, transform 0.15s ease; }
+        /* Context Menu */
+        #contextMenu { transform-origin: bottom center; }
         
-        /* SWIPE ACTIONS */
-        .swipe-content { transition: transform 0.2s ease-out; touch-action: pan-y; }
-        
-        /* WALLPAPER PATTERN */
-        .chat-bg-pattern {
-            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
-            background-size: 400px;
-            opacity: 0.06;
-        }
-        
-        /* LOADER */
-        .spinner {
-            width: 24px; height: 24px; border: 3px solid rgba(255,255,255,0.3); 
-            border-radius: 50%; border-top-color: #00a884; animation: spin 1s ease-in-out infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        /* Audio Player Styling */
+        audio::-webkit-media-controls-panel { background-color: transparent; }
     </style>
 </head>
-<body class="text-gray-900 dark:text-gray-100 flex flex-col md:flex-row h-[100dvh]">
+<body class="text-slate-900 dark:text-slate-100 flex flex-col md:flex-row h-[100dvh]">
 
     <audio id="remoteAudio" autoplay playsinline></audio>
     <audio id="localAudio" muted autoplay playsinline></audio>
-    <audio id="notifySound" src="https://assets.mixkit.co/sfx/preview/mixkit-message-pop-alert-2354.mp3" preload="auto"></audio>
-    <audio id="sentSound" src="https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3" preload="auto"></audio>
-    <audio id="ringtoneSound" src="https://assets.mixkit.co/sfx/preview/mixkit-waiting-ringtone-1354.mp3" preload="auto" loop></audio>
-    <audio id="connectSound" src="https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-confirmation-914.mp3" preload="auto"></audio>
+    <audio id="notifySound" src="https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3"></audio>
+    <audio id="ringtone" src="https://assets.mixkit.co/sfx/preview/mixkit-waiting-ringtone-1354.mp3" loop></audio>
+    <audio id="sentSound" src="https://assets.mixkit.co/sfx/preview/mixkit-message-pop-alert-2354.mp3"></audio>
 
-    <div id="toastContainer" class="fixed top-6 right-6 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
+    <div id="toast-container" class="fixed top-5 right-5 z-[9999] flex flex-col gap-2 pointer-events-none"></div>
 
-    <div id="lightbox" class="fixed inset-0 z-[300] bg-black/95 flex flex-col items-center justify-center hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm">
-        <div class="absolute top-0 w-full p-4 flex justify-between items-center bg-gradient-to-b from-black/60 to-transparent z-50">
-            <span id="lb-sender" class="text-white font-bold ml-2">Sender</span>
-            <button onclick="UI.Lightbox.close()" class="p-3 bg-white/10 rounded-full hover:bg-white/20 transition"><i data-lucide="x" class="w-6 h-6 text-white"></i></button>
-        </div>
-        <img id="lightbox-img" class="max-h-[85dvh] max-w-[95vw] object-contain rounded-md shadow-2xl transition-transform duration-200">
-        <div class="absolute bottom-10 flex gap-4">
-             <button onclick="UI.Lightbox.download()" class="p-3 bg-white/10 rounded-full hover:bg-white/20 text-white"><i data-lucide="download" class="w-6 h-6"></i></button>
-        </div>
+    <div id="lightbox" class="fixed inset-0 z-[300] bg-black/95 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <button onclick="window.closeLightbox()" class="absolute top-4 right-4 p-3 bg-white/10 rounded-full hover:bg-white/20 text-white"><i data-lucide="x"></i></button>
+        <img id="lightbox-img" class="max-h-[90dvh] max-w-[95vw] object-contain rounded-lg">
     </div>
 
-    <div id="globalLoader" class="fixed inset-0 z-[1000] bg-wa-dark flex flex-col items-center justify-center transition-opacity duration-500">
-        <div class="w-16 h-16 border-4 border-wa-accent/30 border-t-wa-accent rounded-full animate-spin mb-4"></div>
-        <h2 class="text-wa-accent font-bold tracking-widest text-sm animate-pulse">SHADOWCHAT V13</h2>
-        <p class="text-gray-500 text-xs mt-2">Connecting to Secure Server...</p>
-    </div>
-
-    <aside id="mainSidebar" class="flex flex-col w-full md:w-[420px] h-full border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-wa-dark z-20 shrink-0 transition-all duration-300 relative">
+    <aside id="mainSidebar" class="flex flex-col w-full md:w-[400px] h-full border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 z-20 shrink-0 transition-all">
         
-        <header class="h-[64px] bg-wa-panelLight dark:bg-wa-panel flex items-center justify-between px-4 shrink-0 z-20 shadow-sm">
-            <div class="flex items-center gap-3 cursor-pointer group" onclick="UI.Tabs.switch('settings')">
-                <div class="relative">
-                    <div id="myAvatar" class="w-10 h-10 rounded-full bg-gradient-to-br from-wa-accent to-emerald-600 flex items-center justify-center font-bold text-white text-lg shadow-md group-hover:scale-105 transition-transform">?</div>
-                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-wa-panel"></div>
-                </div>
-                <div class="hidden sm:block">
-                    <p class="font-bold text-sm leading-none dark:text-gray-100" id="myDisplayNick">Lädt...</p>
-                    <p class="text-[10px] text-wa-accent font-bold mt-1 tracking-wide opacity-80">ONLINE</p>
+        <header class="h-[70px] px-4 flex items-center justify-between bg-white dark:bg-slate-950/50 backdrop-blur-md sticky top-0 z-30">
+            <div class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition" onclick="window.switchTab('settings')">
+                <img id="myAvatarImg" class="w-10 h-10 rounded-full object-cover bg-slate-200 dark:bg-slate-800">
+                <div>
+                    <h1 class="font-bold text-lg leading-none" id="myDisplayNick">Laden...</h1>
+                    <span class="text-[10px] font-bold text-wa-accent tracking-wider uppercase">Online</span>
                 </div>
             </div>
-            
-            <div class="flex items-center gap-2 text-gray-500">
-                <button onclick="UI.Modals.open('newGroupModal')" class="p-2.5 hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition" title="Neue Gruppe">
-                    <i data-lucide="users-round" class="w-5 h-5"></i>
-                </button>
-                <button onclick="UI.Tabs.switch('status')" class="p-2.5 hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition relative" title="Status">
-                    <i data-lucide="circle-dashed" class="w-5 h-5"></i>
-                    <span class="absolute top-2 right-2 w-2 h-2 bg-wa-accent rounded-full"></span>
-                </button>
-                
-                <div class="relative" id="sidebarMenuParent">
-                    <button onclick="document.getElementById('sidebarDropdown').classList.toggle('hidden')" class="p-2.5 hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition">
-                        <i data-lucide="more-vertical" class="w-5 h-5"></i>
-                    </button>
-                    <div id="sidebarDropdown" class="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-wa-panelHover rounded-lg shadow-xl border dark:border-gray-700 hidden z-50 py-1 animate-scale-in origin-top-right">
-                        <button onclick="UI.Tabs.switch('settings')" class="w-full text-left px-4 py-3 hover:bg-black/5 dark:hover:bg-white/5 text-sm flex gap-3"><i data-lucide="settings" class="w-4 h-4"></i> Einstellungen</button>
-                        <button onclick="UI.Tabs.switch('friends')" class="w-full text-left px-4 py-3 hover:bg-black/5 dark:hover:bg-white/5 text-sm flex gap-3"><i data-lucide="user-plus" class="w-4 h-4"></i> Kontakte</button>
-                        <div class="h-px bg-gray-200 dark:bg-gray-700 my-1"></div>
-                        <button onclick="Auth.logout()" class="w-full text-left px-4 py-3 hover:bg-red-500/10 text-red-500 text-sm flex gap-3"><i data-lucide="log-out" class="w-4 h-4"></i> Abmelden</button>
+            <div class="flex gap-1">
+                <button onclick="window.toggleModal('newGroupModal')" class="p-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-500 dark:text-slate-400"><i data-lucide="users-round" class="w-5 h-5"></i></button>
+                <div class="relative group">
+                    <button class="p-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-500 dark:text-slate-400"><i data-lucide="more-vertical" class="w-5 h-5"></i></button>
+                    <div class="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 hidden group-hover:block z-50 overflow-hidden animate-pop-in">
+                        <button onclick="window.switchTab('settings')" class="w-full text-left px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700 text-sm font-medium">Einstellungen</button>
+                        <button onclick="window.toggleModal('loginModal')" class="w-full text-left px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700 text-sm text-red-400 font-medium border-t dark:border-slate-700">Account wechseln</button>
                     </div>
                 </div>
             </div>
         </header>
 
-        <div class="p-2 bg-white dark:bg-wa-dark border-b dark:border-gray-800 z-10">
-            <div class="bg-gray-100 dark:bg-wa-panel flex items-center px-4 py-2 rounded-lg transition-all focus-within:ring-1 ring-wa-accent focus-within:bg-white dark:focus-within:bg-wa-panel">
-                <button id="searchBackBtn" class="hidden mr-2" onclick="Chat.clearSearch()"><i data-lucide="arrow-left" class="w-5 h-5 text-wa-accent"></i></button>
-                <i id="searchIcon" data-lucide="search" class="w-4 h-4 text-gray-400"></i>
-                <input id="searchInput" type="text" placeholder="Suchen oder neuer Chat..." class="bg-transparent text-sm w-full outline-none px-3 py-0.5 dark:text-white placeholder-gray-500" onkeyup="Chat.filterChats(this.value)" onfocus="document.getElementById('searchBackBtn').classList.remove('hidden'); document.getElementById('searchIcon').classList.add('hidden')">
+        <div class="px-4 pb-2">
+            <div class="bg-slate-100 dark:bg-slate-900 flex items-center px-4 py-2.5 rounded-xl border border-transparent focus-within:border-wa-accent focus-within:ring-1 focus-within:ring-wa-accent/50 transition-all">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+                <input id="searchInput" type="text" placeholder="Suchen..." class="bg-transparent text-sm w-full outline-none px-3 placeholder-slate-500 dark:text-white" onkeyup="window.filterChats()">
             </div>
         </div>
 
-        <div class="flex-1 overflow-y-auto custom-scrollbar relative bg-white dark:bg-wa-dark" id="sidebarContent">
-            
-            <div id="tab-chats" class="tab-content h-full">
-                <div id="archivedBtn" class="flex items-center gap-4 p-4 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition border-b dark:border-gray-800/50 hidden">
-                    <div class="w-10 h-10 flex items-center justify-center text-gray-500"><i data-lucide="archive" class="w-5 h-5"></i></div>
-                    <span class="font-bold text-sm">Archiviert</span>
-                </div>
-                <div id="chatListContainer" class="divide-y divide-gray-100 dark:divide-gray-800/30 pb-20">
-                    </div>
-            </div>
-            
-            <div id="tab-friends" class="hidden tab-content p-0">
-                <div class="bg-wa-panel p-5 m-4 rounded-xl border border-gray-700 shadow-lg relative overflow-hidden group">
-                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition"><i data-lucide="users" class="w-24 h-24 text-wa-accent"></i></div>
-                    <h4 class="text-xs font-bold text-wa-accent uppercase mb-3 flex items-center gap-2"><i data-lucide="user-plus" class="w-4 h-4"></i> Add User</h4>
-                    <div class="flex gap-2 relative z-10">
-                        <input id="friendSearchInput" type="text" class="flex-1 bg-black/20 text-white p-2.5 rounded-lg text-sm border border-gray-600 outline-none focus:border-wa-accent transition font-mono" placeholder="User ID (e.g., 7X9A...)">
-                        <button onclick="Contact.sendRequest()" class="bg-wa-accent hover:bg-wa-accentHover text-white p-2.5 rounded-lg shadow-md transition-all active:scale-95"><i data-lucide="send" class="w-5 h-5"></i></button>
-                    </div>
-                </div>
+        <div class="hidden md:flex px-4 gap-1 border-b border-slate-200 dark:border-slate-800/50 mb-2">
+            <button onclick="window.switchTab('chats')" id="dt-chats" class="flex-1 pb-3 text-sm font-bold border-b-2 border-transparent hover:text-wa-accent transition">Chats</button>
+            <button onclick="window.switchTab('calls')" id="dt-calls" class="flex-1 pb-3 text-sm font-bold border-b-2 border-transparent hover:text-wa-accent transition">Anrufe</button>
+            <button onclick="window.switchTab('friends')" id="dt-friends" class="flex-1 pb-3 text-sm font-bold border-b-2 border-transparent hover:text-wa-accent transition">Kontakte</button>
+        </div>
 
-                <div id="pendingContainer" class="hidden px-4 mb-4 animate-slide-up">
-                    <h4 class="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-2 px-2">Eingehende Anfragen</h4>
+        <div class="flex-1 overflow-y-auto custom-scrollbar relative">
+            <div id="tab-chats" class="tab-content h-full">
+                <div id="pinnedChats" class="hidden border-b border-dashed border-slate-200 dark:border-slate-800 mb-2 pb-2"></div>
+                <div id="chatListContainer" class="pb-20">
+                    <div class="flex flex-col items-center justify-center h-40 text-slate-500 gap-2">
+                        <div class="w-6 h-6 border-2 border-wa-accent border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-calls" class="hidden tab-content p-2 pb-20 space-y-2">
+                <h3 class="text-xs font-bold text-slate-500 uppercase px-4 mt-2">Anrufverlauf</h3>
+                <div id="callHistoryList" class="space-y-1"></div>
+            </div>
+
+            <div id="tab-friends" class="hidden tab-content p-4 pb-20 space-y-6">
+                 <div class="bg-slate-100 dark:bg-slate-900 p-4 rounded-2xl">
+                    <h4 class="text-xs font-bold text-wa-accent uppercase mb-2">Kontakt hinzufügen</h4>
+                    <div class="flex gap-2">
+                        <input id="friendSearchInput" type="text" class="flex-1 bg-white dark:bg-slate-800 p-2 rounded-lg text-sm outline-none" placeholder="ID eingeben...">
+                        <button onclick="window.sendRequest()" class="bg-wa-accent text-white p-2 rounded-lg"><i data-lucide="user-plus" class="w-5 h-5"></i></button>
+                    </div>
+                </div>
+                <div id="pendingContainer" class="hidden">
+                    <h4 class="text-[10px] font-bold text-orange-400 uppercase mb-2">Anfragen</h4>
                     <div id="pendingList" class="space-y-2"></div>
                 </div>
-
-                <div class="px-4">
-                    <h4 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 px-2">Alle Kontakte</h4>
-                    <div id="contactsList" class="space-y-1 pb-20"></div>
+                <div>
+                    <h4 class="text-[10px] font-bold text-slate-500 uppercase mb-2">Deine Kontakte</h4>
+                    <div id="contactsList" class="space-y-1"></div>
                 </div>
             </div>
 
-            <div id="tab-status" class="hidden tab-content p-4">
-                <div class="flex items-center gap-4 mb-6 cursor-pointer p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-xl transition" onclick="document.getElementById('statusIn').click()">
-                    <div class="relative">
-                         <div class="w-14 h-14 rounded-full border-2 border-dashed border-gray-500 flex items-center justify-center relative">
-                             <img id="myStatusPreview" class="w-full h-full object-cover rounded-full hidden">
-                             <i data-lucide="plus" class="w-6 h-6 text-gray-500"></i>
-                         </div>
-                         <div class="absolute bottom-0 right-0 bg-wa-accent rounded-full p-1 border-2 border-wa-dark"><i data-lucide="camera" class="w-3 h-3 text-white"></i></div>
+            <div id="tab-settings" class="hidden tab-content p-6 pb-20 space-y-6 animate-slide-up">
+                <div class="text-center">
+                    <div class="relative inline-block group cursor-pointer" onclick="document.getElementById('avatarIn').click()">
+                        <img id="setAvatarImg" class="w-24 h-24 rounded-full object-cover border-4 border-white dark:border-slate-800 shadow-xl">
+                        <div class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><i data-lucide="camera" class="text-white"></i></div>
                     </div>
-                    <div>
-                        <h3 class="font-bold text-sm">Mein Status</h3>
-                        <p class="text-xs text-gray-500">Tippe um Update zu senden</p>
-                    </div>
-                    <input type="file" id="statusIn" class="hidden" accept="image/*" onchange="Status.upload()">
-                </div>
-                <h4 class="text-[10px] font-bold text-gray-500 uppercase mb-4">Aktuelle Meldungen</h4>
-                <div id="statusList" class="space-y-4"></div>
-            </div>
-
-            <div id="tab-settings" class="hidden tab-content p-0 pb-20">
-                <div class="bg-wa-panelLight dark:bg-wa-panel p-8 text-center mb-4">
-                    <div class="relative w-28 h-28 mx-auto mb-4 group cursor-pointer" onclick="UI.Modals.open('avatarModal')">
-                         <div id="setAvatar" class="w-full h-full rounded-full bg-wa-accent flex items-center justify-center text-5xl text-white font-black shadow-xl ring-4 ring-wa-panelHover group-hover:opacity-80 transition">?</div>
-                         <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><i data-lucide="camera" class="w-8 h-8 text-white drop-shadow-md"></i></div>
-                    </div>
-                    <h2 class="text-xl font-bold dark:text-white" id="setNick">Gast</h2>
-                    <p class="text-xs text-gray-500" id="setBio">Loading bio...</p>
+                    <input type="file" id="avatarIn" class="hidden" accept="image/*" onchange="window.uploadAvatar()">
+                    <h2 class="text-xl font-bold mt-3" id="setNick">...</h2>
                 </div>
 
-                <div class="px-4 space-y-4">
-                    <div class="bg-white dark:bg-wa-panel rounded-xl overflow-hidden">
-                        <div class="p-4 border-b dark:border-gray-700">
-                            <label class="text-xs text-wa-accent font-bold uppercase block mb-1">Name</label>
-                            <div class="flex items-center gap-2">
-                                <input id="nickIn" type="text" class="w-full bg-transparent outline-none font-medium border-b border-transparent focus:border-wa-accent transition" placeholder="Dein Name">
-                                <i data-lucide="pencil" class="w-4 h-4 text-gray-500"></i>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <label class="text-xs text-wa-accent font-bold uppercase block mb-1">Bio</label>
-                            <div class="flex items-center gap-2">
-                                <input id="bioIn" type="text" class="w-full bg-transparent outline-none font-medium text-gray-400 border-b border-transparent focus:border-wa-accent transition" placeholder="Über mich">
-                                <i data-lucide="pencil" class="w-4 h-4 text-gray-500"></i>
-                            </div>
-                        </div>
-                        <button onclick="Auth.saveProfile()" class="w-full bg-wa-panelHover hover:bg-wa-accent py-3 text-xs font-bold uppercase transition text-gray-300 hover:text-white">Speichern</button>
-                    </div>
+                <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl space-y-3">
+                    <label class="text-xs font-bold text-slate-500 uppercase">Profil</label>
+                    <input id="nickIn" type="text" class="w-full bg-transparent border-b border-slate-300 dark:border-slate-700 py-2 text-sm font-medium outline-none focus:border-wa-accent transition" placeholder="Dein Name">
+                    <input id="bioIn" type="text" class="w-full bg-transparent border-b border-slate-300 dark:border-slate-700 py-2 text-sm font-medium outline-none focus:border-wa-accent transition" placeholder="Info">
+                    <button onclick="window.saveProfile()" class="w-full bg-wa-accent text-white py-2 rounded-lg text-xs font-bold uppercase shadow hover:bg-wa-accentHover transition">Speichern</button>
+                </div>
 
-                    <div class="bg-white dark:bg-wa-panel rounded-xl overflow-hidden p-2 space-y-1">
-                        <div class="flex items-center justify-between p-3 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg cursor-pointer" onclick="document.getElementById('notifyToggle').click()">
-                            <div class="flex items-center gap-3">
-                                <div class="p-2 bg-red-500/10 rounded-lg text-red-500"><i data-lucide="bell" class="w-5 h-5"></i></div>
-                                <span class="text-sm font-medium">Benachrichtigungen</span>
-                            </div>
-                            <input type="checkbox" id="notifyToggle" class="accent-wa-accent w-5 h-5 cursor-pointer" onchange="Settings.toggle('notify', this.checked)">
-                        </div>
-                        
-                        <div class="flex items-center justify-between p-3 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg cursor-pointer" onclick="document.getElementById('soundToggle').click()">
-                            <div class="flex items-center gap-3">
-                                <div class="p-2 bg-orange-500/10 rounded-lg text-orange-500"><i data-lucide="volume-2" class="w-5 h-5"></i></div>
-                                <span class="text-sm font-medium">Töne</span>
-                            </div>
-                            <input type="checkbox" id="soundToggle" class="accent-wa-accent w-5 h-5 cursor-pointer" onchange="Settings.toggle('sound', this.checked)">
-                        </div>
+                <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl flex items-center justify-between">
+                    <div><p class="text-sm font-bold">Benachrichtigungen</p><p class="text-xs text-slate-500">Push-Meldungen</p></div>
+                    <button onclick="window.requestNotifyPermission()" id="notifyBtn" class="text-xs bg-slate-200 dark:bg-slate-700 px-3 py-1 rounded-full font-bold">Aktivieren</button>
+                </div>
 
-                        <div class="flex items-center justify-between p-3 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg cursor-pointer" onclick="UI.Modals.open('wallpaperModal')">
-                            <div class="flex items-center gap-3">
-                                <div class="p-2 bg-purple-500/10 rounded-lg text-purple-500"><i data-lucide="image" class="w-5 h-5"></i></div>
-                                <span class="text-sm font-medium">Hintergrund</span>
-                            </div>
-                            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500"></i>
-                        </div>
+                <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl">
+                    <p class="text-xs font-bold text-slate-500 uppercase mb-2">Sicherheit</p>
+                    <div class="flex items-center gap-2 bg-slate-200 dark:bg-slate-800 p-2 rounded-lg mb-2">
+                        <code id="myFullId" class="text-xs flex-1 truncate font-mono select-all">---</code>
+                        <button onclick="window.copyMyId()" class="p-1"><i data-lucide="copy" class="w-4 h-4"></i></button>
                     </div>
-                    
-                    <div class="bg-white dark:bg-wa-panel rounded-xl p-4">
-                        <h4 class="text-xs font-bold text-gray-500 mb-2 uppercase"><i data-lucide="shield-check" class="w-3 h-3 inline mr-1"></i> Sicherheit</h4>
-                        <p class="text-[10px] text-gray-400 mb-2">Deine eindeutige ID (Tippen zum Kopieren):</p>
-                        <div onclick="Utils.copyId()" class="bg-black/20 p-3 rounded-lg font-mono text-xs break-all cursor-pointer hover:bg-black/40 transition flex justify-between items-center group">
-                            <span id="myFullId">---</span>
-                            <i data-lucide="copy" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition"></i>
-                        </div>
-                    </div>
+                    <button onclick="window.logoutAndClear()" class="w-full py-2 text-red-500 text-xs font-bold border border-red-500/20 rounded-lg hover:bg-red-500 hover:text-white transition">Vom Gerät löschen</button>
                 </div>
             </div>
         </div>
 
-        <nav class="md:hidden h-[65px] bg-wa-panel border-t dark:border-gray-800 flex justify-around items-center shrink-0 z-30 pb-safe shadow-[0_-5px_15px_rgba(0,0,0,0.3)]">
-            <button onclick="UI.Tabs.switch('chats')" id="mnav-chats" class="text-wa-accent flex flex-col items-center gap-1 p-2 rounded-xl transition active:scale-90"><i data-lucide="message-square" class="w-6 h-6"></i><span class="text-[10px] font-medium">Chats</span></button>
-            <button onclick="UI.Tabs.switch('status')" id="mnav-status" class="text-gray-500 flex flex-col items-center gap-1 p-2 rounded-xl transition active:scale-90"><i data-lucide="circle-dashed" class="w-6 h-6"></i><span class="text-[10px] font-medium">Status</span></button>
-            <button onclick="UI.Tabs.switch('friends')" id="mnav-friends" class="text-gray-500 flex flex-col items-center gap-1 p-2 rounded-xl transition active:scale-90"><i data-lucide="users" class="w-6 h-6"></i><span class="text-[10px] font-medium">Leute</span></button>
-            <button onclick="UI.Tabs.switch('settings')" id="mnav-settings" class="text-gray-500 flex flex-col items-center gap-1 p-2 rounded-xl transition active:scale-90"><i data-lucide="settings" class="w-6 h-6"></i><span class="text-[10px] font-medium">Profil</span></button>
+        <nav class="md:hidden h-[65px] bg-white dark:bg-slate-950 border-t dark:border-slate-900 flex justify-around items-center shrink-0 z-30 pb-safe">
+            <button onclick="window.switchTab('chats')" id="mnav-chats" class="flex flex-col items-center text-wa-accent"><i data-lucide="message-square" class="w-6 h-6"></i></button>
+            <button onclick="window.switchTab('calls')" id="mnav-calls" class="flex flex-col items-center text-slate-500"><i data-lucide="phone" class="w-6 h-6"></i></button>
+            <button onclick="window.switchTab('friends')" id="mnav-friends" class="flex flex-col items-center text-slate-500"><i data-lucide="users" class="w-6 h-6"></i></button>
+            <button onclick="window.switchTab('settings')" id="mnav-settings" class="flex flex-col items-center text-slate-500"><i data-lucide="settings" class="w-6 h-6"></i></button>
         </nav>
     </aside>
 
-    <main id="chatArea" class="hidden md:flex flex-1 flex-col h-full relative overflow-hidden bg-[#0b141a] z-30 transition-all duration-300">
+    <main id="chatArea" class="hidden md:flex flex-1 flex-col h-full relative overflow-hidden bg-slate-100 dark:bg-[#0b141a] z-30 transition-all">
         
-        <div id="chatBackground" class="absolute inset-0 z-0 chat-bg-pattern bg-[#0b141a] transition-all duration-500"></div>
-        <div class="absolute inset-0 z-0 bg-black/30 pointer-events-none"></div>
+        <div class="absolute inset-0 opacity-[0.05] pointer-events-none" style="background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-size: 400px;"></div>
 
-        <div id="noChatSelected" class="absolute inset-0 z-40 flex flex-col items-center justify-center bg-wa-panel border-l dark:border-gray-800 text-center p-10">
-            <div class="w-64 h-64 mb-6 opacity-80 animate-scale-in">
-                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="w-full h-full fill-wa-accent">
-                    <path d="M45.7,-76.3C58.9,-69.3,69.1,-55.5,76.1,-41.2C83.1,-26.9,86.9,-12.1,84.6,1.8C82.3,15.8,73.9,28.9,64.2,40.1C54.5,51.3,43.4,60.6,31.2,67.3C18.9,74,5.5,78.1,-7.1,76.8C-19.7,75.5,-31.5,68.9,-42.6,60.8C-53.7,52.7,-64.1,43.1,-71.4,31.5C-78.7,19.9,-82.9,6.3,-80.7,-6.3C-78.5,-18.9,-69.9,-30.5,-59.8,-40.4C-49.7,-50.3,-38.1,-58.5,-26.1,-66.1C-14.1,-73.7,-1.7,-80.7,11.3,-82.1C24.3,-83.5,32.5,-83.3,45.7,-76.3Z" transform="translate(100 100)" fill-opacity="0.1" />
-                    <circle cx="100" cy="100" r="50" fill="currentColor" fill-opacity="0.2" />
-                    <path d="M85 85 L115 85 L115 105 L100 120 L85 105 Z" fill="currentColor" />
-                </svg>
-            </div>
-            <h1 class="text-3xl font-light text-gray-200 mb-4">ShadowChat <span class="font-bold text-wa-accent">Ultimate</span></h1>
-            <p class="text-gray-400 text-sm max-w-md leading-relaxed">
-                Sende und empfange Nachrichten ohne Spuren.<br>
-                End-to-End Verschlüsselt. Schneller als Licht.
-            </p>
-            <div class="mt-8 flex gap-2 text-xs text-gray-600">
-                <i data-lucide="lock" class="w-3 h-3"></i> Ende-zu-Ende verschlüsselt
-            </div>
-        </div>
-
-        <header id="chatHeader" class="h-[64px] bg-wa-panelLight dark:bg-wa-panel flex items-center justify-between px-4 shrink-0 z-20 border-b dark:border-gray-800 shadow-sm backdrop-blur-md bg-opacity-95 hidden">
+        <header id="chatHeader" class="h-[70px] bg-white/90 dark:bg-slate-950/90 backdrop-blur-md flex items-center justify-between px-4 z-20 border-b dark:border-slate-800 shadow-sm">
             <div class="flex items-center gap-3">
-                <button onclick="UI.closeChatMobile()" class="md:hidden p-2 -ml-2 text-gray-400 hover:text-white transition"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
-                <div id="activeAvatar" class="w-10 h-10 rounded-full bg-gray-500 flex items-center justify-center text-white font-bold shadow-sm cursor-pointer hover:opacity-80 transition" onclick="UI.Modals.open('infoModal')">?</div>
-                <div class="cursor-pointer" onclick="UI.Modals.open('infoModal')">
-                    <h2 id="activeTitle" class="font-bold text-base leading-tight dark:text-gray-100">Chat</h2>
-                    <p id="activeSub" class="text-[11px] text-gray-400 font-medium truncate max-w-[150px] animate-fade-in flex items-center gap-1">Lade...</p>
+                <button onclick="window.closeChatMobile()" class="md:hidden p-2 -ml-2 text-slate-500"><i data-lucide="arrow-left"></i></button>
+                <img id="activeChatAvatar" class="w-10 h-10 rounded-full object-cover bg-slate-300 cursor-pointer" onclick="window.toggleModal('infoModal')">
+                <div class="cursor-pointer" onclick="window.toggleModal('infoModal')">
+                    <h2 id="activeChatTitle" class="font-bold text-base leading-tight">Chat</h2>
+                    <p id="activeChatSub" class="text-xs text-wa-accent font-medium truncate animate-fade-in">...</p>
                 </div>
             </div>
-            <div class="flex items-center gap-2 md:gap-4">
-                <button onclick="Call.initiate()" class="p-2.5 text-wa-accent hover:bg-wa-accent/10 rounded-full transition shadow-sm bg-transparent" title="Anruf starten">
-                    <i data-lucide="phone" class="w-5 h-5 fill-current"></i>
-                </button>
-                <button onclick="UI.Modals.open('infoModal')" class="p-2 text-gray-400 hover:text-white transition rounded-full hover:bg-white/10">
-                    <i data-lucide="search" class="w-5 h-5"></i>
-                </button>
-                <button onclick="document.getElementById('chatMenuDropdown').classList.toggle('hidden')" class="p-2 text-gray-400 hover:text-white transition rounded-full hover:bg-white/10 relative">
-                    <i data-lucide="more-vertical" class="w-5 h-5"></i>
-                    <div id="chatMenuDropdown" class="absolute right-0 top-full mt-2 w-48 bg-wa-panel rounded-lg shadow-xl border border-gray-700 hidden py-1 z-50 text-left">
-                        <div onclick="Chat.clearHistory()" class="px-4 py-2 hover:bg-white/5 text-sm cursor-pointer">Chat leeren</div>
-                        <div onclick="UI.Modals.open('wallpaperModal')" class="px-4 py-2 hover:bg-white/5 text-sm cursor-pointer">Hintergrund</div>
-                        <div onclick="Chat.leave()" class="px-4 py-2 hover:bg-red-500/10 text-red-500 text-sm cursor-pointer">Blockieren / Verlassen</div>
-                    </div>
-                </button>
+            <div class="flex items-center gap-3">
+                <button onclick="window.initiateCall()" class="p-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition text-wa-accent"><i data-lucide="phone" class="w-5 h-5 fill-current"></i></button>
+                <button onclick="window.toggleChatPin()" id="pinBtn" class="p-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-400"><i data-lucide="pin" class="w-5 h-5"></i></button>
+                <button onclick="window.toggleModal('infoModal')" class="p-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-400"><i data-lucide="info" class="w-5 h-5"></i></button>
             </div>
         </header>
 
-        <div id="messagesList" class="flex-1 overflow-y-auto p-4 md:px-12 lg:px-20 space-y-1 relative z-10 custom-scrollbar flex flex-col pb-4 scroll-smooth">
-            </div>
+        <div id="messagesList" class="flex-1 overflow-y-auto p-4 space-y-1 relative z-10 custom-scrollbar scroll-smooth"></div>
 
-        <button id="scrollDownBtn" onclick="UI.scrollToBottom()" class="absolute bottom-24 right-6 z-20 bg-wa-panel text-wa-accent p-3 rounded-full shadow-lg scale-0 transition-transform duration-200 hover:bg-gray-700 border border-gray-700">
-            <i data-lucide="chevron-down" class="w-5 h-5"></i>
-            <span id="unreadScrollBadge" class="absolute -top-1 -right-1 bg-wa-accent text-wa-dark text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center hidden"></span>
-        </button>
-
-        <div id="replyPreview" class="hidden bg-wa-panel/95 backdrop-blur-md border-l-4 border-wa-accent p-2 mx-2 mb-1 rounded-r-lg flex justify-between items-center animate-slide-up z-20 shadow-lg absolute bottom-[70px] left-0 right-0 md:left-4 md:right-4 max-w-4xl mx-auto">
-            <div class="overflow-hidden pl-2">
-                <p class="text-xs font-bold text-wa-accent mb-0.5" id="replyName">Name</p>
-                <p class="text-xs text-gray-300 line-clamp-1 opacity-80" id="replyText">Text...</p>
+        <div id="replyPreview" class="hidden bg-slate-50 dark:bg-slate-900 border-t dark:border-slate-800 p-2 px-4 flex justify-between items-center z-20 border-l-4 border-wa-accent">
+            <div class="overflow-hidden">
+                <p class="text-xs font-bold text-wa-accent" id="replyTargetName">Antwort an...</p>
+                <p class="text-xs text-slate-500 truncate" id="replyTargetText">Nachricht...</p>
             </div>
-            <button onclick="Chat.cancelReply()" class="p-2 hover:bg-black/20 rounded-full transition"><i data-lucide="x" class="w-4 h-4 text-gray-400"></i></button>
+            <button onclick="window.cancelReply()" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full"><i data-lucide="x" class="w-4 h-4"></i></button>
         </div>
 
-        <footer id="chatInputArea" class="p-2 md:p-3 bg-wa-panelLight dark:bg-wa-panel flex items-end gap-2 shrink-0 z-30 hidden border-t dark:border-gray-800">
+        <footer class="p-2 md:p-3 bg-white dark:bg-slate-950 flex items-end gap-2 z-20 border-t dark:border-slate-800">
+            <button onclick="document.getElementById('imgIn').click()" class="p-3 text-slate-500 hover:text-wa-accent transition"><i data-lucide="plus" class="w-6 h-6"></i></button>
+            <input type="file" id="imgIn" class="hidden" accept="image/*" onchange="window.handleImageUpload()">
             
-            <button onclick="document.getElementById('imgIn').click()" class="p-3 text-gray-500 hover:text-wa-accent transition rounded-full hover:bg-black/5 dark:hover:bg-white/5">
-                <i data-lucide="plus" class="w-6 h-6"></i>
+            <div class="flex-1 bg-slate-100 dark:bg-slate-900 rounded-2xl flex items-center px-4 py-2 min-h-[48px] focus-within:ring-2 ring-wa-accent/50 transition-all relative">
+                <textarea id="msgIn" placeholder="Nachricht..." class="w-full bg-transparent outline-none text-[15px] dark:text-white resize-none max-h-32 custom-scrollbar placeholder-slate-500 py-2" rows="1" oninput="window.autoGrow(this)" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault(); window.sendMsg();}"></textarea>
+            </div>
+            
+            <button id="micBtn" class="bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 p-3 rounded-full hover:bg-slate-300 dark:hover:bg-slate-700 transition" onmousedown="window.startRecording()" onmouseup="window.stopRecording()" ontouchstart="window.startRecording()" ontouchend="window.stopRecording()">
+                <i data-lucide="mic" class="w-5 h-5"></i>
             </button>
-            <input type="file" id="imgIn" class="hidden" accept="image/*" onchange="Chat.handleImageFile()">
             
-            <div class="flex-1 bg-white dark:bg-wa-dark rounded-2xl flex items-center px-4 py-2 min-h-[48px] shadow-sm ring-1 ring-transparent focus-within:ring-wa-accent/50 transition-all">
-                <textarea id="msgIn" placeholder="Nachricht" class="w-full bg-transparent outline-none text-[15px] dark:text-white px-1 py-1 resize-none max-h-32 custom-scrollbar placeholder-gray-500 leading-normal" rows="1" oninput="Chat.handleInput(this)" onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); Chat.send(); }"></textarea>
-            </div>
-            
-            <div class="relative w-12 h-12 flex items-center justify-center">
-                <button id="recordBtn" onmousedown="Recorder.start()" onmouseup="Recorder.stop()" ontouchstart="Recorder.start()" ontouchend="Recorder.stop()" class="absolute inset-0 bg-wa-panelHover rounded-full text-gray-400 hover:text-red-500 transition active:scale-95 flex items-center justify-center shadow-sm">
-                    <i data-lucide="mic" class="w-6 h-6"></i>
-                </button>
-                <button id="sendBtn" onclick="Chat.send()" class="absolute inset-0 bg-wa-accent text-white rounded-full shadow-lg hover:bg-wa-accentHover transition transform scale-0 flex items-center justify-center">
-                    <i data-lucide="send-horizontal" class="w-5 h-5 ml-0.5"></i>
-                </button>
-            </div>
+            <button id="sendBtn" onclick="window.sendMsg()" class="hidden bg-wa-accent text-white p-3 rounded-full hover:bg-wa-accentHover transition shadow-lg transform active:scale-90">
+                <i data-lucide="send-horizontal" class="w-5 h-5"></i>
+            </button>
         </footer>
 
-        <div id="recordingOverlay" class="hidden absolute bottom-24 left-1/2 -translate-x-1/2 bg-wa-panel px-8 py-4 rounded-full shadow-2xl flex items-center gap-6 animate-pulse-record border border-red-500/30 z-50 pointer-events-none">
-            <div class="flex items-center gap-2">
-                <div class="w-3 h-3 bg-red-500 rounded-full animate-bounce"></div>
-                <span id="recordTimer" class="font-mono text-red-500 font-bold text-lg">0:00</span>
-            </div>
-            <div class="h-8 w-px bg-gray-600"></div>
-            <span class="text-xs text-gray-300 font-medium tracking-wider uppercase">Loslassen zum Senden</span>
-        </div>
-
-        <div id="dropZone" class="hidden absolute inset-0 bg-wa-accent/10 z-50 flex items-center justify-center backdrop-blur-sm border-4 border-wa-accent border-dashed m-4 rounded-3xl">
-            <div class="text-center animate-bounce">
-                <i data-lucide="image-plus" class="w-16 h-16 text-wa-accent mx-auto mb-2"></i>
-                <h3 class="text-2xl font-bold text-wa-accent">Bild hier ablegen</h3>
-            </div>
+        <div id="recordingOverlay" class="absolute bottom-20 left-1/2 -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-4 hidden z-50 animate-pulse-rec">
+            <i data-lucide="mic" class="w-5 h-5 animate-bounce"></i>
+            <span class="font-bold tracking-widest" id="recTimer">0:00</span>
+            <span class="text-xs opacity-80 uppercase">Lassen zum Senden</span>
         </div>
     </main>
 
-    <div id="contextMenu" class="fixed hidden bg-wa-panel/95 rounded-xl shadow-2xl border dark:border-gray-700 py-1.5 z-[9999] min-w-[200px] backdrop-blur-xl bg-opacity-95 text-gray-200 transform scale-95 opacity-0">
-        <div class="px-4 py-2 text-[10px] text-gray-500 font-bold uppercase tracking-wider border-b border-gray-700 mb-1" id="ctxHeader">Nachricht</div>
-        <button onclick="Chat.ctxAction('reply')" class="w-full text-left px-4 py-2.5 hover:bg-white/5 flex items-center gap-3 text-sm transition"><i data-lucide="reply" class="w-4 h-4"></i> Antworten</button>
-        <button onclick="Chat.ctxAction('forward')" class="w-full text-left px-4 py-2.5 hover:bg-white/5 flex items-center gap-3 text-sm transition"><i data-lucide="forward" class="w-4 h-4"></i> Weiterleiten</button>
-        <button onclick="Chat.ctxAction('copy')" class="w-full text-left px-4 py-2.5 hover:bg-white/5 flex items-center gap-3 text-sm transition"><i data-lucide="copy" class="w-4 h-4"></i> Kopieren</button>
-        <div class="h-px bg-gray-700 my-1 mx-2"></div>
-        <button onclick="Chat.ctxAction('deleteMe')" class="w-full text-left px-4 py-2.5 hover:bg-white/5 flex items-center gap-3 text-sm text-red-400 transition"><i data-lucide="trash" class="w-4 h-4"></i> Für mich löschen</button>
-        <button id="ctxDelAll" onclick="Chat.ctxAction('deleteAll')" class="w-full text-left px-4 py-2.5 hover:bg-red-500/20 flex items-center gap-3 text-sm text-red-500 hidden transition"><i data-lucide="trash-2" class="w-4 h-4"></i> Für alle löschen</button>
+    <div id="callOverlay" class="hidden fixed inset-0 z-[200] flex flex-col items-center justify-between py-12 px-6 bg-slate-900/90 backdrop-blur-xl text-white animate-fade-in">
+        <div class="mt-10 text-center">
+            <div class="inline-flex items-center gap-2 bg-white/10 px-4 py-1 rounded-full text-xs font-bold mb-8 backdrop-blur-md">
+                <i data-lucide="lock" class="w-3 h-3"></i> End-to-End Encrypted
+            </div>
+            <img id="callAvatar" class="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-white/10 shadow-2xl object-cover bg-slate-700">
+            <h2 id="callName" class="text-3xl font-black mb-2">...</h2>
+            <p id="callStatus" class="text-lg text-slate-400 animate-pulse">Verbinden...</p>
+        </div>
+
+        <div id="activeCallControls" class="hidden grid grid-cols-3 gap-6 mb-10">
+            <button onclick="window.toggleMute()" id="muteBtn" class="flex flex-col items-center gap-2 group"><div class="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition"><i data-lucide="mic" class="w-6 h-6"></i></div><span class="text-xs">Stumm</span></button>
+            <button onclick="window.hangUpCall()" class="col-start-2 w-16 h-16 rounded-full bg-red-500 flex items-center justify-center shadow-lg hover:scale-110 transition"><i data-lucide="phone-off" class="w-8 h-8 fill-current"></i></button>
+        </div>
+
+        <div id="incomingCallControls" class="hidden flex items-center gap-10 mb-10">
+            <button onclick="window.hangUpCall()" class="flex flex-col items-center gap-2"><div class="w-16 h-16 rounded-full bg-red-500 flex items-center justify-center shadow-lg hover:scale-110 transition"><i data-lucide="x" class="w-8 h-8"></i></div><span class="text-sm font-bold">Ablehnen</span></button>
+            <button onclick="window.answerCall()" class="flex flex-col items-center gap-2"><div class="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center shadow-lg hover:scale-110 transition animate-bounce"><i data-lucide="phone" class="w-8 h-8 fill-current"></i></div><span class="text-sm font-bold">Annehmen</span></button>
+        </div>
+    </div>
+
+    <div id="msgContextMenu" class="hidden fixed inset-0 z-[100] z-[100] flex items-end sm:items-center justify-center sm:justify-center p-4" onclick="window.closeContextMenu(event)">
+        <div class="glass-modal absolute inset-0"></div>
+        <div class="bg-white dark:bg-slate-800 w-full max-w-xs rounded-2xl p-2 shadow-2xl relative z-10 animate-slide-up sm:animate-pop-in space-y-1">
+            <button onclick="window.ctxAction('reply')" class="w-full flex items-center gap-3 p-3 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition text-left text-sm font-bold"><i data-lucide="reply" class="w-4 h-4 text-wa-accent"></i> Antworten</button>
+            <button onclick="window.ctxAction('forward')" class="w-full flex items-center gap-3 p-3 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition text-left text-sm font-bold"><i data-lucide="forward" class="w-4 h-4 text-blue-500"></i> Weiterleiten</button>
+            <button onclick="window.ctxAction('copy')" class="w-full flex items-center gap-3 p-3 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition text-left text-sm font-bold"><i data-lucide="copy" class="w-4 h-4 text-slate-500"></i> Kopieren</button>
+            <button id="ctxDeleteBtn" onclick="window.ctxAction('delete')" class="w-full flex items-center gap-3 p-3 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-xl transition text-left text-sm font-bold text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i> Löschen (Für alle)</button>
+        </div>
+    </div>
+
+    <div id="forwardModal" class="hidden fixed inset-0 z-[110] glass-modal flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 w-full max-w-sm rounded-2xl p-4 shadow-2xl max-h-[70vh] flex flex-col">
+            <h3 class="font-bold text-lg mb-4 px-2">Weiterleiten an...</h3>
+            <div id="forwardList" class="flex-1 overflow-y-auto space-y-2 custom-scrollbar"></div>
+            <button onclick="window.toggleModal('forwardModal')" class="mt-4 w-full py-3 bg-slate-200 dark:bg-slate-700 rounded-xl font-bold text-sm">Abbrechen</button>
+        </div>
     </div>
 
     <div id="newGroupModal" class="hidden fixed inset-0 z-[100] glass-modal flex items-center justify-center p-4">
-        <div class="bg-wa-panel w-full max-w-sm rounded-2xl p-6 shadow-2xl border dark:border-gray-700 transform scale-95 opacity-0 transition-all duration-300" id="newGroupContent">
-            <h3 class="text-xl font-black mb-1 dark:text-white">Neue Gruppe</h3>
-            <p class="text-xs text-gray-400 mb-6">Erstelle einen Raum für deine Freunde.</p>
+        <div class="bg-white dark:bg-slate-800 w-full max-w-sm rounded-3xl p-6 shadow-2xl">
+            <h3 class="text-xl font-black mb-4">Neue Gruppe</h3>
             <div class="space-y-4">
-                <input id="ng_name" type="text" class="w-full bg-wa-dark p-4 rounded-xl outline-none border border-gray-700 focus:border-wa-accent focus:ring-1 ring-wa-accent transition" placeholder="Gruppenname (z.B. Die Coolen)">
-                <input id="ng_pass" type="password" class="w-full bg-wa-dark p-4 rounded-xl outline-none border border-gray-700 focus:border-wa-accent transition" placeholder="Passwort (Optional)">
-            </div>
-            <div class="flex justify-end gap-3 mt-8">
-                <button onclick="UI.Modals.close('newGroupModal')" class="px-5 py-2 text-gray-400 hover:text-white font-medium text-sm transition">Abbrechen</button>
-                <button onclick="Chat.createGroup()" class="bg-wa-accent px-6 py-2.5 rounded-xl text-white font-bold shadow-lg hover:bg-wa-accentHover active:scale-95 transition">Erstellen</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="forwardModal" class="hidden fixed inset-0 z-[100] glass-modal flex items-center justify-center p-4">
-        <div class="bg-wa-panel w-full max-w-sm rounded-2xl p-0 shadow-2xl border dark:border-gray-700 flex flex-col max-h-[70vh] overflow-hidden transform scale-95 opacity-0 transition-all" id="forwardContent">
-            <div class="p-4 border-b border-gray-700 bg-wa-panelLight dark:bg-wa-panel">
-                <h3 class="font-bold flex items-center gap-2"><i data-lucide="forward" class="w-5 h-5 text-wa-accent"></i> Weiterleiten an...</h3>
-            </div>
-            <div id="forwardList" class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1"></div>
-            <div class="p-3 bg-wa-panel border-t border-gray-700">
-                <button onclick="UI.Modals.close('forwardModal')" class="w-full bg-gray-700 py-2 rounded-lg text-sm font-bold hover:bg-gray-600">Abbrechen</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="wallpaperModal" class="hidden fixed inset-0 z-[100] glass-modal flex items-center justify-center p-4">
-        <div class="bg-wa-panel w-full max-w-md rounded-3xl p-6 shadow-2xl border border-gray-700 transform scale-95 opacity-0 transition-all" id="wallpaperContent">
-            <h3 class="text-xl font-bold mb-4">Chat Hintergrund</h3>
-            <div class="grid grid-cols-4 gap-3 mb-6">
-                <div class="aspect-square rounded-lg bg-[#0b141a] cursor-pointer border-2 border-transparent hover:border-wa-accent relative" onclick="UI.setWallpaper('default')">
-                    <div class="absolute inset-0 opacity-10 bg-[url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png')] bg-[length:200px]"></div>
+                <input id="ng_name" type="text" class="w-full bg-slate-100 dark:bg-slate-900 p-3 rounded-xl outline-none" placeholder="Gruppenname">
+                <input id="ng_pass" type="text" class="w-full bg-slate-100 dark:bg-slate-900 p-3 rounded-xl outline-none" placeholder="Passwort (Optional)">
+                <div class="flex gap-2 mt-4">
+                    <button onclick="window.toggleModal('newGroupModal')" class="flex-1 py-3 text-slate-500 font-bold">Abbrechen</button>
+                    <button onclick="window.createGrp()" class="flex-1 bg-wa-accent text-white rounded-xl font-bold shadow-lg">Erstellen</button>
                 </div>
-                <div class="aspect-square rounded-lg bg-[#000000] cursor-pointer border-2 border-transparent hover:border-wa-accent" onclick="UI.setWallpaper('#000000')"></div>
-                <div class="aspect-square rounded-lg bg-[#222e35] cursor-pointer border-2 border-transparent hover:border-wa-accent" onclick="UI.setWallpaper('#222e35')"></div>
-                <div class="aspect-square rounded-lg bg-gradient-to-br from-indigo-900 to-purple-800 cursor-pointer border-2 border-transparent hover:border-wa-accent" onclick="UI.setWallpaper('linear-gradient(to bottom right, #312e81, #581c87)')"></div>
-                <div class="aspect-square rounded-lg bg-gradient-to-tr from-emerald-900 to-teal-800 cursor-pointer border-2 border-transparent hover:border-wa-accent" onclick="UI.setWallpaper('linear-gradient(to top right, #064e3b, #115e59)')"></div>
-                <div class="aspect-square rounded-lg bg-[#4a044e] cursor-pointer border-2 border-transparent hover:border-wa-accent" onclick="UI.setWallpaper('#4a044e')"></div>
+                <div class="border-t dark:border-slate-700 pt-4 mt-2">
+                     <p class="text-xs font-bold text-slate-500 mb-2">Oder beitreten:</p>
+                     <div class="flex gap-2">
+                        <input id="jg_id" type="text" class="flex-1 bg-slate-100 dark:bg-slate-900 p-2 rounded-lg text-xs font-mono uppercase" placeholder="8-Stellige ID">
+                        <button onclick="window.joinGrp()" class="bg-slate-700 text-white px-4 rounded-lg text-xs font-bold">Join</button>
+                     </div>
+                </div>
             </div>
-            <button onclick="UI.Modals.close('wallpaperModal')" class="w-full py-3 bg-gray-700 rounded-xl font-bold text-sm">Schließen</button>
+        </div>
+    </div>
+
+    <div id="loginModal" class="hidden fixed inset-0 z-[100] glass-modal flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 w-full max-w-sm rounded-3xl p-6 shadow-2xl relative">
+            <button onclick="window.toggleModal('loginModal')" class="absolute top-4 right-4"><i data-lucide="x"></i></button>
+            <h3 class="text-xl font-black mb-6">Account wiederherstellen</h3>
+            <div class="space-y-3">
+                <input id="login_id" type="text" placeholder="User ID" class="w-full bg-slate-100 dark:bg-slate-900 p-3 rounded-xl outline-none font-mono text-center">
+                <input id="login_pass" type="password" placeholder="Passwort" class="w-full bg-slate-100 dark:bg-slate-900 p-3 rounded-xl outline-none font-mono text-center">
+                <button onclick="window.recoverAccount()" class="w-full bg-wa-accent text-white py-3 rounded-xl font-bold shadow-lg mt-4">Login</button>
+            </div>
         </div>
     </div>
 
     <div id="infoModal" class="hidden fixed inset-0 z-[100] glass-modal flex items-center justify-center p-4">
-        <div class="bg-wa-panel w-full max-w-md rounded-[32px] overflow-hidden shadow-2xl relative flex flex-col max-h-[85vh] transform scale-95 opacity-0 transition-all" id="infoContent">
-            <div class="h-40 bg-gradient-to-br from-wa-accent to-emerald-800 relative flex items-end p-6 shrink-0">
-                <button onclick="UI.Modals.close('infoModal')" class="absolute top-4 right-4 bg-black/20 text-white hover:bg-black/40 p-2 rounded-full transition backdrop-blur-sm"><i data-lucide="x" class="w-5 h-5"></i></button>
-                <div id="infoAvaLarge" class="w-24 h-24 rounded-2xl bg-white/10 backdrop-blur-md border border-white/30 text-white flex items-center justify-center text-4xl font-black shadow-2xl translate-y-8">?</div>
+        <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh]">
+            <div class="relative h-32 bg-wa-accent/20">
+                <button onclick="window.toggleModal('infoModal')" class="absolute top-4 right-4 bg-black/20 text-white p-2 rounded-full"><i data-lucide="x" class="w-4 h-4"></i></button>
             </div>
-            <div class="p-6 pt-12 flex-1 overflow-y-auto custom-scrollbar bg-wa-panel">
-                <h3 id="infoTit" class="text-2xl font-black mb-1 dark:text-white">Name</h3>
-                <p id="infoBio" class="text-sm text-gray-400 mb-4 italic">Loading...</p>
-                <div class="bg-black/20 p-3 rounded-lg mb-6 flex justify-between items-center">
-                    <span class="text-xs font-mono text-gray-400" id="infoId">ID: ---</span>
-                    <i data-lucide="copy" class="w-4 h-4 text-gray-500 cursor-pointer hover:text-white" onclick="navigator.clipboard.writeText(document.getElementById('infoId').innerText.split(' ')[1]); UI.toast('ID kopiert')"></i>
-                </div>
-                <h4 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4 border-b border-gray-700 pb-2">Teilnehmer</h4>
-                <div id="infoMemberList" class="space-y-3 mb-6"></div>
+            <div class="px-6 -mt-10 mb-4 flex flex-col items-center">
+                <img id="infoAvatar" class="w-24 h-24 rounded-full border-4 border-white dark:border-slate-800 shadow-xl object-cover bg-slate-500">
+                <h2 id="infoTitle" class="text-xl font-black mt-2 text-center">...</h2>
+                <p id="infoSub" class="text-xs text-slate-500">...</p>
+                <div id="infoIdBadge" class="mt-2 text-[10px] font-mono bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded select-all">ID</div>
             </div>
-            <div class="p-4 bg-wa-dark border-t border-gray-800 shrink-0">
-                <button onclick="Chat.leave()" class="w-full py-3 rounded-xl border border-red-500/30 text-red-500 font-bold hover:bg-red-500 hover:text-white transition flex items-center justify-center gap-2">
-                    <i data-lucide="log-out" class="w-4 h-4"></i> Chat verlassen
-                </button>
+            <div class="flex-1 overflow-y-auto px-6 custom-scrollbar">
+                <h4 class="text-xs font-bold text-slate-500 uppercase mb-3">Teilnehmer & Admins</h4>
+                <div id="infoMemberList" class="space-y-2 pb-4"></div>
             </div>
-        </div>
-    </div>
-
-    <div id="callOverlay" class="hidden fixed inset-0 z-[200] bg-wa-dark flex flex-col items-center justify-between py-12 px-6 transition-all duration-500 opacity-0">
-        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-        <div class="text-center mt-10 relative z-10 w-full">
-            <div class="inline-flex items-center gap-2 text-gray-400 text-xs mb-12 bg-white/5 py-1.5 px-4 rounded-full border border-white/5 backdrop-blur-md">
-                <i data-lucide="lock" class="w-3 h-3 text-wa-accent"></i> End-to-End Verschlüsselt
+            <div class="p-4 border-t dark:border-slate-700" id="infoActions">
+                <button onclick="window.leaveChat()" class="w-full py-3 rounded-xl text-red-500 font-bold bg-red-50 dark:bg-red-900/10 hover:bg-red-100 transition flex justify-center gap-2"><i data-lucide="log-out" class="w-5 h-5"></i> <span id="leaveText">Verlassen</span></button>
             </div>
-            <div class="relative w-40 h-40 mx-auto mb-8">
-                <div class="absolute inset-0 bg-wa-accent/20 rounded-full animate-ping"></div>
-                <div id="callAva" class="w-40 h-40 rounded-full bg-gradient-to-b from-gray-700 to-gray-800 flex items-center justify-center text-6xl font-bold shadow-2xl relative z-10 border-4 border-wa-dark">?</div>
-            </div>
-            <h2 id="callName" class="text-3xl font-bold mb-2 text-white">Unbekannt</h2>
-            <p id="callStatus" class="text-lg text-wa-accent font-medium animate-pulse">Verbinden...</p>
-        </div>
-
-        <div id="incomingCallControls" class="w-full max-w-sm flex justify-between px-8 hidden relative z-10">
-            <button onclick="Call.hangup()" class="flex flex-col items-center gap-3 group">
-                <div class="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition duration-300">
-                    <i data-lucide="phone-off" class="w-8 h-8 text-white fill-current"></i>
-                </div>
-                <span class="text-sm font-medium">Ablehnen</span>
-            </button>
-            <button onclick="Call.answer()" class="flex flex-col items-center gap-3 group">
-                <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg animate-bounce group-hover:scale-110 transition duration-300">
-                    <i data-lucide="phone" class="w-8 h-8 text-white fill-current"></i>
-                </div>
-                <span class="text-sm font-medium">Annehmen</span>
-            </button>
-        </div>
-
-        <div id="activeCallControls" class="w-full max-w-sm grid grid-cols-3 gap-6 hidden relative z-10 place-items-center">
-            <button onclick="Call.toggleMute()" id="btnMute" class="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition backdrop-blur-md">
-                <i data-lucide="mic" class="w-6 h-6"></i>
-            </button>
-            <button onclick="Call.hangup()" class="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center shadow-xl hover:bg-red-600 transition scale-110">
-                <i data-lucide="phone-off" class="w-8 h-8 text-white fill-current"></i>
-            </button>
-            <button class="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition backdrop-blur-md opacity-50 cursor-not-allowed">
-                <i data-lucide="video-off" class="w-6 h-6"></i>
-            </button>
         </div>
     </div>
 
     <script type="module">
-        // ---------------------------------------------------------
-        // 1. IMPORTS & CONFIGURATION
-        // ---------------------------------------------------------
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, getDoc, setDoc, arrayUnion, arrayRemove, where, deleteDoc, writeBatch, limit, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, getDoc, setDoc, arrayUnion, arrayRemove, where, deleteDoc, writeBatch, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-        const CONFIG = {
-            firebase: {
-                apiKey: "AIzaSyBC_O4jysYWBVuSeLJ6-ylx8OXrHBKQjfc",
-                authDomain: "shadowchat-e94f0.firebaseapp.com",
-                projectId: "shadowchat-e94f0",
-                storageBucket: "shadowchat-e94f0.firebasestorage.app",
-                messagingSenderId: "555331269217",
-                appId: "1:555331269217:web:872ef3fddca93db0957020"
-            },
-            imgbbKey: "bd8f03312d551a4e7c4973f6af975396",
-            rtc: { iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }] }
+        // --- KONFIGURATION ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBC_O4jysYWBVuSeLJ6-ylx8OXrHBKQjfc",
+            authDomain: "shadowchat-e94f0.firebaseapp.com",
+            projectId: "shadowchat-e94f0",
+            storageBucket: "shadowchat-e94f0.firebasestorage.app", // WICHTIG: Storage Bucket muss in Console aktiviert sein
+            messagingSenderId: "555331269217",
+            appId: "1:555331269217:web:872ef3fddca93db0957020"
         };
 
-        const app = initializeApp(CONFIG.firebase);
+        const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
         const storage = getStorage(app);
-
-        // ---------------------------------------------------------
-        // 2. STATE STORE (Centralized Data)
-        // ---------------------------------------------------------
-        const Store = {
-            user: null,
-            uid: null,
-            nick: "Gast",
-            activeChatId: null,
-            isPrivateChat: false,
-            chatsCache: [],
-            friendsCache: [],
-            customNames: {},
-            replyTarget: null,
-            ctxMessage: null,
-            typingTimeout: null,
-            mediaRecorder: null,
-            audioChunks: [],
-            recordStartTime: 0,
-            recordInterval: null,
-            settings: {
-                sound: localStorage.getItem('sc_sound') !== 'false',
-                notify: localStorage.getItem('sc_notify') === 'true',
-                wallpaper: localStorage.getItem('sc_wallpaper') || 'default'
-            },
-            listeners: { chat: null, user: null, call: null }
-        };
-
-        // ---------------------------------------------------------
-        // 3. UTILITIES & HELPERS
-        // ---------------------------------------------------------
-        const Utils = {
-            formatTime: (date) => {
-                if (!date) return '';
-                const d = date instanceof Date ? date : date.toDate();
-                const now = new Date();
-                const diff = now - d;
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                
-                if (days === 0) return d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                if (days === 1) return 'Gestern';
-                if (days < 7) return d.toLocaleDateString([], {weekday: 'short'});
-                return d.toLocaleDateString([], {day: '2-digit', month: '2-digit', year: '2-digit'});
-            },
-            generateId: () => Math.random().toString(36).substr(2, 9),
-            copyId: () => {
-                navigator.clipboard.writeText(Store.uid);
-                UI.toast("ID in die Zwischenablage kopiert", "success");
-            },
-            vibrate: (pattern) => {
-                if (navigator.vibrate) navigator.vibrate(pattern);
-            },
-            playAudio: (id) => {
-                if (!Store.settings.sound) return;
-                const el = document.getElementById(id);
-                if (el) { el.currentTime = 0; el.play().catch(e => console.warn("Audio play failed", e)); }
-            },
-            sanitize: (str) => {
-                const div = document.createElement('div');
-                div.textContent = str;
-                return div.innerHTML;
-            }
-        };
-
-        // ---------------------------------------------------------
-        // 4. UI MANAGER
-        // ---------------------------------------------------------
-        const UI = {
-            init: () => {
-                lucide.createIcons();
-                UI.setWallpaper(Store.settings.wallpaper);
-                document.getElementById('notifyToggle').checked = Store.settings.notify;
-                document.getElementById('soundToggle').checked = Store.settings.sound;
-                
-                // Drag & Drop
-                const dz = document.getElementById('dropZone');
-                window.addEventListener('dragenter', () => dz.classList.remove('hidden'));
-                dz.addEventListener('dragleave', (e) => { if(e.target===dz) dz.classList.add('hidden'); });
-                dz.addEventListener('drop', (e) => {
-                    e.preventDefault(); dz.classList.add('hidden');
-                    if(e.dataTransfer.files[0]) Chat.uploadImage(e.dataTransfer.files[0]);
-                });
-                window.addEventListener('dragover', e => e.preventDefault());
-            },
-            
-            toast: (msg, type = 'info') => {
-                const con = document.getElementById('toastContainer');
-                const el = document.createElement('div');
-                const colors = { 
-                    info: 'border-wa-accent', 
-                    error: 'border-red-500', 
-                    success: 'border-green-500' 
-                };
-                const icons = {
-                    info: 'info',
-                    error: 'alert-triangle',
-                    success: 'check-circle'
-                };
-                
-                el.className = `bg-wa-panel text-white p-4 rounded-lg shadow-2xl border-l-4 ${colors[type]} flex items-center gap-3 min-w-[300px] animate-slide-in-right backdrop-blur-md`;
-                el.innerHTML = `<i data-lucide="${icons[type]}" class="w-5 h-5"></i><span class="text-sm font-medium">${msg}</span>`;
-                con.appendChild(el);
-                lucide.createIcons();
-                
-                setTimeout(() => {
-                    el.classList.add('animate-fade-out');
-                    setTimeout(() => el.remove(), 300);
-                }, 3500);
-            },
-
-            Tabs: {
-                switch: (tabName) => {
-                    // Update main view
-                    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-                    document.getElementById(`tab-${tabName}`).classList.remove('hidden');
-                    document.getElementById(`tab-${tabName}`).classList.add('animate-fade-in');
-                    
-                    // Update mobile nav
-                    document.querySelectorAll('nav button').forEach(btn => {
-                        btn.className = "text-gray-500 flex flex-col items-center gap-1 p-2 transition";
-                    });
-                    const activeBtn = document.getElementById(`mnav-${tabName}`);
-                    if (activeBtn) activeBtn.className = "text-wa-accent flex flex-col items-center gap-1 p-2 transition bg-wa-accent/10 rounded-xl";
-                    
-                    lucide.createIcons();
-                }
-            },
-
-            Modals: {
-                open: (id) => {
-                    const m = document.getElementById(id);
-                    const c = m.firstElementChild; // Content div
-                    m.classList.remove('hidden');
-                    // Animation Logic
-                    requestAnimationFrame(() => {
-                        m.style.opacity = "1";
-                        if(c) { c.style.opacity = "1"; c.style.transform = "scale(1)"; }
-                    });
-                },
-                close: (id) => {
-                    const m = document.getElementById(id);
-                    const c = m.firstElementChild;
-                    m.style.opacity = "0";
-                    if(c) { c.style.opacity = "0"; c.style.transform = "scale(0.95)"; }
-                    setTimeout(() => m.classList.add('hidden'), 300);
-                }
-            },
-
-            Lightbox: {
-                open: (src, sender) => {
-                    const lb = document.getElementById('lightbox');
-                    const img = document.getElementById('lightbox-img');
-                    img.src = src;
-                    document.getElementById('lb-sender').innerText = sender;
-                    lb.classList.remove('hidden');
-                    setTimeout(() => { lb.classList.remove('opacity-0'); img.style.transform = "scale(1)"; }, 10);
-                },
-                close: () => {
-                    const lb = document.getElementById('lightbox');
-                    lb.classList.add('opacity-0');
-                    document.getElementById('lightbox-img').style.transform = "scale(0.9)";
-                    setTimeout(() => { lb.classList.add('hidden'); document.getElementById('lightbox-img').src = ""; }, 300);
-                },
-                download: () => {
-                    const link = document.createElement('a');
-                    link.href = document.getElementById('lightbox-img').src;
-                    link.download = `ShadowChat_Img_${Date.now()}.jpg`;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                }
-            },
-
-            scrollToBottom: (smooth = true) => {
-                const list = document.getElementById('messagesList');
-                list.scrollTo({ top: list.scrollHeight, behavior: smooth ? 'smooth' : 'auto' });
-                document.getElementById('scrollDownBtn').style.transform = 'scale(0)';
-            },
-
-            setWallpaper: (val) => {
-                const bg = document.getElementById('chatBackground');
-                if (val === 'default') {
-                    bg.style.backgroundImage = "url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png')";
-                    bg.style.background = "#0b141a";
-                } else if (val.startsWith('linear')) {
-                    bg.style.background = val;
-                } else {
-                    bg.style.backgroundImage = 'none';
-                    bg.style.backgroundColor = val;
-                }
-                Store.settings.wallpaper = val;
-                localStorage.setItem('sc_wallpaper', val);
-            },
-
-            closeChatMobile: () => {
-                document.getElementById('chatArea').classList.add('hidden');
-                document.getElementById('mainSidebar').classList.remove('hidden');
-                Store.activeChatId = null;
-                if(Store.listeners.chat) Store.listeners.chat();
-            }
-        };
-
-        // ---------------------------------------------------------
-        // 5. AUTH MANAGER
-        // ---------------------------------------------------------
-        const Auth = {
-            init: () => {
-                onAuthStateChanged(auth, async (u) => {
-                    const loader = document.getElementById('globalLoader');
-                    
-                    if (u) {
-                        Store.user = u;
-                        Store.uid = localStorage.getItem('sc_uid') || u.uid;
-                        if (!localStorage.getItem('sc_uid')) localStorage.setItem('sc_uid', u.uid);
-
-                        // Load User Doc or Create
-                        const userRef = doc(db, "users", Store.uid);
-                        const snap = await getDoc(userRef);
-
-                        if (!snap.exists()) {
-                            Store.nick = "User-" + Utils.generateId();
-                            await setDoc(userRef, {
-                                uid: Store.uid,
-                                nickname: Store.nick,
-                                bio: "Hey! Ich nutze ShadowChat.",
-                                online: true,
-                                lastSeen: serverTimestamp(),
-                                friends: [],
-                                incoming: []
-                            });
-                        } else {
-                            const d = snap.data();
-                            Store.nick = d.nickname;
-                            Store.customNames = d.customNames || {};
-                            document.getElementById('nickIn').value = d.nickname;
-                            document.getElementById('bioIn').value = d.bio || "";
-                            document.getElementById('setBio').innerText = d.bio || "Keine Bio";
-                        }
-
-                        // Presence System
-                        updateDoc(userRef, { online: true });
-                        document.addEventListener("visibilitychange", () => {
-                            updateDoc(userRef, { online: document.visibilityState === 'visible', lastSeen: serverTimestamp() });
-                        });
-                        window.addEventListener("beforeunload", () => {
-                            updateDoc(userRef, { online: false, lastSeen: serverTimestamp() });
-                        });
-
-                        // Update UI
-                        document.getElementById('myAvatar').innerText = Store.nick[0].toUpperCase();
-                        document.getElementById('setAvatar').innerText = Store.nick[0].toUpperCase();
-                        document.getElementById('myDisplayNick').innerText = Store.nick;
-                        document.getElementById('setNick').innerText = Store.nick;
-                        document.getElementById('myFullId').innerText = Store.uid;
-
-                        // Start Listeners
-                        Chat.loadChats();
-                        Contact.loadContacts();
-                        Call.listen();
-                        
-                        // Hide Loader
-                        loader.style.opacity = "0";
-                        setTimeout(() => loader.remove(), 500);
-
-                    } else {
-                        signInAnonymously(auth).catch(e => {
-                            UI.toast("Login fehlgeschlagen: " + e.message, "error");
-                        });
-                    }
-                });
-            },
-            saveProfile: async () => {
-                const n = document.getElementById('nickIn').value.trim();
-                const b = document.getElementById('bioIn').value.trim();
-                if (n) {
-                    await updateDoc(doc(db, "users", Store.uid), { nickname: n, bio: b });
-                    UI.toast("Profil gespeichert", "success");
-                    location.reload();
-                }
-            },
-            logout: () => {
-                if(confirm("Abmelden? Lokale ID wird gelöscht.")) {
-                    localStorage.removeItem('sc_uid');
-                    location.reload();
-                }
-            }
-        };
-
-        // ---------------------------------------------------------
-        // 6. CHAT LOGIC
-        // ---------------------------------------------------------
-        const Chat = {
-            loadChats: () => {
-                const q = query(collection(db, "chats"), orderBy("lastActivity", "desc"), limit(50));
-                onSnapshot(q, snap => {
-                    const list = document.getElementById('chatListContainer');
-                    list.innerHTML = "";
-                    Store.chatsCache = [];
-                    
-                    snap.forEach(d => {
-                        const c = d.data();
-                        if (c.members?.includes(Store.uid) || c.participants?.includes(Store.uid)) {
-                            Store.chatsCache.push({id: d.id, ...c});
-                            
-                            const isGroup = c.type === 'group';
-                            let name = c.name;
-                            let avatar = name ? name[0] : '?';
-                            
-                            if (!isGroup) {
-                                const oid = c.participants.find(x => x !== Store.uid);
-                                name = c.names?.[oid] || "Unbekannt";
-                                if (Store.customNames[oid]) name = Store.customNames[oid];
-                                avatar = name[0];
-                            }
-
-                            const isActive = Store.activeChatId === d.id;
-                            const isTyping = c.typing && Object.entries(c.typing).some(([uid, ts]) => uid !== Store.uid && Date.now() - ts < 3000);
-                            
-                            // Unread Logic (Simple)
-                            const lastMsg = c.lastMessage || "Keine Nachrichten";
-                            
-                            const el = document.createElement('div');
-                            el.className = `flex items-center gap-4 p-4 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition relative ${isActive ? 'bg-black/10 dark:bg-white/10 border-l-4 border-wa-accent pl-3' : 'border-l-4 border-transparent'}`;
-                            el.innerHTML = `
-                                <div class="relative">
-                                    <div class="w-12 h-12 rounded-full bg-gradient-to-br ${isGroup ? 'from-indigo-500 to-purple-600' : 'from-gray-400 to-gray-600'} flex items-center justify-center text-white font-bold text-lg shadow-sm">
-                                        ${avatar}
-                                    </div>
-                                    ${isTyping ? '<div class="absolute -bottom-1 -right-1 bg-wa-panel rounded-full p-1"><div class="w-2 h-2 bg-wa-accent rounded-full animate-bounce"></div></div>' : ''}
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex justify-between items-baseline mb-1">
-                                        <h4 class="font-bold text-sm truncate dark:text-gray-100">${name}</h4>
-                                        <span class="text-[11px] text-gray-500">${Utils.formatTime(c.lastActivity)}</span>
-                                    </div>
-                                    <p class="text-[13px] text-gray-500 dark:text-gray-400 truncate flex items-center gap-1 ${isTyping ? 'text-wa-accent font-bold' : ''}">
-                                        ${c.lastSender === Store.uid && !isTyping ? '<i data-lucide="check" class="w-3 h-3"></i>' : ''}
-                                        ${isTyping ? 'schreibt...' : lastMsg}
-                                    </p>
-                                </div>
-                            `;
-                            el.onclick = () => Chat.open(d.id, name, !isGroup, c);
-                            list.appendChild(el);
-                        }
-                    });
-                    lucide.createIcons();
-                });
-            },
-
-            open: async (id, name, isPrivate, chatData) => {
-                Store.activeChatId = id;
-                Store.isPrivateChat = isPrivate;
-                Chat.cancelReply();
-
-                // Mobile View Switch
-                if(window.innerWidth < 768) {
-                    document.getElementById('mainSidebar').classList.add('hidden');
-                    document.getElementById('chatArea').classList.remove('hidden');
-                }
-
-                // UI Reset
-                document.getElementById('chatHeader').classList.remove('hidden');
-                document.getElementById('chatHeader').classList.add('flex');
-                document.getElementById('chatInputArea').classList.remove('hidden');
-                document.getElementById('chatInputArea').classList.add('flex');
-                document.getElementById('noChatSelected').classList.add('hidden');
-                
-                // Header Data
-                document.getElementById('activeTitle').innerText = name;
-                document.getElementById('activeAvatar').innerText = name[0];
-
-                // Subtitle Logic (Online Status / Members)
-                const sub = document.getElementById('activeSub');
-                if (isPrivate) {
-                    const oid = id.split('_').find(x => x !== Store.uid);
-                    // Realtime Online Listener
-                    if(Store.listeners.user) Store.listeners.user();
-                    Store.listeners.user = onSnapshot(doc(db, "users", oid), s => {
-                         const d = s.data();
-                         if(d.online) sub.innerHTML = '<span class="text-wa-accent font-bold">Online</span>';
-                         else sub.innerText = "Zuletzt gesehen: " + Utils.formatTime(d.lastSeen);
-                    });
-                } else {
-                    sub.innerText = `${chatData.members.length} Teilnehmer`;
-                }
-
-                // Messages Listener
-                if(Store.listeners.chat) Store.listeners.chat();
-                const q = query(collection(db, `chats/${id}/messages`), orderBy("timestamp", "asc"), limit(100));
-                
-                Store.listeners.chat = onSnapshot(q, snap => {
-                    const list = document.getElementById('messagesList');
-                    const isNearBottom = list.scrollHeight - list.scrollTop - list.clientHeight < 200;
-                    
-                    // Mark as read batch
-                    const batch = writeBatch(db);
-                    let needsCommit = false;
-
-                    list.innerHTML = "";
-                    let lastDate = "";
-
-                    snap.forEach(d => {
-                        const m = d.data();
-                        const mid = d.id;
-                        const isMe = m.senderId === Store.uid;
-
-                        // Notification Logic
-                        if (!isMe && (!m.readBy?.includes(Store.uid))) {
-                            if(document.hidden) Utils.playAudio('notifySound');
-                            needsCommit = true;
-                            batch.update(d.ref, { readBy: arrayUnion(Store.uid) });
-                        }
-
-                        // Date Divider
-                        const dStr = Utils.formatTime(m.timestamp);
-                        // Simplified date check logic for divider (needs fuller date comparison)
-                        // ...
-
-                        // Render Message
-                        const div = document.createElement('div');
-                        div.className = `flex ${isMe ? 'justify-end' : 'justify-start'} mb-1 group msg-enter ${isMe?'own':''}`;
-                        
-                        // Status Ticks
-                        let statusIcon = '<i data-lucide="check" class="w-3 h-3 text-gray-400"></i>'; // Sent
-                        if(m.readBy && m.readBy.length > 1) statusIcon = '<i data-lucide="check-check" class="w-3 h-3 text-blue-400"></i>'; // Read (Blue)
-                        else if(m.readBy) statusIcon = '<i data-lucide="check-check" class="w-3 h-3 text-gray-400"></i>'; // Delivered
-
-                        // Content Builder
-                        let contentHtml = "";
-                        
-                        // Reply Block
-                        if(m.replyTo) {
-                            contentHtml += `
-                            <div class="bg-black/10 dark:bg-black/20 rounded-md p-2 mb-1 border-l-4 border-wa-accent text-xs cursor-pointer opacity-75 hover:opacity-100 transition" onclick="document.getElementById('msg-${m.replyTo.id}')?.scrollIntoView({behavior:'smooth', block:'center'})">
-                                <span class="font-bold text-wa-accent block mb-0.5">${m.replyTo.name}</span>
-                                <span class="line-clamp-1">${m.replyTo.text}</span>
-                            </div>`;
-                        }
-
-                        // Image
-                        if(m.img) {
-                            contentHtml += `<img src="${m.img}" class="rounded-lg mb-1 max-h-72 w-auto object-cover cursor-pointer hover:opacity-95 transition shadow-sm" onclick="UI.Lightbox.open('${m.img}', '${m.senderName}')">`;
-                        }
-
-                        // Audio
-                        if(m.audio) {
-                             contentHtml += `
-                             <div class="flex items-center gap-3 min-w-[220px] p-1">
-                                <button onclick="const a=document.getElementById('aud-${mid}'); a.paused ? a.play() : a.pause()" class="w-10 h-10 bg-wa-accent rounded-full flex items-center justify-center text-white hover:bg-wa-accentHover transition">
-                                    <i data-lucide="play" class="w-4 h-4 ml-0.5 play-icon"></i>
-                                </button>
-                                <div class="flex-1 flex flex-col gap-1">
-                                    <input type="range" min="0" max="100" value="0" class="w-full h-1 bg-gray-300 rounded-lg appearance-none cursor-pointer" oninput="document.getElementById('aud-${mid}').currentTime = this.value">
-                                    <span class="text-[10px] text-gray-500 font-mono time-display">0:00</span>
-                                </div>
-                                <audio id="aud-${mid}" src="${m.audio}" ontimeupdate="this.previousElementSibling.firstElementChild.value = this.currentTime; this.previousElementSibling.firstElementChild.max = this.duration; this.parentElement.querySelector('.time-display').innerText = Math.floor(this.currentTime/60)+':'+('0'+Math.floor(this.currentTime%60)).slice(-2)" onplay="this.parentElement.querySelector('.play-icon').setAttribute('data-lucide', 'pause'); lucide.createIcons()" onpause="this.parentElement.querySelector('.play-icon').setAttribute('data-lucide', 'play'); lucide.createIcons()"></audio>
-                             </div>`;
-                        }
-
-                        // Text
-                        if(m.text) {
-                            contentHtml += `<p class="text-[15px] whitespace-pre-wrap leading-relaxed select-text">${Utils.sanitize(m.text)}</p>`;
-                        }
-
-                        div.innerHTML = `
-                            <div class="relative max-w-[85%] md:max-w-[65%] shadow-sm rounded-xl p-2 z-10 
-                                        ${isMe ? 'bg-wa-bubbleOut dark:bg-wa-bubbleDarkOut rounded-tr-none text-gray-900 dark:text-gray-100' : 'bg-white dark:bg-wa-bubbleDarkIn rounded-tl-none text-gray-900 dark:text-white'} 
-                                        swipe-content" id="msg-${mid}"
-                                        ontouchstart="Chat.touchStart(event, '${mid}')" 
-                                        ontouchmove="Chat.touchMove(event)" 
-                                        ontouchend="Chat.touchEnd(event, '${mid}')">
-                                
-                                ${!isMe && !isPrivate ? `<span class="text-xs font-bold text-wa-accent mb-1 block cursor-pointer hover:underline">${m.senderName}</span>` : ''}
-                                
-                                ${contentHtml}
-
-                                <div class="flex justify-end items-center gap-1 mt-0.5 select-none opacity-70">
-                                    <span class="text-[10px]">${m.timestamp ? m.timestamp.toDate().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '...'}</span>
-                                    ${isMe ? statusIcon : ''}
-                                </div>
-                                
-                                <div class="absolute inset-0 z-0" oncontextmenu="Chat.openContext(event, '${mid}', '${m.senderId}')"></div>
-                            </div>
-                        `;
-
-                        list.appendChild(div);
-                    });
-                    
-                    if (needsCommit) batch.commit();
-                    if (isNearBottom || list.childElementCount < 20) UI.scrollToBottom();
-                    
-                    // Show scroll btn if not at bottom
-                    list.onscroll = () => {
-                        const btn = document.getElementById('scrollDownBtn');
-                        if (list.scrollHeight - list.scrollTop - list.clientHeight > 300) btn.style.transform = 'scale(1)';
-                        else btn.style.transform = 'scale(0)';
-                    };
-
-                    lucide.createIcons();
-                });
-                
-                // Populate Info Modal
-                Chat.updateInfoModal(name, id, isPrivate);
-            },
-
-            send: async () => {
-                const input = document.getElementById('msgIn');
-                const text = input.value.trim();
-                
-                if (!text && !Store.fileToSend) return;
-                
-                input.value = "";
-                input.style.height = "auto";
-                Chat.handleInput(input); // Reset UI buttons
-                
-                // Optimistic UI update could happen here for speed
-                Utils.playAudio('sentSound');
-
-                const payload = {
-                    text: text,
-                    senderId: Store.uid,
-                    senderName: Store.nick,
-                    timestamp: serverTimestamp(),
-                    readBy: [Store.uid]
-                };
-
-                if(Store.replyTarget) {
-                    payload.replyTo = { id: Store.replyTarget.mid, name: Store.replyTarget.name, text: Store.replyTarget.text };
-                    Chat.cancelReply();
-                }
-
-                try {
-                    await addDoc(collection(db, `chats/${Store.activeChatId}/messages`), payload);
-                    await updateDoc(doc(db, "chats", Store.activeChatId), {
-                        lastActivity: serverTimestamp(),
-                        lastMessage: text,
-                        lastSender: Store.uid,
-                        [`typing.${Store.uid}`]: 0 // Stop typing
-                    });
-                } catch(e) {
-                    UI.toast("Nachricht konnte nicht gesendet werden", "error");
-                }
-            },
-            
-            handleInput: (el) => {
-                el.style.height = 'auto';
-                el.style.height = Math.min(el.scrollHeight, 150) + 'px';
-                
-                const hasText = el.value.trim().length > 0;
-                const sendBtn = document.getElementById('sendBtn');
-                const recBtn = document.getElementById('recordBtn');
-                
-                if (hasText) {
-                    sendBtn.style.transform = 'scale(1)';
-                    recBtn.style.transform = 'scale(0)';
-                } else {
-                    sendBtn.style.transform = 'scale(0)';
-                    recBtn.style.transform = 'scale(1)';
-                }
-
-                // Debounced Typing Indicator
-                if (Store.activeChatId) {
-                    clearTimeout(Store.typingTimeout);
-                    updateDoc(doc(db, "chats", Store.activeChatId), { [`typing.${Store.uid}`]: Date.now() });
-                    Store.typingTimeout = setTimeout(() => {
-                        updateDoc(doc(db, "chats", Store.activeChatId), { [`typing.${Store.uid}`]: 0 });
-                    }, 2000);
-                }
-            },
-
-            // --- Advanced Features ---
-            
-            uploadImage: async (file) => {
-                UI.toast("Lade Bild hoch...", "info");
-                const fd = new FormData();
-                fd.append("image", file);
-                try {
-                    const res = await fetch(`https://api.imgbb.com/1/upload?key=${CONFIG.imgbbKey}`, { method: "POST", body: fd });
-                    const json = await res.json();
-                    if (json.data) {
-                         await addDoc(collection(db, `chats/${Store.activeChatId}/messages`), {
-                             senderId: Store.uid, senderName: Store.nick, timestamp: serverTimestamp(),
-                             img: json.data.url, readBy: [Store.uid]
-                         });
-                         await updateDoc(doc(db, "chats", Store.activeChatId), { lastMessage: "📷 Bild", lastActivity: serverTimestamp() });
-                    }
-                } catch(e) { UI.toast("Upload fehlgeschlagen", "error"); }
-            },
-
-            handleImageFile: () => {
-                const f = document.getElementById('imgIn').files[0];
-                if(f) Chat.uploadImage(f);
-                document.getElementById('imgIn').value = "";
-            },
-
-            // --- Context Menu Logic ---
-            openContext: (e, mid, senderId) => {
-                e.preventDefault();
-                const msgEl = document.getElementById(`msg-${mid}`);
-                const text = msgEl.querySelector('p')?.innerText || "Medien";
-                
-                Store.ctxMessage = { mid, text, senderId, el: msgEl };
-                
-                const menu = document.getElementById('contextMenu');
-                const delAll = document.getElementById('ctxDelAll');
-                
-                // Show "Delete All" only if I sent it
-                if (senderId === Store.uid) delAll.classList.remove('hidden');
-                else delAll.classList.add('hidden');
-
-                // Positioning
-                let x = e.clientX;
-                let y = e.clientY;
-                
-                // Boundary check
-                if (x + 200 > window.innerWidth) x -= 200;
-                if (y + 200 > window.innerHeight) y -= 200;
-
-                menu.style.left = x + 'px';
-                menu.style.top = y + 'px';
-                menu.classList.remove('hidden');
-                requestAnimationFrame(() => {
-                    menu.style.transform = 'scale(1)';
-                    menu.style.opacity = '1';
-                });
-
-                // Close on click outside
-                const close = (evt) => {
-                    if (!menu.contains(evt.target)) {
-                        menu.style.opacity = '0';
-                        menu.style.transform = 'scale(0.95)';
-                        setTimeout(() => menu.classList.add('hidden'), 150);
-                        document.removeEventListener('click', close);
-                    }
-                };
-                // Defer adding listener to avoid immediate close
-                setTimeout(() => document.addEventListener('click', close), 10);
-            },
-
-            ctxAction: async (action) => {
-                const { mid, text, senderId } = Store.ctxMessage;
-                document.getElementById('contextMenu').classList.add('hidden');
-
-                if (action === 'copy') {
-                    navigator.clipboard.writeText(text);
-                    UI.toast("Kopiert");
-                }
-                else if (action === 'reply') {
-                    // Find sender name from UI (hacky but saves a read)
-                    const name = senderId === Store.uid ? "Du" : document.querySelector(`#msg-${mid} .text-wa-accent`)?.innerText || "Jemand";
-                    Store.replyTarget = { mid, text, name };
-                    document.getElementById('replyName').innerText = name;
-                    document.getElementById('replyText').innerText = text;
-                    document.getElementById('replyPreview').classList.remove('hidden');
-                    document.getElementById('msgIn').focus();
-                }
-                else if (action === 'forward') {
-                    Chat.loadForwardList();
-                    UI.Modals.open('forwardModal');
-                }
-                else if (action === 'deleteAll') {
-                    if(confirm("Für alle löschen?")) {
-                        await deleteDoc(doc(db, `chats/${Store.activeChatId}/messages`, mid));
-                        UI.toast("Gelöscht");
-                    }
-                }
-                else if (action === 'deleteMe') {
-                    // Local hide (would require local storage or complex array logic, simplified here)
-                    document.getElementById(`msg-${mid}`).style.display = 'none';
-                    UI.toast("Lokal ausgeblendet");
-                }
-            },
-
-            cancelReply: () => {
-                Store.replyTarget = null;
-                document.getElementById('replyPreview').classList.add('hidden');
-            },
-
-            // --- Forwarding ---
-            loadForwardList: () => {
-                const l = document.getElementById('forwardList');
-                l.innerHTML = "";
-                Store.chatsCache.forEach(c => {
-                    let name = c.name;
-                    if (c.type === 'private') {
-                        const oid = c.participants.find(x => x !== Store.uid);
-                        name = c.names?.[oid] || "User";
-                    }
-                    const btn = document.createElement('div');
-                    btn.className = "p-3 hover:bg-black/10 dark:hover:bg-white/10 rounded-lg cursor-pointer flex items-center gap-3 border-b border-gray-800";
-                    btn.innerHTML = `<div class="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center font-bold text-white">${name[0]}</div><span class="text-sm font-bold dark:text-white">${name}</span>`;
-                    btn.onclick = async () => {
-                        await addDoc(collection(db, `chats/${c.id}/messages`), {
-                            text: Store.ctxMessage.text,
-                            senderId: Store.uid, senderName: Store.nick, timestamp: serverTimestamp(),
-                            isForwarded: true, readBy: [Store.uid]
-                        });
-                        await updateDoc(doc(db, "chats", c.id), { lastMessage: Store.ctxMessage.text, lastActivity: serverTimestamp() });
-                        UI.Modals.close('forwardModal');
-                        UI.toast(`Weitergeleitet an ${name}`, 'success');
-                    };
-                    l.appendChild(btn);
-                });
-            },
-
-            // --- Group Creation ---
-            createGroup: async () => {
-                const n = document.getElementById('ng_name').value.trim();
-                const p = document.getElementById('ng_pass').value.trim();
-                if(!n) return;
-                
-                try {
-                    const res = await addDoc(collection(db, "chats"), {
-                        type: 'group', name: n, password: p, creator: Store.uid,
-                        members: [Store.uid], lastActivity: serverTimestamp(), lastMessage: "Gruppe erstellt"
-                    });
-                    UI.Modals.close('newGroupModal');
-                    Chat.open(res.id, n, false, {members:[Store.uid]});
-                    UI.toast("Gruppe erstellt!", "success");
-                } catch(e) { UI.toast("Fehler beim Erstellen", "error"); }
-            },
-
-            leave: async () => {
-                if(!Store.activeChatId) return;
-                if(confirm("Chat wirklich verlassen?")) {
-                    await updateDoc(doc(db, "chats", Store.activeChatId), { members: arrayRemove(Store.uid) });
-                    UI.closeChatMobile();
-                    document.getElementById('noChatSelected').classList.remove('hidden');
-                    document.getElementById('chatHeader').classList.add('hidden');
-                    document.getElementById('chatInputArea').classList.add('hidden');
-                    Store.activeChatId = null;
-                }
-            },
-
-            updateInfoModal: async (name, id, isPriv) => {
-                document.getElementById('infoTit').innerText = name;
-                document.getElementById('infoAvaLarge').innerText = name[0];
-                document.getElementById('infoId').innerText = `ID: ${id}`;
-                
-                const list = document.getElementById('infoMemberList');
-                list.innerHTML = '<div class="flex justify-center p-4"><div class="spinner"></div></div>';
-                
-                if (isPriv) {
-                    const oid = id.split('_').find(x => x !== Store.uid);
-                    const snap = await getDoc(doc(db, "users", oid));
-                    document.getElementById('infoBio').innerText = snap.exists() ? snap.data().bio : "---";
-                    list.innerHTML = "<p class='text-center text-gray-500 text-xs mt-4'>Privater Chat</p>";
-                } else {
-                    document.getElementById('infoBio').innerText = "Gruppe";
-                    const snap = await getDoc(doc(db, "chats", id));
-                    const mems = snap.data().members;
-                    list.innerHTML = "";
-                    for (const uid of mems) {
-                        const uSnap = await getDoc(doc(db, "users", uid));
-                        const uName = uSnap.exists() ? uSnap.data().nickname : "Unbekannt";
-                        const div = document.createElement('div');
-                        div.className = "flex items-center justify-between p-2 hover:bg-black/10 rounded-lg";
-                        div.innerHTML = `<span class="text-sm font-bold dark:text-gray-200">${uName} ${uid===Store.uid?'(Du)':''}</span>`;
-                        list.appendChild(div);
-                    }
-                }
-            },
-
-            // --- Swipe to Reply Logic (Mobile) ---
-            touchStartX: 0,
-            currentSwipedMsg: null,
-            touchStart: (e, mid) => {
-                Chat.touchStartX = e.touches[0].clientX;
-                Chat.currentSwipedMsg = document.getElementById(`msg-${mid}`);
-            },
-            touchMove: (e) => {
-                if(!Chat.currentSwipedMsg) return;
-                const diff = e.touches[0].clientX - Chat.touchStartX;
-                if(diff > 0 && diff < 100) {
-                    Chat.currentSwipedMsg.style.transform = `translateX(${diff}px)`;
-                }
-            },
-            touchEnd: (e, mid) => {
-                if(!Chat.currentSwipedMsg) return;
-                const diff = e.changedTouches[0].clientX - Chat.touchStartX;
-                Chat.currentSwipedMsg.style.transform = 'translateX(0)';
-                if(diff > 80) {
-                    // Trigger Reply
-                    const msg = Store.chatsCache.find(c => c.id === Store.activeChatId); // Inefficient, use Context logic
-                    Utils.vibrate(50);
-                    Chat.ctxAction('reply'); // Will use last stored ctx message if we don't set it.
-                    // Correct implementation requires setting Store.ctxMessage from the swipe target ID
-                    // Omitted for brevity in this specific block, but assumed working via Context trigger logic
-                    // Quick fix:
-                    const txt = Chat.currentSwipedMsg.querySelector('p')?.innerText || "Medien";
-                    Store.ctxMessage = { mid, text: txt }; // Minimal set
-                    Chat.ctxAction('reply');
-                }
-                Chat.currentSwipedMsg = null;
-            },
-            
-            clearSearch: () => {
-                document.getElementById('searchInput').value = "";
-                Chat.filterChats("");
-                document.getElementById('searchBackBtn').classList.add('hidden');
-                document.getElementById('searchIcon').classList.remove('hidden');
-            },
-            filterChats: (term) => {
-                const t = term.toLowerCase();
-                const container = document.getElementById('chatListContainer');
-                Array.from(container.children).forEach(el => {
-                    const name = el.querySelector('h4').innerText.toLowerCase();
-                    el.style.display = name.includes(t) ? 'flex' : 'none';
-                });
-            }
-        };
-
-        // ---------------------------------------------------------
-        // 7. AUDIO RECORDER
-        // ---------------------------------------------------------
-        const Recorder = {
-            start: async () => {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    Store.mediaRecorder = new MediaRecorder(stream);
-                    Store.audioChunks = [];
-                    
-                    Store.mediaRecorder.ondataavailable = e => Store.audioChunks.push(e.data);
-                    
-                    Store.mediaRecorder.onstop = async () => {
-                        clearInterval(Store.recordInterval);
-                        document.getElementById('recordingOverlay').classList.add('hidden');
-                        
-                        // If duration < 1s, cancel
-                        if (Date.now() - Store.recordStartTime < 1000) return UI.toast("Aufnahme zu kurz", "error");
-
-                        const blob = new Blob(Store.audioChunks, { type: 'audio/webm' });
-                        UI.toast("Sende Audio...", "info");
-                        
-                        // Upload
-                        const sRef = ref(storage, `audio/${Store.activeChatId}/${Date.now()}.webm`);
-                        await uploadBytes(sRef, blob);
-                        const url = await getDownloadURL(sRef);
-                        
-                        await addDoc(collection(db, `chats/${Store.activeChatId}/messages`), {
-                             senderId: Store.uid, senderName: Store.nick, timestamp: serverTimestamp(),
-                             audio: url, readBy: [Store.uid]
-                        });
-                        await updateDoc(doc(db, "chats", Store.activeChatId), { lastMessage: "🎤 Sprachnachricht", lastActivity: serverTimestamp() });
-                    };
-                    
-                    Store.mediaRecorder.start();
-                    Store.recordStartTime = Date.now();
-                    
-                    // UI
-                    document.getElementById('recordingOverlay').classList.remove('hidden');
-                    Utils.vibrate(100);
-                    
-                    // Timer
-                    const timer = document.getElementById('recordTimer');
-                    Store.recordInterval = setInterval(() => {
-                        const s = Math.floor((Date.now() - Store.recordStartTime)/1000);
-                        timer.innerText = `0:${('0'+s).slice(-2)}`;
-                    }, 1000);
-
-                } catch(e) {
-                    UI.toast("Mikrofon Zugriff verweigert!", "error");
-                }
-            },
-            stop: () => {
-                if (Store.mediaRecorder && Store.mediaRecorder.state !== 'inactive') {
-                    Store.mediaRecorder.stop();
-                    Utils.vibrate([50, 50]);
-                }
-            }
-        };
-
-        // ---------------------------------------------------------
-        // 8. CONTACT MANAGER
-        // ---------------------------------------------------------
-        const Contact = {
-            loadContacts: () => {
-                onSnapshot(doc(db, "users", Store.uid), async (s) => {
-                    const d = s.data();
-                    if(!d) return;
-
-                    // Incoming Requests
-                    const pList = document.getElementById('pendingList');
-                    pList.innerHTML = "";
-                    if(d.incoming?.length > 0) {
-                        document.getElementById('pendingContainer').classList.remove('hidden');
-                        for(const rid of d.incoming) {
-                            const rU = await getDoc(doc(db, "users", rid));
-                            if(rU.exists()) {
-                                const div = document.createElement('div');
-                                div.className = "flex justify-between items-center bg-wa-panel p-3 rounded-lg shadow-sm border border-gray-700";
-                                div.innerHTML = `
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold">${rU.data().nickname[0]}</div>
-                                        <span class="font-bold text-sm text-white">${rU.data().nickname}</span>
-                                    </div>
-                                    <div class="flex gap-2">
-                                        <button onclick="window.Contact.accept('${rid}')" class="bg-green-500 p-1.5 rounded hover:bg-green-600 text-white"><i data-lucide="check" class="w-4 h-4"></i></button>
-                                        <button class="bg-red-500 p-1.5 rounded hover:bg-red-600 text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
-                                    </div>`;
-                                pList.appendChild(div);
-                            }
-                        }
-                    } else document.getElementById('pendingContainer').classList.add('hidden');
-
-                    // Friend List
-                    const cList = document.getElementById('contactsList');
-                    cList.innerHTML = "";
-                    if(d.friends?.length > 0) {
-                        for(const fid of d.friends) {
-                            const fU = await getDoc(doc(db, "users", fid));
-                            if(fU.exists()) {
-                                const fd = fU.data();
-                                const div = document.createElement('div');
-                                div.className = "flex items-center gap-3 p-3 hover:bg-black/5 dark:hover:bg-white/5 rounded-xl cursor-pointer border-b dark:border-gray-800/50";
-                                div.innerHTML = `
-                                    <div class="relative">
-                                        <div class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold">${fd.nickname[0]}</div>
-                                        ${fd.online ? '<div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border border-wa-dark"></div>' : ''}
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="font-bold text-sm dark:text-gray-100">${fd.nickname}</p>
-                                        <p class="text-[10px] text-gray-500 truncate">${fd.bio || ''}</p>
-                                    </div>
-                                    <button class="p-2 text-wa-accent hover:bg-wa-accent/10 rounded-full"><i data-lucide="message-circle" class="w-5 h-5"></i></button>
-                                `;
-                                div.onclick = () => Contact.startChat(fid, fd.nickname);
-                                cList.appendChild(div);
-                            }
-                        }
-                    } else {
-                        cList.innerHTML = "<p class='text-center text-gray-500 text-xs mt-10'>Noch keine Freunde.<br>Suche oben nach einer ID.</p>";
-                    }
-                    lucide.createIcons();
-                });
-            },
-            sendRequest: async () => {
-                const id = document.getElementById('friendSearchInput').value.trim();
-                if(!id || id === Store.uid) return UI.toast("Ungültige ID", "error");
-                
-                const ref = doc(db, "users", id);
-                const snap = await getDoc(ref);
-                
-                if(snap.exists()) {
-                    await updateDoc(ref, { incoming: arrayUnion(Store.uid) });
-                    UI.toast("Anfrage gesendet", "success");
-                    document.getElementById('friendSearchInput').value = "";
-                } else UI.toast("Nutzer nicht gefunden", "error");
-            },
-            accept: async (rid) => {
-                const batch = writeBatch(db);
-                batch.update(doc(db, "users", Store.uid), { friends: arrayUnion(rid), incoming: arrayRemove(rid) });
-                batch.update(doc(db, "users", rid), { friends: arrayUnion(Store.uid) });
-                await batch.commit();
-                UI.toast("Freund hinzugefügt!", "success");
-            },
-            startChat: async (oid, oname) => {
-                const cid = [Store.uid, oid].sort().join("_");
-                await setDoc(doc(db, "chats", cid), {
-                    type: 'private', participants: [Store.uid, oid], lastActivity: serverTimestamp(),
-                    names: { [Store.uid]: Store.nick, [oid]: oname }
-                }, { merge: true });
-                UI.Tabs.switch('chats');
-                Chat.open(cid, oname, true);
-            }
-        };
-        // Expose to window for HTML click handlers
-        window.Contact = Contact;
-
-        // ---------------------------------------------------------
-        // 9. STATUS MANAGER (Stories)
-        // ---------------------------------------------------------
-        const Status = {
-            upload: async () => {
-                const f = document.getElementById('statusIn').files[0];
-                if(!f) return;
-                UI.toast("Status Upload...", "info");
-                // ImgBB Logic repeated (could be modularized better, but keeping explicit for length)
-                const fd = new FormData(); fd.append("image", f);
-                const res = await fetch(`https://api.imgbb.com/1/upload?key=${CONFIG.imgbbKey}`, { method: "POST", body: fd });
-                const json = await res.json();
-                if(json.data) {
-                    await addDoc(collection(db, "status"), {
-                        uid: Store.uid, name: Store.nick, img: json.data.url, timestamp: serverTimestamp()
-                    });
-                    UI.toast("Status geteilt", "success");
-                }
-            },
-            load: () => {
-                // Simplified Loader
-                const list = document.getElementById('statusList');
-                const q = query(collection(db, "status"), orderBy("timestamp", "desc"), limit(20));
-                onSnapshot(q, s => {
-                    list.innerHTML = "";
-                    s.forEach(d => {
-                        const dat = d.data();
-                        // Filter > 24h
-                        // ...
-                        const div = document.createElement('div');
-                        div.className = "flex items-center gap-3 p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-xl cursor-pointer";
-                        div.innerHTML = `
-                            <div class="p-[2px] rounded-full bg-gradient-to-tr from-wa-accent to-blue-500">
-                                <img src="${dat.img}" class="w-12 h-12 rounded-full border-2 border-wa-dark object-cover">
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-sm dark:text-white">${dat.name}</h4>
-                                <p class="text-[10px] text-gray-500">vor kurzem</p>
-                            </div>
-                        `;
-                        div.onclick = () => UI.Lightbox.open(dat.img, dat.name);
-                        list.appendChild(div);
-                    });
-                });
-            }
-        };
-        // Trigger status load
-        Status.load();
-
-        // ---------------------------------------------------------
-        // 10. CALL MANAGER (WebRTC)
-        // ---------------------------------------------------------
-        const Call = {
-            peer: null,
-            localStream: null,
-            currentCallId: null,
-            
-            listen: () => {
-                const q = query(collection(db, "calls"), where("status", "==", "ringing"));
-                if(Store.listeners.call) Store.listeners.call();
-                Store.listeners.call = onSnapshot(q, s => {
-                    s.docChanges().forEach(c => {
-                        if(c.type === 'added') {
-                            const d = c.doc.data();
-                            // If I am target
-                            if(d.targetId === Store.uid && d.callerId !== Store.uid) {
-                                Call.currentCallId = c.doc.id;
-                                Call.showIncoming(d.callerName);
-                            }
-                        }
-                    });
-                });
-            },
-
-            showIncoming: (name) => {
-                const ov = document.getElementById('callOverlay');
-                ov.classList.remove('hidden');
-                requestAnimationFrame(() => ov.style.opacity = "1");
-                
-                document.getElementById('callName').innerText = name;
-                document.getElementById('callStatus').innerText = "Eingehender Anruf...";
-                document.getElementById('callAva').innerText = name[0];
-                
-                document.getElementById('incomingCallControls').classList.remove('hidden');
-                document.getElementById('activeCallControls').classList.add('hidden');
-                
-                document.getElementById('ringtoneSound').play().catch(()=>{});
-                Utils.vibrate([200, 100, 200]);
-            },
-
-            initiate: async () => {
-                if(!Store.activeChatId) return;
-                const name = document.getElementById('activeTitle').innerText;
-                const targetId = Store.activeChatId.split('_').find(x=>x!==Store.uid); // Only works for private calls correctly in this version
-                if(!targetId) return UI.toast("Anruf nur in Privat-Chats", "error");
-
-                try {
-                    Call.localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                } catch(e) { return UI.toast("Mikrofon Fehler", "error"); }
-
-                // Create Call Doc
-                const callRef = await addDoc(collection(db, "calls"), {
-                    callerId: Store.uid, callerName: Store.nick, targetId, status: 'ringing'
-                });
-                Call.currentCallId = callRef.id;
-
-                // UI
-                const ov = document.getElementById('callOverlay');
-                ov.classList.remove('hidden');
-                ov.style.opacity = "1";
-                document.getElementById('callName').innerText = name;
-                document.getElementById('callStatus').innerText = "Rufaufbau...";
-                document.getElementById('callAva').innerText = name[0];
-                document.getElementById('incomingCallControls').classList.add('hidden');
-                document.getElementById('activeCallControls').classList.remove('hidden');
-
-                // Peer Setup
-                Call.peer = new RTCPeerConnection(CONFIG.rtc);
-                Call.localStream.getTracks().forEach(t => Call.peer.addTrack(t, Call.localStream));
-                
-                Call.peer.ontrack = e => { 
-                    document.getElementById('remoteAudio').srcObject = e.streams[0];
-                    document.getElementById('callStatus').innerText = "Verbunden";
-                    document.getElementById('callStatus').className = "text-green-500 font-bold animate-pulse";
-                    Utils.playAudio('connectSound');
-                };
-
-                Call.peer.onicecandidate = e => {
-                    if(e.candidate) addDoc(collection(db, `calls/${Call.currentCallId}/offerCandidates`), e.candidate.toJSON());
-                };
-
-                // Create Offer
-                const offer = await Call.peer.createOffer();
-                await Call.peer.setLocalDescription(offer);
-                await updateDoc(callRef, { offer: { type: offer.type, sdp: offer.sdp } });
-
-                // Listen for Answer
-                onSnapshot(callRef, s => {
-                    const d = s.data();
-                    if(d?.answer && !Call.peer.currentRemoteDescription) {
-                        Call.peer.setRemoteDescription(new RTCSessionDescription(d.answer));
-                    }
-                    if(d?.status === 'ended') Call.endLocal();
-                });
-
-                // Listen for Remote Candidates
-                onSnapshot(collection(db, `calls/${Call.currentCallId}/answerCandidates`), s => {
-                    s.docChanges().forEach(c => { if(c.type==='added') Call.peer.addIceCandidate(new RTCIceCandidate(c.doc.data())); });
-                });
-            },
-
-            answer: async () => {
-                document.getElementById('ringtoneSound').pause();
-                
-                try {
-                    Call.localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                } catch(e) { return UI.toast("Mikrofon Fehler", "error"); }
-
-                document.getElementById('incomingCallControls').classList.add('hidden');
-                document.getElementById('activeCallControls').classList.remove('hidden');
-                document.getElementById('callStatus').innerText = "Verbinde...";
-
-                Call.peer = new RTCPeerConnection(CONFIG.rtc);
-                Call.localStream.getTracks().forEach(t => Call.peer.addTrack(t, Call.localStream));
-                
-                Call.peer.ontrack = e => { 
-                    document.getElementById('remoteAudio').srcObject = e.streams[0]; 
-                    document.getElementById('callStatus').innerText = "Verbunden";
-                    Utils.playAudio('connectSound');
-                };
-                
-                Call.peer.onicecandidate = e => {
-                    if(e.candidate) addDoc(collection(db, `calls/${Call.currentCallId}/answerCandidates`), e.candidate.toJSON());
-                };
-
-                // Get Offer
-                const callDoc = await getDoc(doc(db, "calls", Call.currentCallId));
-                const data = callDoc.data();
-                
-                await Call.peer.setRemoteDescription(new RTCSessionDescription(data.offer));
-                const answer = await Call.peer.createAnswer();
-                await Call.peer.setLocalDescription(answer);
-                
-                await updateDoc(doc(db, "calls", Call.currentCallId), { answer: { type: answer.type, sdp: answer.sdp }, status: 'connected' });
-
-                onSnapshot(collection(db, `calls/${Call.currentCallId}/offerCandidates`), s => {
-                    s.docChanges().forEach(c => { if(c.type==='added') Call.peer.addIceCandidate(new RTCIceCandidate(c.doc.data())); });
-                });
-                
-                // End listener
-                onSnapshot(doc(db, "calls", Call.currentCallId), s => {
-                    if(s.data()?.status === 'ended') Call.endLocal();
-                });
-            },
-
-            hangup: async () => {
-                if(Call.currentCallId) {
-                    // Try catch in case doc deleted
-                    try { await updateDoc(doc(db, "calls", Call.currentCallId), { status: 'ended' }); } catch(e){}
-                }
-                Call.endLocal();
-            },
-
-            endLocal: () => {
-                const ov = document.getElementById('callOverlay');
-                ov.style.opacity = "0";
-                setTimeout(() => ov.classList.add('hidden'), 500);
-                
-                document.getElementById('ringtoneSound').pause();
-                document.getElementById('ringtoneSound').currentTime = 0;
-                
-                if(Call.localStream) Call.localStream.getTracks().forEach(t=>t.stop());
-                if(Call.peer) Call.peer.close();
-                Call.currentCallId = null;
-            },
-
-            toggleMute: () => {
-                if(Call.localStream) {
-                    const track = Call.localStream.getAudioTracks()[0];
-                    track.enabled = !track.enabled;
-                    document.getElementById('btnMute').classList.toggle('bg-red-500');
-                    document.getElementById('btnMute').classList.toggle('bg-white/10');
-                }
-            }
-        };
-
-        // ---------------------------------------------------------
-        // 11. SETTINGS MANAGER
-        // ---------------------------------------------------------
-        const Settings = {
-            toggle: (key, val) => {
-                Store.settings[key] = val;
-                localStorage.setItem(`sc_${key}`, val);
-                if(key === 'notify' && val) Notification.requestPermission();
-                UI.toast("Einstellung gespeichert");
-            }
-        };
-
-        // ---------------------------------------------------------
-        // 12. INITIALIZATION & GLOBAL EXPORTS
-        // ---------------------------------------------------------
-        window.UI = UI;
-        window.Chat = Chat;
-        window.Auth = Auth;
-        window.Settings = Settings;
-        window.Call = Call;
-        window.Recorder = Recorder;
-        window.Utils = Utils;
-        window.Status = Status;
-
-        // Initialize App
-        UI.init();
-        Auth.init();
         
-        // Error Handler Global
-        window.onerror = (msg, url, line) => {
-            console.error("Global Error:", msg);
-            // Optional: Send to logging service
+        // --- GLOBAL STATE ---
+        let currentUser = null; 
+        let myRealUid = null;
+        let myData = null;
+        let activeChatId = null; 
+        let isPrivate = false;
+        let activeChatData = null; // Für Admin Checks
+
+        // Features State
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let replyToMsg = null; // { id, text, sender }
+        let contextMsgId = null; // ID für Kontextmenü
+        let contextMsgData = null;
+        
+        // WebRTC
+        let peerConnection = null;
+        let localStream = null;
+        let callUnsub = null;
+        let currentCallId = null;
+        const servers = { iceServers: [{ urls: ['stun:stun1.l.google.com:19302'] }] };
+
+        // Schimpfwort Filter (Basic)
+        const BAD_WORDS = ["arsch", "idiot", "hurensohn", "wichser", "fuck", "shit"];
+
+        // --- AUTH & INIT ---
+        const savedUid = localStorage.getItem('shadow_uid_v13');
+        signInAnonymously(auth);
+
+        onAuthStateChanged(auth, async (u) => {
+            if(u) {
+                myRealUid = savedUid || u.uid;
+                const userRef = doc(db, "users", myRealUid);
+                const snap = await getDoc(userRef);
+
+                if(!snap.exists()) {
+                    if(savedUid) { localStorage.removeItem('shadow_uid_v13'); location.reload(); return; }
+                    // Create New
+                    const nick = "User-" + Math.floor(Math.random()*1000);
+                    const pass = Math.random().toString(36).slice(-6);
+                    await setDoc(userRef, { 
+                        uid: myRealUid, nickname: nick, bio: "Hey there!", 
+                        password: pass, avatar: null, friends: [], incoming: [],
+                        online: true, lastSeen: serverTimestamp() 
+                    });
+                    showToast("Willkommen! Dein Passwort: " + pass, 'info');
+                } else {
+                    myData = snap.data();
+                    updateSelfUI();
+                }
+                
+                // Online Presence
+                updateDoc(userRef, { online: true });
+                document.addEventListener('visibilitychange', () => {
+                    updateDoc(userRef, { online: document.visibilityState === 'visible', lastSeen: serverTimestamp() });
+                });
+                window.addEventListener('beforeunload', () => updateDoc(userRef, { online: false, lastSeen: serverTimestamp() }));
+
+                loadChats();
+                loadCallsHistory();
+                loadFriends();
+                startIncomingCallListener();
+                lucide.createIcons();
+            }
+        });
+
+        // --- UI HELPERS ---
+        window.showToast = (msg, type='info') => {
+            const c = document.getElementById('toast-container');
+            const d = document.createElement('div');
+            d.className = `p-4 rounded-xl shadow-lg text-sm font-bold flex items-center gap-2 animate-slide-up ${type==='error'?'bg-red-500 text-white':'bg-white dark:bg-slate-800 dark:text-white'}`;
+            d.innerHTML = type==='error' ? `<i data-lucide="alert-circle" class="w-5 h-5"></i> ${msg}` : `<i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i> ${msg}`;
+            c.appendChild(d);
+            lucide.createIcons();
+            setTimeout(() => d.remove(), 3000);
         };
 
+        window.switchTab = (id) => {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('tab-'+id).classList.remove('hidden');
+            document.getElementById('tab-'+id).classList.add('animate-slide-up');
+            
+            // Desktop Highlighting
+            document.querySelectorAll('[id^="dt-"]').forEach(b => b.classList.remove('text-wa-accent', 'border-wa-accent'));
+            const dt = document.getElementById('dt-'+id); if(dt) dt.classList.add('text-wa-accent', 'border-wa-accent');
+
+            // Mobile Highlighting
+            document.querySelectorAll('[id^="mnav-"]').forEach(b => b.classList.replace('text-wa-accent', 'text-slate-500'));
+            const mn = document.getElementById('mnav-'+id); if(mn) mn.classList.replace('text-slate-500', 'text-wa-accent');
+        };
+
+        window.toggleModal = (id) => {
+            const el = document.getElementById(id);
+            if(el.classList.contains('hidden')) { el.classList.remove('hidden'); } else { el.classList.add('hidden'); }
+        };
+
+        function updateSelfUI() {
+            document.getElementById('myDisplayNick').innerText = myData.nickname;
+            document.getElementById('setNick').innerText = myData.nickname;
+            document.getElementById('nickIn').value = myData.nickname;
+            document.getElementById('bioIn').value = myData.bio;
+            document.getElementById('myFullId').innerText = myRealUid;
+            
+            const ava = myData.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${myData.nickname}`;
+            document.getElementById('myAvatarImg').src = ava;
+            document.getElementById('setAvatarImg').src = ava;
+        }
+
+        // --- CORE FEATURES ---
+
+        // 7. & 8. Profilbild & Schimpfwort Filter
+        window.uploadAvatar = async () => {
+            const file = document.getElementById('avatarIn').files[0];
+            if(!file) return;
+            showToast("Lade hoch...");
+            try {
+                const sRef = ref(storage, `avatars/${myRealUid}_${Date.now()}`);
+                await uploadBytes(sRef, file);
+                const url = await getDownloadURL(sRef);
+                await updateDoc(doc(db, "users", myRealUid), { avatar: url });
+                myData.avatar = url; updateSelfUI();
+                showToast("Profilbild aktualisiert");
+            } catch(e) { showToast("Upload Fehler", 'error'); }
+        };
+
+        window.saveProfile = async () => {
+            const newNick = document.getElementById('nickIn').value.trim();
+            const newBio = document.getElementById('bioIn').value.trim();
+            
+            // Profanity Check
+            if(BAD_WORDS.some(w => newNick.toLowerCase().includes(w))) {
+                return showToast("Name enthält unzulässige Wörter!", 'error');
+            }
+
+            await updateDoc(doc(db, "users", myRealUid), { nickname: newNick, bio: newBio });
+            myData.nickname = newNick; myData.bio = newBio;
+            updateSelfUI();
+            showToast("Gespeichert!");
+        };
+
+        // 9. Benachrichtigungen
+        window.requestNotifyPermission = () => {
+            Notification.requestPermission().then(p => {
+                if(p === 'granted') {
+                    showToast("Benachrichtigungen aktiv!");
+                    document.getElementById('notifyBtn').classList.add('hidden');
+                }
+            });
+        };
+        
+        function sendNotification(title, body) {
+            if(document.hidden && Notification.permission === 'granted') {
+                new Notification(title, { body, icon: 'https://cdn-icons-png.flaticon.com/512/733/733585.png' });
+                document.getElementById('sentSound').play();
+            }
+        }
+
+        // --- CHAT LOGIC ---
+
+        window.openChat = async (chatId, name, priv, avatarUrl) => {
+            activeChatId = chatId; isPrivate = priv;
+            document.getElementById('chatArea').classList.replace('hidden', 'flex');
+            document.getElementById('mainSidebar').classList.add('hidden'); // Mobile logic
+            
+            document.getElementById('activeChatTitle').innerText = name;
+            document.getElementById('activeChatAvatar').src = avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${name}`;
+            
+            // Set Pin State
+            const chatRef = doc(db, "chats", chatId);
+            const chatSnap = await getDoc(chatRef);
+            activeChatData = chatSnap.data();
+            
+            const isPinned = activeChatData.pinned?.[myRealUid] || false;
+            document.getElementById('pinBtn').classList.toggle('text-wa-accent', isPinned);
+            document.getElementById('pinBtn').classList.toggle('text-slate-400', !isPinned);
+
+            // Load Messages
+            const q = query(collection(db, `chats/${chatId}/messages`), orderBy("timestamp", "asc"), limit(60));
+            onSnapshot(q, (snap) => {
+                const list = document.getElementById('messagesList');
+                list.innerHTML = "";
+                
+                // 12. Real Blue Ticks Logic (Mark as read when I see them)
+                if(!document.hidden) {
+                    snap.docs.forEach(d => {
+                        const m = d.data();
+                        if(!m.readBy.includes(myRealUid)) {
+                            updateDoc(d.ref, { readBy: arrayUnion(myRealUid) });
+                        }
+                    });
+                }
+
+                snap.forEach(d => renderMessage(d, list, activeChatData.members?.length || 2));
+                list.scrollTo({ top: list.scrollHeight, behavior: 'smooth' });
+                lucide.createIcons();
+            });
+
+            // Update Header Status
+            if(isPrivate) {
+                const pid = chatId.split('_').find(x => x !== myRealUid);
+                onSnapshot(doc(db, "users", pid), s => {
+                    const u = s.data();
+                    const sub = document.getElementById('activeChatSub');
+                    if(u.online) sub.innerHTML = '<span class="text-green-500">Online</span>';
+                    else sub.innerText = u.lastSeen ? "Zuletzt: " + u.lastSeen.toDate().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : "Offline";
+                });
+            } else {
+                document.getElementById('activeChatSub').innerText = `${activeChatData.members.length} Mitglieder`;
+            }
+        };
+
+        // 1. Voice Messages Logic
+        window.startRecording = async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                mediaRecorder.start();
+                
+                document.getElementById('recordingOverlay').classList.remove('hidden');
+                document.getElementById('msgIn').disabled = true;
+                
+                let sec = 0;
+                window.recInterval = setInterval(() => {
+                    sec++;
+                    document.getElementById('recTimer').innerText = `0:0${sec}`;
+                }, 1000);
+            } catch(e) { showToast("Mikrofon Fehler", 'error'); }
+        };
+
+        window.stopRecording = () => {
+            if(!mediaRecorder) return;
+            mediaRecorder.stop();
+            clearInterval(window.recInterval);
+            document.getElementById('recordingOverlay').classList.add('hidden');
+            document.getElementById('msgIn').disabled = false;
+            
+            mediaRecorder.onstop = async () => {
+                const blob = new Blob(audioChunks, { type: 'audio/mp3' });
+                // Upload logic
+                const fname = `voice/${activeChatId}/${Date.now()}.mp3`;
+                const sRef = ref(storage, fname);
+                await uploadBytes(sRef, blob);
+                const url = await getDownloadURL(sRef);
+                sendMessage(null, null, url); // type defaults to audio if url present and no text
+            };
+        };
+
+        // 2. & 11. & 12. Message Rendering & Interaction
+        function renderMessage(docSnap, container, memberCount) {
+            const m = docSnap.data();
+            const mid = docSnap.id;
+            const isMe = m.senderId === myRealUid;
+            
+            // 11. Deleted Stub
+            if(m.type === 'system' && m.text === 'deleted') {
+                container.innerHTML += `<div class="flex justify-center my-2"><span class="text-xs text-slate-400 italic bg-slate-200 dark:bg-slate-800 px-2 py-1 rounded-full"><i data-lucide="ban" class="w-3 h-3 inline"></i> Nachricht gelöscht</span></div>`;
+                return;
+            }
+
+            const div = document.createElement('div');
+            // Swipe Logic Wrapper
+            div.className = `msg-container flex ${isMe ? 'justify-end' : 'justify-start'} mb-1 group relative`;
+            
+            // Long Press Event
+            const hammer = new Hammer(div);
+            hammer.on('press', () => { window.openContextMenu(mid, m, isMe); });
+            // Swipe Event (Right swipe to reply)
+            hammer.on('panright', (e) => {
+                if(Math.abs(e.deltaY) < 50) { // Only horizontal
+                   div.style.transform = `translateX(${Math.min(e.deltaX, 100)}px)`;
+                   if(e.deltaX > 80) div.querySelector('.reply-icon-wrapper').style.opacity = 1;
+                }
+            });
+            hammer.on('panend', (e) => {
+                div.style.transform = '';
+                div.querySelector('.reply-icon-wrapper').style.opacity = 0;
+                if(e.deltaX > 80) window.initReply(mid, m);
+            });
+
+            // 12. Blue Ticks Logic
+            const isRead = m.readBy && m.readBy.length >= memberCount; // Simple logic: Everyone read it
+            const checkColor = isRead ? 'text-blue-500' : 'text-slate-400';
+
+            // Content Builder
+            let content = '';
+            
+            // Reply Header
+            if(m.replyTo) {
+                content += `<div class="bg-black/5 dark:bg-black/20 p-1 pl-2 mb-1 rounded border-l-2 border-wa-accent text-xs cursor-pointer" onclick="document.getElementById('${m.replyTo.id}')?.scrollIntoView({behavior:'smooth'})">
+                    <span class="font-bold text-wa-accent">${m.replyTo.sender}</span><br>
+                    <span class="truncate opacity-70">${m.replyTo.text}</span>
+                </div>`;
+            }
+
+            // Forwarded Label
+            if(m.isForwarded) {
+                content += `<div class="text-[10px] text-slate-400 italic mb-1 flex items-center gap-1"><i data-lucide="forward" class="w-3 h-3"></i> Weitergeleitet</div>`;
+            }
+
+            // Body
+            if(m.audio) {
+                content += `<audio controls src="${m.audio}" class="h-8 w-48"></audio>`;
+            } else if(m.img) {
+                content += `<img src="${m.img}" class="max-w-[200px] rounded-lg cursor-pointer" onclick="window.openLightbox('${m.img}')">`;
+                if(m.text) content += `<p class="mt-1">${m.text}</p>`;
+            } else {
+                content += `<p>${m.text}</p>`;
+            }
+            
+            const time = m.timestamp ? m.timestamp.toDate().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '...';
+
+            div.innerHTML = `
+                <div class="reply-icon-wrapper text-wa-accent"><i data-lucide="reply" class="w-6 h-6 bg-white dark:bg-slate-800 rounded-full p-1 shadow"></i></div>
+                <div id="${mid}" class="msg-content max-w-[75%] p-2 rounded-xl shadow-sm relative text-[15px] leading-relaxed 
+                    ${isMe ? 'bg-wa-bubbleOut dark:bg-wa-bubbleDarkOut rounded-tr-none text-slate-800 dark:text-slate-100' : 'bg-white dark:bg-wa-bubbleDarkIn rounded-tl-none text-slate-800 dark:text-slate-100'}">
+                    ${!isMe && !isPrivate ? `<p class="text-[10px] font-bold text-wa-accent mb-0.5">${m.senderName}</p>` : ''}
+                    ${content}
+                    <div class="flex justify-end items-center gap-1 mt-1 select-none">
+                        <span class="text-[9px] opacity-60">${time}</span>
+                        ${isMe ? `<i data-lucide="check-check" class="w-3 h-3 ${checkColor}"></i>` : ''}
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+        }
+
+        // Send Logic
+        window.sendMsg = async () => {
+            const txt = document.getElementById('msgIn').value.trim();
+            if(!txt && !window.tempImg) return;
+            await sendMessage(txt, window.tempImg, null);
+            document.getElementById('msgIn').value = "";
+            window.cancelReply();
+        };
+
+        async function sendMessage(text, img, audio) {
+            const payload = {
+                text: text || null,
+                img: img || null,
+                audio: audio || null,
+                senderId: myRealUid,
+                senderName: myData.nickname,
+                timestamp: serverTimestamp(),
+                readBy: [myRealUid],
+                type: audio ? 'audio' : (img ? 'image' : 'text'),
+                isForwarded: false
+            };
+            if(replyToMsg) payload.replyTo = replyToMsg;
+
+            await addDoc(collection(db, `chats/${activeChatId}/messages`), payload);
+            await updateDoc(doc(db, "chats", activeChatId), { 
+                lastMessage: audio ? '🎤 Sprachnachricht' : (img ? '📷 Bild' : text),
+                lastActivity: serverTimestamp() 
+            });
+            document.getElementById('sentSound').play();
+        }
+
+        // 3. Context Menu Logic
+        window.openContextMenu = (mid, mData, isMe) => {
+            contextMsgId = mid;
+            contextMsgData = mData;
+            
+            // Admin Check for "Delete for Everyone"
+            const isAdmin = activeChatData.admins?.includes(myRealUid) || activeChatData.creator === myRealUid;
+            const delBtn = document.getElementById('ctxDeleteBtn');
+            
+            // Löschen Logik: Eigene Nachricht oder Admin in Gruppe
+            if (isMe || (isAdmin && !isPrivate)) {
+                delBtn.classList.remove('hidden');
+            } else {
+                delBtn.classList.add('hidden');
+            }
+
+            document.getElementById('msgContextMenu').classList.remove('hidden');
+        };
+
+        window.closeContextMenu = (e) => {
+            if(e.target === e.currentTarget || e.target.classList.contains('glass-modal')) 
+                document.getElementById('msgContextMenu').classList.add('hidden');
+        };
+
+        window.ctxAction = (action) => {
+            document.getElementById('msgContextMenu').classList.add('hidden');
+            if(action === 'reply') window.initReply(contextMsgId, contextMsgData);
+            if(action === 'copy') { navigator.clipboard.writeText(contextMsgData.text || ""); showToast("Kopiert"); }
+            if(action === 'delete') window.deleteMessageForEveryone(contextMsgId);
+            if(action === 'forward') window.openForwardModal();
+        };
+
+        // 2. Swipe / Reply Logic
+        window.initReply = (mid, mData) => {
+            replyToMsg = { id: mid, text: mData.text || (mData.audio ? "Sprachnachricht" : "Bild"), sender: mData.senderName };
+            document.getElementById('replyPreview').classList.remove('hidden');
+            document.getElementById('replyTargetName').innerText = `Antwort an ${mData.senderName}`;
+            document.getElementById('replyTargetText').innerText = replyToMsg.text;
+            document.getElementById('msgIn').focus();
+        };
+
+        window.cancelReply = () => {
+            replyToMsg = null;
+            document.getElementById('replyPreview').classList.add('hidden');
+        };
+
+        // 3. Forward Logic
+        window.openForwardModal = () => {
+            const list = document.getElementById('forwardList');
+            list.innerHTML = "";
+            window.toggleModal('forwardModal');
+            // Populate list from existing chats
+            const chats = document.querySelectorAll('#chatListContainer > div'); // Lazy way, better query DB again in real app
+            // Just fetching recent chats from DB for clean list
+            getDoc(doc(db, "users", myRealUid)).then(async u => { // Or use existing chat list data
+                 // Dummy: Reuse visual list logic or fetch
+                 // Implementation detail: Iterate loaded chats
+                 showToast("Wähle einen Chat aus der Liste (Placeholder)");
+            });
+            // Simplified:
+            const q = query(collection(db, "chats"), where("members", "array-contains", myRealUid), limit(5));
+            getDocs(q).then(snap => {
+                snap.forEach(d => {
+                    const c = d.data();
+                    const btn = document.createElement('button');
+                    btn.className = "w-full p-3 text-left hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg font-bold text-sm truncate";
+                    btn.innerText = c.name || "Chat";
+                    btn.onclick = () => window.forwardTo(d.id);
+                    list.appendChild(btn);
+                });
+            });
+        };
+
+        window.forwardTo = async (targetId) => {
+            window.toggleModal('forwardModal');
+            const payload = {
+                ...contextMsgData,
+                senderId: myRealUid,
+                senderName: myData.nickname,
+                timestamp: serverTimestamp(),
+                readBy: [myRealUid],
+                isForwarded: true,
+                replyTo: null
+            };
+            delete payload.id; // New ID
+            await addDoc(collection(db, `chats/${targetId}/messages`), payload);
+            showToast("Weitergeleitet!");
+        };
+
+        // 11. Delete Logic
+        window.deleteMessageForEveryone = async (mid) => {
+            if(confirm("Nachricht für alle löschen?")) {
+                await updateDoc(doc(db, `chats/${activeChatId}/messages`, mid), {
+                    type: 'system',
+                    text: 'deleted',
+                    img: null,
+                    audio: null
+                });
+            }
+        };
+
+        // 6. Pin Chats
+        window.toggleChatPin = async () => {
+            if(!activeChatId) return;
+            const currentPin = activeChatData.pinned?.[myRealUid] || false;
+            await updateDoc(doc(db, "chats", activeChatId), {
+                [`pinned.${myRealUid}`]: !currentPin
+            });
+            document.getElementById('pinBtn').classList.toggle('text-wa-accent');
+            showToast(currentPin ? "Chat gelöst" : "Chat angepinnt");
+        };
+
+        // --- CALLS LOGIC (5. & 10.) ---
+        
+        // 5. Calls Tab History
+        function loadCallsHistory() {
+            const q = query(collection(db, "calls"), where("callerId", "==", myRealUid), orderBy("timestamp", "desc"), limit(20));
+            onSnapshot(q, snap => {
+                const list = document.getElementById('callHistoryList');
+                list.innerHTML = "";
+                snap.forEach(d => {
+                    const c = d.data();
+                    const div = document.createElement('div');
+                    div.className = "flex items-center justify-between p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800";
+                    div.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center"><i data-lucide="phone-outgoing" class="w-5 h-5 text-slate-500"></i></div>
+                            <div>
+                                <p class="font-bold text-sm">${c.targetName || "Unbekannt"}</p>
+                                <p class="text-[10px] text-slate-400">${c.timestamp ? c.timestamp.toDate().toLocaleDateString() : 'Gerade'}</p>
+                            </div>
+                        </div>
+                        <button onclick="window.initiateCall('${c.targetId}', '${c.targetName}')" class="text-green-500 p-2"><i data-lucide="refresh-ccw" class="w-5 h-5"></i></button>
+                    `;
+                    list.appendChild(div);
+                });
+            });
+        }
+
+        window.initiateCall = async (tid, tname) => {
+            const targetId = tid || (isPrivate ? activeChatId.split('_').find(x=>x!==myRealUid) : null);
+            if(!targetId && !isPrivate) return showToast("Gruppenanrufe noch Beta", 'error');
+
+            const targetName = tname || document.getElementById('activeChatTitle').innerText;
+            
+            // UI
+            document.getElementById('callOverlay').classList.remove('hidden');
+            document.getElementById('activeCallControls').classList.remove('hidden');
+            document.getElementById('incomingCallControls').classList.add('hidden');
+            document.getElementById('callName').innerText = targetName;
+            document.getElementById('callStatus').innerText = "Wähle...";
+
+            // WebRTC Init
+            localStream = await navigator.mediaDevices.getUserMedia({audio:true});
+            const callDoc = doc(collection(db, "calls"));
+            currentCallId = callDoc.id;
+            
+            peerConnection = new RTCPeerConnection(servers);
+            localStream.getTracks().forEach(t => peerConnection.addTrack(t, localStream));
+            peerConnection.ontrack = e => document.getElementById('remoteAudio').srcObject = e.streams[0];
+            peerConnection.onicecandidate = e => e.candidate && addDoc(collection(callDoc, 'offerCandidates'), e.candidate.toJSON());
+
+            const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+
+            await setDoc(callDoc, {
+                callerId: myRealUid, callerName: myData.nickname, targetId, targetName,
+                offer: {sdp: offer.sdp, type: offer.type}, status: 'ringing', timestamp: serverTimestamp()
+            });
+
+            callUnsub = onSnapshot(callDoc, s => {
+                const d = s.data();
+                if(!peerConnection.currentRemoteDescription && d?.answer) peerConnection.setRemoteDescription(d.answer);
+                if(d?.status === 'connected') document.getElementById('callStatus').innerText = "Verbunden";
+                if(d?.status === 'ended') window.hangUpCall();
+            });
+        };
+
+        // 10. Ringtone & Incoming
+        function startIncomingCallListener() {
+            onSnapshot(query(collection(db, "calls"), where("status", "==", "ringing")), snap => {
+                snap.docChanges().forEach(change => {
+                    if(change.type === 'added') {
+                        const d = change.doc.data();
+                        if(d.targetId === myRealUid) {
+                            currentCallId = change.doc.id;
+                            document.getElementById('callOverlay').classList.remove('hidden');
+                            document.getElementById('incomingCallControls').classList.remove('hidden');
+                            document.getElementById('activeCallControls').classList.add('hidden');
+                            document.getElementById('callName').innerText = d.callerName;
+                            document.getElementById('callStatus').innerText = "Eingehender Anruf...";
+                            
+                            // 10. Ringtone
+                            const ring = document.getElementById('ringtone');
+                            ring.currentTime = 0; ring.play();
+                            sendNotification("Anruf", `${d.callerName} ruft an!`);
+                        }
+                    }
+                });
+            });
+        }
+        
+        window.answerCall = async () => {
+            document.getElementById('ringtone').pause();
+            document.getElementById('incomingCallControls').classList.add('hidden');
+            document.getElementById('activeCallControls').classList.remove('hidden');
+            
+            const callDoc = doc(db, "calls", currentCallId);
+            const callData = (await getDoc(callDoc)).data();
+            
+            localStream = await navigator.mediaDevices.getUserMedia({audio:true});
+            peerConnection = new RTCPeerConnection(servers);
+            localStream.getTracks().forEach(t => peerConnection.addTrack(t, localStream));
+            peerConnection.ontrack = e => document.getElementById('remoteAudio').srcObject = e.streams[0];
+            peerConnection.onicecandidate = e => e.candidate && addDoc(collection(callDoc, 'answerCandidates'), e.candidate.toJSON());
+            
+            await peerConnection.setRemoteDescription(callData.offer);
+            const answer = await peerConnection.createAnswer();
+            await peerConnection.setLocalDescription(answer);
+            
+            await updateDoc(callDoc, { answer: {sdp: answer.sdp, type: answer.type}, status: 'connected' });
+        };
+
+        window.hangUpCall = async () => {
+            document.getElementById('ringtone').pause();
+            if(currentCallId) updateDoc(doc(db, "calls", currentCallId), { status: 'ended' });
+            if(peerConnection) peerConnection.close();
+            if(localStream) localStream.getTracks().forEach(t=>t.stop());
+            document.getElementById('callOverlay').classList.add('hidden');
+            window.location.reload(); // Quick reset for WebRTC state
+        };
+
+        // --- GROUP ADMIN LOGIC (13.) ---
+        window.createGrp = async () => {
+            const name = document.getElementById('ng_name').value;
+            // 13. 8-Stellige ID
+            const gid = Math.random().toString(36).slice(-8).toUpperCase();
+            
+            await setDoc(doc(db, "chats", gid), {
+                type: 'group', name, 
+                members: [myRealUid],
+                admins: [myRealUid], // Creator is admin
+                creator: myRealUid,
+                lastActivity: serverTimestamp()
+            });
+            window.toggleModal('newGroupModal');
+            showToast("Gruppe erstellt: " + gid);
+        };
+
+        // Render Members list with Admin controls
+        function renderGroupInfo(members, admins, creator) {
+            const list = document.getElementById('infoMemberList');
+            list.innerHTML = "";
+            const iAmAdmin = admins.includes(myRealUid);
+
+            members.forEach(async mid => {
+                const uSnap = await getDoc(doc(db, "users", mid));
+                if(!uSnap.exists()) return;
+                const u = uSnap.data();
+                const isUserAdmin = admins.includes(mid);
+                const isUserCreator = mid === creator;
+
+                const div = document.createElement('div');
+                div.className = "flex items-center justify-between p-2 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-lg";
+                
+                let badges = "";
+                if(isUserCreator) badges += `<span class="text-[9px] bg-yellow-100 text-yellow-600 px-1 rounded ml-1">OWNER</span>`;
+                else if(isUserAdmin) badges += `<span class="text-[9px] bg-blue-100 text-blue-600 px-1 rounded ml-1">ADMIN</span>`;
+
+                let controls = "";
+                // 13. Admin Controls (Kick, Promote) - Creator cannot be touched
+                if(iAmAdmin && mid !== myRealUid && mid !== creator) {
+                    controls = `
+                    <div class="flex gap-1">
+                        ${!isUserAdmin ? `<button onclick="window.grpAction('promote','${mid}')" class="text-blue-500 p-1" title="Admin machen"><i data-lucide="shield" class="w-3 h-3"></i></button>` : `<button onclick="window.grpAction('demote','${mid}')" class="text-orange-500 p-1"><i data-lucide="shield-off" class="w-3 h-3"></i></button>`}
+                        <button onclick="window.grpAction('kick','${mid}')" class="text-red-500 p-1" title="Kicken"><i data-lucide="user-minus" class="w-3 h-3"></i></button>
+                    </div>`;
+                }
+
+                div.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <img src="${u.avatar || 'https://api.dicebear.com/7.x/initials/svg?seed='+u.nickname}" class="w-8 h-8 rounded-full">
+                        <span class="text-sm font-bold">${u.nickname} ${badges}</span>
+                    </div>
+                    ${controls}
+                `;
+                list.appendChild(div);
+                lucide.createIcons();
+            });
+        }
+
+        window.grpAction = async (action, targetId) => {
+            const ref = doc(db, "chats", activeChatId);
+            if(action === 'kick') {
+                if(confirm("Nutzer entfernen?")) await updateDoc(ref, { members: arrayRemove(targetId), admins: arrayRemove(targetId) });
+            }
+            if(action === 'promote') await updateDoc(ref, { admins: arrayUnion(targetId) });
+            if(action === 'demote') await updateDoc(ref, { admins: arrayRemove(targetId) });
+            // Refresh UI triggers automatically via Snapshot
+        };
+
+        // Helpers for Chat List
+        function loadChats() {
+            onSnapshot(query(collection(db, "chats"), orderBy("lastActivity", "desc"), limit(50)), snap => {
+                const cont = document.getElementById('chatListContainer');
+                const pinCont = document.getElementById('pinnedChats');
+                cont.innerHTML = ""; pinCont.innerHTML = "";
+                let hasPinned = false;
+
+                snap.forEach(d => {
+                    const c = d.data();
+                    if(c.members?.includes(myRealUid) || c.participants?.includes(myRealUid)) {
+                        const isPinned = c.pinned?.[myRealUid];
+                        const div = document.createElement('div');
+                        // Styling Logic...
+                        let name = c.name;
+                        if(c.type === 'private') {
+                             const pid = c.participants.find(x => x !== myRealUid);
+                             // Async Name fetch placeholder
+                             name = c.names?.[pid] || "User"; 
+                        }
+                        
+                        div.className = "flex items-center gap-4 p-4 hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer transition border-b dark:border-slate-800/50";
+                        if(activeChatId === d.id) div.classList.add('bg-slate-100', 'dark:bg-slate-800');
+                        
+                        div.innerHTML = `
+                            <div class="relative">
+                                <img src="https://api.dicebear.com/7.x/initials/svg?seed=${name}" class="w-12 h-12 rounded-full object-cover">
+                                ${isPinned ? '<div class="absolute -top-1 -right-1 bg-wa-accent text-white p-0.5 rounded-full"><i data-lucide="pin" class="w-3 h-3"></i></div>' : ''}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex justify-between">
+                                    <h4 class="font-bold text-sm truncate dark:text-slate-100">${name}</h4>
+                                    <span class="text-[10px] text-slate-400">${c.lastActivity ? new Date(c.lastActivity.seconds*1000).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : ''}</span>
+                                </div>
+                                <p class="text-xs text-slate-500 truncate dark:text-slate-400">${c.lastMessage || 'Start a chat'}</p>
+                            </div>
+                        `;
+                        div.onclick = () => window.openChat(d.id, name, c.type==='private');
+
+                        if(isPinned) { hasPinned = true; pinCont.appendChild(div); }
+                        else cont.appendChild(div);
+                    }
+                });
+                pinCont.classList.toggle('hidden', !hasPinned);
+                lucide.createIcons();
+            });
+        }
+        
+        // Init Mobile Helper
+        window.closeChatMobile = () => {
+            document.getElementById('chatArea').classList.add('hidden');
+            document.getElementById('mainSidebar').classList.remove('hidden');
+            activeChatId = null;
+        };
+
+        // Additional utility to handle the generic imports
+        window.getDocs = getDocs; 
+        window.arrayUnion = arrayUnion;
+        window.arrayRemove = arrayRemove;
+        
     </script>
 </body>
 </html>
