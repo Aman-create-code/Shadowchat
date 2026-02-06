@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0b141a">
-    <title>ShadowChat Ultimate V13 - Pro Max</title>
+    <title>ShadowChat Ultimate V14 - Fixed & Enhanced</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
     
     <script>
         tailwind.config = {
@@ -30,7 +31,7 @@
                             iosRed: '#ff3b30',
                             iosGreen: '#34c759',
                             system: '#020617',
-                            gold: '#fbbf24' // Für Admins/Owner
+                            gold: '#fbbf24'
                         }
                     },
                     fontFamily: {
@@ -46,6 +47,7 @@
                         'scale-in': 'scaleIn 0.15s ease-out forwards',
                         'wiggle': 'wiggle 1s ease-in-out infinite',
                         'recording': 'recordingPulse 1.5s infinite ease-in-out',
+                        'typing': 'typingBounce 1s infinite',
                     },
                     keyframes: {
                         slideUp: {
@@ -76,6 +78,10 @@
                             '0%': { transform: 'scale(1)', boxShadow: '0 0 0 0 rgba(239, 68, 68, 0.7)' },
                             '70%': { transform: 'scale(1.1)', boxShadow: '0 0 0 10px rgba(239, 68, 68, 0)' },
                             '100%': { transform: 'scale(1)', boxShadow: '0 0 0 0 rgba(239, 68, 68, 0)' },
+                        },
+                        typingBounce: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-3px)' }
                         }
                     }
                 }
@@ -156,6 +162,8 @@
         .edited-tag { font-size: 10px; color: #94a3b8; font-style: italic; margin-left: 4px; display: inline-block; }
         .deleted-msg { font-style: italic; color: #64748b; font-size: 13px; display: flex; items-center: center; gap: 5px; }
         .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+        
+        /* Typing Indicator Dots */
         .typing-dot { animation: typing 1.4s infinite ease-in-out both; fill: currentColor; }
         .typing-dot:nth-child(1) { animation-delay: -0.32s; }
         .typing-dot:nth-child(2) { animation-delay: -0.16s; }
@@ -170,6 +178,13 @@
         /* Toggle Switch */
         .toggle-checkbox:checked { right: 0; border-color: #6366f1; }
         .toggle-checkbox:checked + .toggle-label { background-color: #6366f1; }
+        
+        /* Loading Overlay */
+        #loadingOverlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 9999;
+            display: flex; align-items: center; justify-content: center; color: white;
+            backdrop-filter: blur(5px);
+        }
     </style>
 </head>
 <body class="text-slate-900 dark:text-slate-100 flex flex-col md:flex-row h-[100dvh]">
@@ -181,6 +196,12 @@
     <audio id="sentSound" src="https://assets.mixkit.co/sfx/preview/mixkit-message-pop-alert-2354.mp3" preload="auto"></audio>
 
     <div id="toast-container" class="fixed top-5 right-5 z-[9999] flex flex-col gap-2 pointer-events-none"></div>
+    <div id="loadingOverlay" class="hidden">
+        <div class="flex flex-col items-center gap-4">
+            <div class="w-10 h-10 border-4 border-wa-accent border-t-transparent rounded-full animate-spin"></div>
+            <p id="loadingText" class="font-bold tracking-widest uppercase text-sm">Verarbeite...</p>
+        </div>
+    </div>
 
     <div id="lightbox" class="fixed inset-0 z-[300] bg-black/95 flex flex-col items-center justify-center hidden opacity-0 transition-opacity duration-300">
         <button onclick="window.closeLightbox()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-white bg-black/50 rounded-full z-50">
@@ -219,12 +240,12 @@
         <header class="h-[64px] bg-wa-panelLight dark:bg-wa-panel flex items-center justify-between px-4 shrink-0 shadow-sm z-20">
             <div class="flex items-center gap-3 group cursor-pointer" onclick="window.switchTab('settings')">
                 <div class="relative">
-                    <img id="myAvatarDisplay" class="w-10 h-10 rounded-full object-cover border-2 border-transparent group-hover:border-wa-accent transition bg-slate-200">
+                    <img id="myAvatarDisplay" class="w-10 h-10 rounded-full object-cover border-2 border-transparent group-hover:border-wa-accent transition bg-slate-200" src="">
                     <div id="myStatusDot" class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-wa-panelLight dark:border-wa-panel"></div>
                 </div>
                 <div class="hidden sm:block">
                     <p class="font-bold text-sm leading-none dark:text-gray-100" id="myDisplayNick">Lädt...</p>
-                    <p class="text-[10px] text-wa-accent font-bold mt-1 tracking-wide">ULTIMATE V13</p>
+                    <p class="text-[10px] text-wa-accent font-bold mt-1 tracking-wide">ULTIMATE V14</p>
                 </div>
             </div>
             <div class="flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
@@ -278,7 +299,7 @@
             <div id="tab-calls" class="hidden tab-content p-4 space-y-4 pb-20">
                 <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Anrufverlauf</h3>
                 <div id="callsList" class="space-y-2">
-                    <div class="text-center text-slate-500 text-xs mt-10">Keine Anrufe bisher.</div>
+                    <div class="text-center text-slate-500 text-xs mt-10">Lade Verlauf...</div>
                 </div>
             </div>
 
@@ -286,7 +307,7 @@
                 <div class="bg-gradient-to-br from-wa-panel to-wa-dark p-5 rounded-2xl border border-slate-700 shadow-lg">
                     <h4 class="text-xs font-bold text-wa-accent uppercase mb-3 flex items-center gap-2"><i data-lucide="user-plus" class="w-3 h-3"></i> Neuen Kontakt hinzufügen</h4>
                     <div class="flex gap-2">
-                        <input id="friendSearchInput" type="text" class="flex-1 bg-black/20 text-white p-2.5 rounded-lg text-sm border border-slate-600 outline-none focus:border-wa-accent focus:ring-1 ring-wa-accent transition placeholder-slate-500" placeholder="Nutzer-ID eingeben...">
+                        <input id="friendSearchInput" type="text" class="flex-1 bg-white/10 dark:bg-black/20 text-slate-800 dark:text-white p-2.5 rounded-lg text-sm border border-slate-300 dark:border-slate-600 outline-none focus:border-wa-accent focus:ring-1 ring-wa-accent transition placeholder-slate-500" placeholder="Nutzer-ID eingeben...">
                         <button onclick="window.sendRequest()" class="bg-wa-accent hover:bg-wa-accentHover text-white p-2.5 rounded-lg shadow-md transition-all active:scale-95"><i data-lucide="send" class="w-5 h-5"></i></button>
                     </div>
                 </div>
@@ -399,7 +420,7 @@
                 <img id="activeAvatar" class="w-10 h-10 rounded-full object-cover bg-slate-400 cursor-pointer hover:opacity-80 transition" onclick="window.toggleModal('infoModal')">
                 <div class="cursor-pointer" onclick="window.toggleModal('infoModal')">
                     <h2 id="activeTitle" class="font-bold text-sm md:text-base leading-tight dark:text-gray-100">Chat</h2>
-                    <p id="activeSub" class="text-[11px] text-wa-accent font-medium truncate max-w-[150px] animate-fade-in">Lade Status...</p>
+                    <div id="activeSub" class="text-[11px] text-wa-accent font-medium truncate max-w-[150px] animate-fade-in">Lade Status...</div>
                 </div>
             </div>
             <div class="flex items-center gap-2 md:gap-4">
@@ -411,6 +432,15 @@
 
         <div id="messagesList" class="flex-1 overflow-y-auto p-4 md:px-8 lg:px-16 space-y-2 relative z-10 custom-scrollbar flex flex-col pb-4"></div>
         
+        <div id="typingIndicator" class="hidden px-4 md:px-16 pb-2 z-10">
+             <div class="bg-white dark:bg-wa-panel inline-flex items-center gap-1.5 px-3 py-2 rounded-xl rounded-tl-none shadow-sm animate-fade-in border border-slate-100 dark:border-slate-700">
+                 <div class="w-1.5 h-1.5 bg-wa-accent rounded-full animate-bounce"></div>
+                 <div class="w-1.5 h-1.5 bg-wa-accent rounded-full animate-bounce delay-75"></div>
+                 <div class="w-1.5 h-1.5 bg-wa-accent rounded-full animate-bounce delay-150"></div>
+                 <span class="text-xs text-slate-500 ml-1">schreibt...</span>
+             </div>
+        </div>
+
         <div id="replyBanner" class="hidden bg-slate-100 dark:bg-slate-800 border-l-4 border-wa-accent p-2 mx-4 mb-2 rounded-r-lg flex justify-between items-center z-20 animate-slide-up">
             <div class="overflow-hidden">
                 <p class="text-xs font-bold text-wa-accent">Antwort an <span id="replyToName">Name</span></p>
@@ -437,7 +467,9 @@
             <input type="file" id="imgIn" class="hidden" accept="image/*" onchange="window.handleFile()">
             
             <div class="flex-1 bg-white dark:bg-wa-dark rounded-2xl flex items-center px-4 py-2 min-h-[48px] shadow-sm ring-1 ring-transparent focus-within:ring-wa-accent/50 transition-all">
-                <textarea id="msgIn" placeholder="Nachricht schreiben..." class="w-full bg-transparent outline-none text-[15px] dark:text-white px-1 py-1 resize-none max-h-32 custom-scrollbar placeholder-slate-500" rows="1" oninput="window.handleInput(this)" onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); window.sendMsg(); }"></textarea>
+                <textarea id="msgIn" placeholder="Nachricht schreiben..." class="w-full bg-transparent outline-none text-[15px] dark:text-white px-1 py-1 resize-none max-h-32 custom-scrollbar placeholder-slate-500" rows="1" 
+                    oninput="window.handleInput(this)" 
+                    onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); window.sendMsg(); }"></textarea>
             </div>
             
             <button id="micBtn" class="bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 p-3.5 rounded-full shadow-lg hover:bg-slate-300 transition-all flex items-center justify-center" 
@@ -584,7 +616,7 @@
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-        // FIREBASE CONFIG
+        // FIREBASE CONFIG (Do NOT change these keys)
         const firebaseConfig = {
             apiKey: "AIzaSyBC_O4jysYWBVuSeLJ6-ylx8OXrHBKQjfc",
             authDomain: "shadowchat-e94f0.firebaseapp.com",
@@ -602,12 +634,13 @@
         // GLOBAL STATE
         let currentUser = null; 
         let myRealUid = null;
-        let myData = null; // Speichert eigenes Nutzerobjekt
+        let myData = null; 
         let activeChatId = null;
-        let activeChatData = null; // Für Admin Checks
+        let activeChatData = null; 
         let isPrivate = false;
         let messageUnsub = null;
         let activeUserUnsub = null;
+        let typingTimeout = null;
         
         // Voice & Features
         let mediaRecorder = null;
@@ -618,7 +651,7 @@
         // Context Menu & Interactions
         let ctxMsgId = null;
         let ctxMsgData = null;
-        let replyTarget = null; // {id, text, sender}
+        let replyTarget = null; 
 
         // WebRTC
         let peerConnection = null;
@@ -630,7 +663,7 @@
         // Schimpfwort Filter
         const BAD_WORDS = ["arsch", "idiot", "hurensohn", "wichser", "fuck", "scheiße", "bastard"];
 
-        // --- UI UTILS ---
+        // --- UI HELPER ---
         
         window.showToast = (msg, type = 'success') => {
             const c = document.getElementById('toast-container');
@@ -641,6 +674,17 @@
             c.appendChild(t);
             lucide.createIcons();
             setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3000);
+        };
+
+        window.toggleLoading = (show, text = "Verarbeite...") => {
+            const overlay = document.getElementById('loadingOverlay');
+            const txt = document.getElementById('loadingText');
+            if(show) {
+                txt.innerText = text;
+                overlay.classList.remove('hidden');
+            } else {
+                overlay.classList.add('hidden');
+            }
         };
 
         window.toggleModal = (id) => {
@@ -694,7 +738,6 @@
                         localStorage.removeItem('shadow_ultra_uid');
                         location.reload(); return;
                     }
-                    // Neuer User
                     const nick = "User-" + Math.floor(Math.random()*9000+1000);
                     const pass = Math.random().toString(36).slice(-8);
                     await setDoc(uRef, { 
@@ -709,10 +752,12 @@
                     });
                     document.getElementById('mySecretPass').innerText = pass;
                     window.showToast("Willkommen! Speichere dein Passwort.", 'info');
+                    myData = { nickname: nick, bio: "ShadowChat Ultimate User", avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${nick}` }; // Initial data
                 } else {
                     myData = snap.data();
-                    updateSelfUI();
                 }
+                
+                updateSelfUI();
 
                 // Online Status Logik
                 updateDoc(uRef, { online: true, lastSeen: serverTimestamp() });
@@ -724,19 +769,22 @@
                 loadChats();
                 loadFriends();
                 loadStatus();
-                loadCallsHistory();
+                loadCallsHistory(); // Fix 2: Loaded here
                 startIncomingCallListener();
                 lucide.createIcons();
             }
         });
 
         function updateSelfUI() {
+            if(!myData) return;
             document.getElementById('myDisplayNick').innerText = myData.nickname;
             document.getElementById('setNick').innerText = myData.nickname;
             document.getElementById('nickIn').value = myData.nickname;
             document.getElementById('myFullId').innerText = myRealUid;
-            document.getElementById('myAvatarDisplay').src = myData.avatar || "";
-            document.getElementById('setAvatarImg').src = myData.avatar || "";
+            // Force avatar refresh
+            const avatarUrl = myData.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${myData.nickname}`;
+            document.getElementById('myAvatarDisplay').src = avatarUrl;
+            document.getElementById('setAvatarImg').src = avatarUrl;
             document.getElementById('bioIn').value = myData.bio || "";
             document.getElementById('setBio').innerText = myData.bio || "";
             document.getElementById('mySecretPass').innerText = myData.password || "Unbekannt";
@@ -764,40 +812,56 @@
 
         window.copyMyId = () => { navigator.clipboard.writeText(myRealUid); window.showToast("ID kopiert!"); };
 
-        // --- FEATURES (1-13 IMPLEMENTIERUNG) ---
+        // --- FEATURES & FIXES ---
 
-        // 7. & 8. Profilbild Upload & Namensfilter
+        // FIX 1: Profilbild Upload Logic
         window.uploadAvatar = async () => {
             const f = document.getElementById('avatarInput').files[0];
             if(!f) return;
-            window.showToast("Lade Bild hoch...");
+            
+            window.toggleLoading(true, "Lade Bild hoch...");
+            
             try {
+                // Compress image before upload
+                const options = { maxSizeMB: 0.5, maxWidthOrHeight: 800, useWebWorker: true };
+                const compressedFile = await imageCompression(f, options);
+
                 const sRef = ref(storage, `avatars/${myRealUid}_${Date.now()}`);
-                await uploadBytes(sRef, f);
+                await uploadBytes(sRef, compressedFile);
                 const url = await getDownloadURL(sRef);
+                
                 await updateDoc(doc(db, "users", myRealUid), { avatar: url });
+                
+                // Update Local State immediately
                 myData.avatar = url;
                 updateSelfUI();
-                window.showToast("Profilbild geändert!");
-            } catch(e) { window.showToast("Fehler beim Upload", 'error'); }
+                
+                window.toggleLoading(false);
+                window.showToast("Profilbild erfolgreich geändert!", 'success');
+            } catch(e) { 
+                console.error(e);
+                window.toggleLoading(false);
+                window.showToast("Fehler beim Upload: " + e.message, 'error'); 
+            }
         };
 
         window.saveProfile = async () => {
             const n = document.getElementById('nickIn').value.trim();
             const b = document.getElementById('bioIn').value.trim();
             
-            // 8. Schimpfwort Filter
             if(BAD_WORDS.some(w => n.toLowerCase().includes(w))) {
                 return window.showToast("Name enthält unzulässige Wörter!", 'error');
             }
 
+            window.toggleLoading(true, "Speichere...");
             await updateDoc(doc(db, "users", myRealUid), { nickname: n, bio: b });
             myData.nickname = n; myData.bio = b;
             updateSelfUI();
+            window.toggleLoading(false);
             window.showToast("Profil gespeichert");
         };
 
-        // 9. Benachrichtigungen
+        // Benachrichtigungen
         window.requestNotifyPermission = () => {
             Notification.requestPermission().then(p => {
                 if(p === "granted") {
@@ -810,19 +874,20 @@
         function sendSystemNotification(title, body) {
             if(document.hidden && Notification.permission === "granted") {
                 new Notification(title, { body, icon: 'https://cdn-icons-png.flaticon.com/512/1041/1041916.png' });
-                window.playSound('sentSound'); // Kurzer Ton
+                window.playSound('sentSound');
             }
         }
 
         // --- CHAT LOGIC ---
         
-        // 6. Anpinnen
+        // FIX 3: Pinned Chat Toggle
         window.togglePinChat = async () => {
             if(!activeChatId) return;
             const isPinned = activeChatData.pinned?.[myRealUid];
             await updateDoc(doc(db, "chats", activeChatId), { [`pinned.${myRealUid}`]: !isPinned });
             document.getElementById('btnPinChat').classList.toggle('text-wa-accent');
             window.showToast(isPinned ? "Chat losgelöst" : "Chat angepinnt");
+            // Note: UI updates via loadChats snapshot automatically
         };
 
         window.openChat = async (id, name, priv, avatarUrl) => {
@@ -840,14 +905,17 @@
             document.getElementById('activeTitle').innerText = name;
             document.getElementById('activeAvatar').src = avatarUrl;
             
-            // Load Chat Data for Admin/Pin Check
-            onSnapshot(doc(db, "chats", id), s => {
+            // Unsubscribe previous listeners
+            if(activeUserUnsub) activeUserUnsub();
+            
+            // Load Chat Data for Admin/Pin Check & Typing Status
+            activeUserUnsub = onSnapshot(doc(db, "chats", id), s => {
                 activeChatData = s.data();
                 const isPinned = activeChatData.pinned?.[myRealUid];
                 const btn = document.getElementById('btnPinChat');
                 if(isPinned) btn.classList.add('text-wa-accent'); else btn.classList.remove('text-wa-accent');
                 
-                // Status Subtitle
+                // Status Subtitle (Online/LastSeen)
                 if(isPrivate) {
                     const pid = activeChatData.participants.find(p => p !== myRealUid);
                     getDoc(doc(db, "users", pid)).then(u => {
@@ -859,6 +927,13 @@
                 } else {
                     document.getElementById('activeSub').innerText = `${activeChatData.members.length} Mitglieder`;
                 }
+
+                // Feature: Typing Indicator UI
+                const typingUsers = activeChatData.typing || [];
+                const isSomeoneElseTyping = typingUsers.some(uid => uid !== myRealUid);
+                const indicator = document.getElementById('typingIndicator');
+                if(isSomeoneElseTyping) indicator.classList.remove('hidden');
+                else indicator.classList.add('hidden');
             });
 
             // Load Messages
@@ -869,7 +944,7 @@
                 const list = document.getElementById('messagesList');
                 list.innerHTML = "";
                 
-                // 12. Blaue Haken Logik (Real)
+                // Read Receipt Logic
                 if(!document.hidden) {
                     snap.docs.forEach(d => {
                         const m = d.data();
@@ -885,13 +960,12 @@
             });
         };
 
-        // 11. & 12. Message Rendering & Interaction
+        // Message Rendering & Interaction
         function renderMessage(docSnap, container) {
             const m = docSnap.data();
             const mid = docSnap.id;
             const isMe = m.senderId === myRealUid;
             
-            // 11. Gelöscht Stub
             if(m.type === 'deleted') {
                 container.innerHTML += `
                     <div class="flex ${isMe ? 'justify-end' : 'justify-start'} mb-1">
@@ -902,19 +976,17 @@
                 return;
             }
 
-            // 12. Blaue Haken (Check member count)
             const memCount = activeChatData?.members?.length || 2;
             const isRead = m.readBy && m.readBy.length >= memCount;
             const checkColor = isRead ? 'text-blue-500' : 'text-slate-400';
 
-            // 2. Swipe Interaction Setup
+            // Swipe Logic
             const div = document.createElement('div');
             div.className = `swipe-msg-container flex ${isMe ? 'justify-end' : 'justify-start'} mb-1 group relative`;
             
-            // HammerJS Gesture
             const hammer = new Hammer(div);
             hammer.on('panright', e => {
-                if(Math.abs(e.deltaY) < 30) { // Horizontal constraint
+                if(Math.abs(e.deltaY) < 30) { 
                     div.style.transform = `translateX(${Math.min(e.deltaX, 80)}px)`;
                     if(e.deltaX > 60) div.querySelector('.reply-icon-indicator').style.opacity = '1';
                 }
@@ -924,10 +996,8 @@
                 div.querySelector('.reply-icon-indicator').style.opacity = '0';
                 if(e.deltaX > 60) window.initReply(mid, m);
             });
-            // Long Press
             hammer.on('press', () => window.openContextMenu(mid, m, isMe));
 
-            // Content Construction
             let content = "";
             if(m.replyTo) {
                 content += `
@@ -967,11 +1037,15 @@
             container.appendChild(div);
         }
 
-        // 1. Voice Messages Logic
+        // FIX 6: Voice Messages (MimeType & Send Logic)
         window.startRecording = async () => {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
+                // Use WebM for better browser compatibility
+                const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') 
+                               ? 'audio/webm;codecs=opus' : 'audio/webm';
+                
+                mediaRecorder = new MediaRecorder(stream, { mimeType });
                 audioChunks = [];
                 mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
                 mediaRecorder.start();
@@ -984,7 +1058,7 @@
                     const diff = Math.floor((Date.now() - recStartTime) / 1000);
                     document.getElementById('voiceTimer').innerText = `0:${diff.toString().padStart(2, '0')}`;
                 }, 1000);
-            } catch(e) { window.showToast("Mikrofon Fehler", 'error'); }
+            } catch(e) { window.showToast("Mikrofon Zugriff verweigert", 'error'); }
         };
 
         window.stopRecording = () => {
@@ -995,12 +1069,15 @@
             document.getElementById('msgIn').disabled = false;
             
             mediaRecorder.onstop = async () => {
-                const blob = new Blob(audioChunks, { type: 'audio/mp3' });
-                const fname = `voice/${activeChatId}/${Date.now()}.mp3`;
+                const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                const fname = `voice/${activeChatId}/${Date.now()}.webm`;
                 const sRef = ref(storage, fname);
+                
                 window.showToast("Sende Audio...");
                 await uploadBytes(sRef, blob);
                 const url = await getDownloadURL(sRef);
+                
+                // Call standard sendMessage with audio param
                 sendMessage(null, null, url);
             };
         };
@@ -1008,6 +1085,16 @@
         window.handleInput = (el) => {
             const btnSend = document.getElementById('sendBtn');
             const btnMic = document.getElementById('micBtn');
+            
+            // Typing Indicator Logic
+            if(activeChatId) {
+                updateDoc(doc(db, "chats", activeChatId), { typing: arrayUnion(myRealUid) });
+                if(typingTimeout) clearTimeout(typingTimeout);
+                typingTimeout = setTimeout(() => {
+                    updateDoc(doc(db, "chats", activeChatId), { typing: arrayRemove(myRealUid) });
+                }, 2000);
+            }
+
             if(el.value.trim().length > 0) {
                 btnSend.classList.remove('hidden');
                 btnMic.classList.add('hidden');
@@ -1028,15 +1115,28 @@
             window.clearAttachment();
         };
 
-        async function sendMessage(text, img, audio) {
+        // Unified Send Function
+        async function sendMessage(text, imgFile, audioUrl) {
             let type = 'text';
-            if(img) type = 'image';
-            if(audio) type = 'audio';
+            let imgUrl = null;
+
+            if(imgFile && typeof imgFile !== 'string') {
+                 // Image Compression feature
+                 const options = { maxSizeMB: 1, useWebWorker: true };
+                 const compressedFile = await imageCompression(imgFile, options);
+                 
+                 const sRef = ref(storage, `chat/${activeChatId}/${Date.now()}`);
+                 await uploadBytes(sRef, compressedFile);
+                 imgUrl = await getDownloadURL(sRef);
+                 type = 'image';
+            }
+            
+            if(audioUrl) type = 'audio';
 
             const payload = {
                 text: text || null,
-                img: img || null,
-                audio: audio || null,
+                img: imgUrl || null,
+                audio: audioUrl || null,
                 type: type,
                 senderId: myRealUid,
                 senderName: myData.nickname,
@@ -1049,19 +1149,18 @@
             await addDoc(collection(db, `chats/${activeChatId}/messages`), payload);
             await updateDoc(doc(db, "chats", activeChatId), { 
                 lastActivity: serverTimestamp(),
-                lastMessage: audio ? '🎤 Sprachnachricht' : (img ? '📷 Bild' : text)
+                lastMessage: audioUrl ? '🎤 Sprachnachricht' : (imgUrl ? '📷 Bild' : text),
+                typing: arrayRemove(myRealUid) // Stop typing immediately on send
             });
             window.playSound('sentSound');
         }
 
-        // 3. Context Menu Logic
+        // Context Menu Logic
         window.openContextMenu = (mid, m, isMe) => {
             ctxMsgId = mid; ctxMsgData = m;
             document.getElementById('msgContextMenu').classList.remove('hidden');
-            // 3. Löschen Option Logik (Admin or Self)
             const isAdmin = activeChatData.admins?.includes(myRealUid) || activeChatData.creator === myRealUid;
             const btn = document.getElementById('ctxDeleteBtn');
-            // Darf löschen wenn: Eigene Nachricht ODER (Ich bin Admin und es ist Gruppe)
             if(isMe || (isAdmin && activeChatData.type === 'group')) {
                 btn.classList.remove('hidden');
             } else {
@@ -1091,11 +1190,9 @@
 
         window.ctxForward = () => {
             document.getElementById('msgContextMenu').classList.add('hidden');
-            // Lade Chats für Forward Modal
             const list = document.getElementById('forwardList');
             list.innerHTML = "";
             window.toggleModal('forwardModal');
-            // Simplified: Query recent chats
             const q = query(collection(db, "chats"), where("members", "array-contains", myRealUid), limit(10));
             getDocs(q).then(snap => {
                 snap.forEach(d => {
@@ -1118,14 +1215,13 @@
                 timestamp: serverTimestamp(),
                 readBy: [myRealUid],
                 replyTo: null,
-                forwarded: true // 3. Forward Flag
+                forwarded: true
             };
-            delete payload.id; // New ID needed
+            delete payload.id;
             await addDoc(collection(db, `chats/${targetId}/messages`), payload);
             window.showToast("Nachricht weitergeleitet!");
         };
 
-        // 2. Reply UI
         window.initReply = (mid, m) => {
             replyTarget = { id: mid, text: m.text || (m.audio ? "Sprachnachricht" : "Bild"), sender: m.senderName };
             document.getElementById('replyBanner').classList.remove('hidden');
@@ -1139,29 +1235,60 @@
             document.getElementById('replyBanner').classList.add('hidden');
         };
 
-        // 5. Calls History & 10. Ringtone Logic
+        // FIX 2: Call History Logic (Merged Incoming/Outgoing)
         function loadCallsHistory() {
-            const q = query(collection(db, "calls"), where("callerId", "==", myRealUid), orderBy("timestamp", "desc"), limit(20));
-            onSnapshot(q, snap => {
-                const list = document.getElementById('callsList');
+            const list = document.getElementById('callsList');
+            
+            // We need to listen to both incoming and outgoing calls.
+            // Firestore doesn't support logical OR nicely, so we use two listeners.
+            const outgoingQ = query(collection(db, "calls"), where("callerId", "==", myRealUid), orderBy("timestamp", "desc"), limit(20));
+            const incomingQ = query(collection(db, "calls"), where("targetId", "==", myRealUid), orderBy("timestamp", "desc"), limit(20));
+            
+            let outgoingCalls = [];
+            let incomingCalls = [];
+
+            const renderMergedList = () => {
+                const allCalls = [...outgoingCalls, ...incomingCalls].sort((a,b) => b.data.timestamp - a.data.timestamp);
                 list.innerHTML = "";
-                snap.forEach(d => {
-                    const c = d.data();
+                
+                if(allCalls.length === 0) {
+                     list.innerHTML = '<div class="text-center text-slate-500 text-xs mt-10">Keine Anrufe bisher.</div>';
+                     return;
+                }
+
+                allCalls.forEach(item => {
+                    const c = item.data;
+                    const isOutgoing = c.callerId === myRealUid;
+                    const partnerName = isOutgoing ? c.targetName : c.callerName;
+                    const partnerId = isOutgoing ? c.targetId : c.callerId;
+                    const icon = isOutgoing ? 'arrow-up-right' : 'arrow-down-left';
+                    const color = isOutgoing ? 'text-green-500' : 'text-red-500';
+
                     const div = document.createElement('div');
                     div.className = "flex items-center justify-between p-3 bg-white dark:bg-wa-panel rounded-xl shadow-sm border border-slate-100 dark:border-slate-700";
                     div.innerHTML = `
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center"><i data-lucide="phone-outgoing" class="w-5 h-5 text-slate-500"></i></div>
+                            <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center"><i data-lucide="${icon}" class="w-5 h-5 ${color}"></i></div>
                             <div>
-                                <p class="font-bold text-sm dark:text-white">${c.targetName}</p>
-                                <p class="text-[10px] text-slate-400">${c.timestamp?.toDate().toLocaleDateString() || 'Datum'}</p>
+                                <p class="font-bold text-sm dark:text-white">${partnerName}</p>
+                                <p class="text-[10px] text-slate-400">${c.timestamp?.toDate().toLocaleDateString() || 'Datum'} • ${c.timestamp?.toDate().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</p>
                             </div>
                         </div>
-                        <button onclick="window.initiateCall('${c.targetId}', '${c.targetName}')" class="text-green-500 hover:bg-green-100 p-2 rounded-full transition"><i data-lucide="refresh-ccw" class="w-5 h-5"></i></button>
+                        <button onclick="window.initiateCall('${partnerId}', '${partnerName}')" class="text-green-500 hover:bg-green-100 p-2 rounded-full transition"><i data-lucide="phone" class="w-5 h-5"></i></button>
                     `;
                     list.appendChild(div);
                 });
                 lucide.createIcons();
+            };
+
+            onSnapshot(outgoingQ, snap => {
+                outgoingCalls = snap.docs.map(d => ({id: d.id, data: d.data()}));
+                renderMergedList();
+            });
+
+            onSnapshot(incomingQ, snap => {
+                incomingCalls = snap.docs.map(d => ({id: d.id, data: d.data()}));
+                renderMergedList();
             });
         }
 
@@ -1171,7 +1298,6 @@
                 snap.docChanges().forEach(c => {
                     if(c.type === 'added') {
                         const d = c.doc.data();
-                        // 10. Ringtone Play
                         if(d.targetId === myRealUid || (d.isGroup && activeChatData?.members.includes(myRealUid))) {
                             currentCallId = c.doc.id;
                             document.getElementById('callOverlay').classList.remove('hidden');
@@ -1191,7 +1317,6 @@
             });
         }
         
-        // 5. Redial & Call Init
         window.initiateCall = async (tid, tname) => {
             let targetId = tid || (isPrivate ? activeChatId.split('_').find(x => x !== myRealUid) : null);
             let targetName = tname || document.getElementById('activeTitle').innerText;
@@ -1265,11 +1390,10 @@
             document.getElementById('iconMute').className = `w-7 h-7 ${muted ? 'text-red-500' : 'text-white'}`;
         };
 
-        // 13. Group Admin Logic
+        // Group Admin Logic
         window.createGrp = async () => {
             const name = document.getElementById('ng_name').value;
             const pass = document.getElementById('ng_pass').value;
-            // 13. 8-Stellige ID
             const gid = Math.random().toString(36).slice(-8).toUpperCase();
             
             await setDoc(doc(db, "chats", gid), {
@@ -1277,7 +1401,7 @@
                 name: name,
                 password: pass || null,
                 members: [myRealUid],
-                admins: [myRealUid], // 13. Creator is Admin
+                admins: [myRealUid],
                 creator: myRealUid,
                 lastActivity: serverTimestamp()
             });
@@ -1311,7 +1435,6 @@
                     if(mid === creator) role = `<span class="text-[10px] bg-yellow-100 text-yellow-600 px-1 rounded ml-1 font-bold">OWNER</span>`;
                     else if(admins.includes(mid)) role = `<span class="text-[10px] bg-blue-100 text-blue-600 px-1 rounded ml-1 font-bold">ADMIN</span>`;
                     
-                    // 13. Admin Controls
                     let actions = "";
                     if(iAmAdmin && mid !== myRealUid && mid !== creator) {
                         actions = `
@@ -1342,10 +1465,9 @@
             }
             if(action === 'promote') await updateDoc(ref, { admins: arrayUnion(target) });
             if(action === 'demote') await updateDoc(ref, { admins: arrayRemove(target) });
-            // UI reloads via Snapshot
         };
 
-        // --- STATUS TAB (Restored & Functional) ---
+        // STATUS TAB
         window.upStatus = async () => {
             const f = document.getElementById('stIn').files[0];
             if(!f) return;
@@ -1381,7 +1503,7 @@
             });
         }
 
-        // --- FRIENDS & GENERAL ---
+        // FRIENDS & GENERAL
         function loadFriends() {
             onSnapshot(doc(db, "users", myRealUid), async (s) => {
                 const data = s.data(); if(!data) return;
@@ -1441,19 +1563,19 @@
             await setDoc(doc(db, "chats", id), {
                 type: 'private', participants: [myRealUid, oid],
                 lastActivity: serverTimestamp(),
-                members: [myRealUid, oid] // Für Kompatibilität
+                members: [myRealUid, oid] 
             }, { merge: true });
             window.switchTab('chats');
             window.openChat(id, onick, true, oava);
         };
 
+        // FIX 3 & Main Chat List
         function loadChats() {
             onSnapshot(query(collection(db, "chats"), orderBy("lastActivity", "desc")), snap => {
                 const list = document.getElementById('chatListContainer');
                 const pins = document.getElementById('pinnedList');
                 list.innerHTML = ""; pins.innerHTML = "";
-                let hasPins = false;
-
+                
                 snap.forEach(async d => {
                     const c = d.data();
                     if(c.members?.includes(myRealUid) || c.participants?.includes(myRealUid)) {
@@ -1479,19 +1601,24 @@
                                     <span class="text-[10px] text-slate-400">${c.lastActivity ? new Date(c.lastActivity.seconds*1000).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : ''}</span>
                                 </div>
                                 <p class="text-[13px] text-slate-500 dark:text-slate-400 truncate flex items-center gap-1">
-                                    ${c.lastMessage}
+                                    ${c.lastMessage || 'Keine Nachrichten'}
                                 </p>
                             </div>
                             ${isPinned ? '<div class="absolute top-2 right-2 text-wa-accent"><i data-lucide="pin" class="w-3 h-3"></i></div>' : ''}
                         `;
                         div.onclick = () => window.openChat(d.id, name, c.type === 'private', avatar);
 
-                        if(isPinned) { hasPins = true; pins.appendChild(div); }
+                        if(isPinned) { pins.appendChild(div); }
                         else list.appendChild(div);
                     }
                 });
-                if(hasPins) document.getElementById('pinnedChatsContainer').classList.remove('hidden');
-                else document.getElementById('pinnedChatsContainer').classList.add('hidden');
+                
+                // Slightly delayed check to ensure pins container visibility
+                setTimeout(() => {
+                    if(pins.children.length > 0) document.getElementById('pinnedChatsContainer').classList.remove('hidden');
+                    else document.getElementById('pinnedChatsContainer').classList.add('hidden');
+                }, 100);
+                
                 lucide.createIcons();
             });
         }
@@ -1505,7 +1632,6 @@
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab', 'text-wa-accent', 'border-wa-accent'));
             document.getElementById('tabbtn-'+t)?.classList.add('active-tab', 'text-wa-accent', 'border-wa-accent');
             
-            // Mobile
             document.querySelectorAll('.m-nav-btn').forEach(b => b.classList.replace('text-wa-accent', 'text-slate-500'));
             document.getElementById('mnav-'+t)?.classList.replace('text-slate-500', 'text-wa-accent');
         };
@@ -1517,9 +1643,7 @@
         window.handleFile = () => {
             const f = document.getElementById('imgIn').files[0];
             if(f) {
-                window.tempImg = f; // Store for sending logic (not fully implemented in sendMsg for brevity but concept is here)
-                // For this demo, we assume direct upload in sendMsg like Status
-                // Let's implement preview:
+                window.tempImg = f;
                  document.getElementById('attachmentPreview').classList.remove('hidden');
                  document.getElementById('prevImg').src = URL.createObjectURL(f);
             }
@@ -1530,42 +1654,6 @@
             document.getElementById('attachmentPreview').classList.add('hidden');
             window.tempImg = null;
         };
-
-        // IMAGE UPLOAD HELPER FOR CHAT (Override sendMessage to handle img)
-        const originalSend = window.sendMessage;
-        window.sendMessage = async (text, imgFile, audioUrl) => {
-            let imgUrl = null;
-            if(imgFile && typeof imgFile !== 'string') { // If it is a File object
-                 const sRef = ref(storage, `chat/${activeChatId}/${Date.now()}`);
-                 await uploadBytes(sRef, imgFile);
-                 imgUrl = await getDownloadURL(sRef);
-            }
-            
-            // Call logic
-            let type = 'text';
-            if(imgUrl) type = 'image';
-            if(audioUrl) type = 'audio';
-
-            const payload = {
-                text: text || null,
-                img: imgUrl || null,
-                audio: audioUrl || null,
-                type: type,
-                senderId: myRealUid,
-                senderName: myData.nickname,
-                timestamp: serverTimestamp(),
-                readBy: [myRealUid],
-                replyTo: replyTarget,
-                forwarded: false
-            };
-            
-            await addDoc(collection(db, `chats/${activeChatId}/messages`), payload);
-            await updateDoc(doc(db, "chats", activeChatId), { 
-                lastActivity: serverTimestamp(),
-                lastMessage: audioUrl ? '🎤 Sprachnachricht' : (imgUrl ? '📷 Bild' : text)
-            });
-            window.playSound('sentSound');
-        };
         
         window.closeChatMobile = () => {
             document.getElementById('chatArea').classList.add('hidden');
@@ -1573,7 +1661,7 @@
             activeChatId = null;
         };
 
-        // Init
+        // Start
         window.switchTab('chats');
         
     </script>
