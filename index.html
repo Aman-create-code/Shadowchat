@@ -2036,12 +2036,10 @@
             const file = document.getElementById('imgIn').files[0];
             const txt = inp.value.trim();
             if(!txt && !file) return;
+            if(!activeChatId) return window.showToast('Kein Chat ausgewählt.', 'error');
+            if(!myRealUid) return window.showToast('Noch nicht angemeldet. Bitte warten.', 'error');
 
             const txtToSend = txt;
-            inp.value = "";
-            inp.style.height = 'auto';
-            window.handleInput(inp);
-            window.clearAttachment();
 
             let url = null;
             if(file) {
@@ -2071,7 +2069,12 @@
                     lastActivity: serverTimestamp(), lastMessage: txtToSend || (url ? "📷 Bild" : "🎤 Sprachnachricht"),
                     [`typing.${myRealUid}`]: false
                 });
-            } catch(e) { window.showToast("Senden fehlgeschlagen", 'error'); }
+                // Only clear input/attachment after successful send
+                inp.value = "";
+                inp.style.height = 'auto';
+                window.handleInput(inp);
+                window.clearAttachment();
+            } catch(e) { console.error('sendMsg failed', e); window.showToast("Senden fehlgeschlagen", 'error'); }
         };
 
         // ===================== NEW: VOICE MESSAGES =====================
@@ -2331,6 +2334,70 @@
             });
             updateInfoModal(id, name, isPriv);
         };
+
+        // Populate the info modal for a chat (group or private)
+        async function updateInfoModal(id, name, isPriv) {
+            const tit = document.getElementById('infoTit');
+            const bio = document.getElementById('infoBio');
+            const badge = document.getElementById('infoBadge');
+            const memberList = document.getElementById('infoMemberList');
+            const ava = document.getElementById('infoAvaLarge');
+            const renameBtn = document.getElementById('infoRenameBtn');
+            const leaveBtn = document.getElementById('leaveBtn');
+
+            tit.textContent = name || 'Lade...';
+            bio.textContent = '';
+            badge.textContent = `ID: ${id || '---'}`;
+            memberList.innerHTML = '';
+            ava.textContent = (name && name.length > 0) ? name[0] : '?';
+            renameBtn.classList.add('hidden');
+            leaveBtn.style.display = isPriv ? 'none' : 'block';
+
+            try {
+                if(isPriv) {
+                    // For private chat, show the partner's public info
+                    const partnerId = id.split('_').find(u => u !== myRealUid);
+                    if(!partnerId) return;
+                    const uSnap = await getDoc(doc(db, 'users', partnerId));
+                    if(uSnap.exists()) {
+                        const ud = uSnap.data();
+                        tit.textContent = ud.nickname || name || partnerId;
+                        bio.textContent = ud.bio || '';
+                        badge.textContent = `ID: ${partnerId}`;
+                        ava.textContent = ud.avatarEmoji || (ud.nickname ? ud.nickname[0] : '?');
+                        const div = document.createElement('div');
+                        div.className = 'flex items-center gap-3';
+                        div.innerHTML = `<div class="w-10 h-10 bg-sc-warn/10 text-sc-warn rounded-full flex items-center justify-center font-bold text-lg">${ava.textContent}</div><div><div class="font-bold">${ud.nickname||partnerId}</div><div class="text-xs text-gray-500">${ud.email||''}</div></div>`;
+                        memberList.appendChild(div);
+                    }
+                } else {
+                    // Group chat: list members
+                    const cSnap = await getDoc(doc(db, 'chats', id));
+                    if(!cSnap.exists()) return;
+                    const cd = cSnap.data();
+                    tit.textContent = cd.name || name || id;
+                    bio.textContent = cd.creator ? `Erstellt von ${cd.creator}` : '';
+                    badge.textContent = `ID: ${id}`;
+                    ava.textContent = (cd.name && cd.name.length>0) ? cd.name[0] : '?';
+                    const members = cd.members || [];
+                    if(members.length === 0) memberList.innerHTML = '<p class="text-xs text-gray-400">Keine Teilnehmer.</p>';
+                    else {
+                        for(const uid of members.slice(0,50)) {
+                            try {
+                                const u = await getDoc(doc(db, 'users', uid));
+                                const d = u.exists() ? u.data() : { nickname: uid };
+                                const el = document.createElement('div');
+                                el.className = 'flex items-center justify-between p-3 bg-white dark:bg-sc-panel rounded-xl border border-gray-100 dark:border-sc-border';
+                                el.innerHTML = `<div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-gradient-to-tr from-gray-300 to-gray-400 flex items-center justify-center text-white font-bold">${(d.nickname||uid)[0]}</div><div class="text-sm font-bold">${d.nickname||uid}</div></div><div class="text-xs text-gray-500">${uid}</div>`;
+                                memberList.appendChild(el);
+                            } catch(e) { /* ignore individual user fetch errors */ }
+                        }
+                    }
+                    // show rename button for admins (simple check)
+                    if(cd.admins && cd.admins.includes(myRealUid)) renameBtn.classList.remove('hidden');
+                }
+            } catch(e) { console.error('updateInfoModal error', e); }
+        }
 
         window.addReaction = async (msgId, emo) => {
             await updateDoc(doc(db, `chats/${activeChatId}/messages`, msgId), { reactions: arrayUnion(emo) });
