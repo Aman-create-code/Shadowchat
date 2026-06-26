@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0b141a">
+    <title>ShadowChat Ultimate V13 - Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        wa: { light: '#ffffff', dark: '#111b21', panelLight: '#f0f2f5', panel: '#202c33', accent: '#00a884', accentHover: '#008f6f', bubbleOut: '#d9fdd3', bubbleIn: '#ffffff', bubbleDarkOut: '#005c4b', bubbleDarkIn: '#202c33', iosRed: '#ff3b30', iosGreen: '#34c759', system: '#182229' }
+                    },
+                    fontFamily: { sans: ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'], mono: ['SF Mono', 'Fira Code', 'Roboto Mono', 'monospace'] },
+                    animation: { 'slide-up': 'slideUp 0.4s cubic-bezier(0.32, 0.72, 0, 1) forwards', 'slide-down': 'slideDown 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards', 'pulse-slow': 'pulse 3s infinite', 'bounce-slight': 'bounceSlight 0.3s ease-in-out', 'fade-in': 'fadeIn 0.2s ease-out forwards', 'scale-in': 'scaleIn 0.15s ease-out forwards' },
+                    keyframes: {
+                        slideUp: { '0%': { transform: 'translateY(100%)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+                        slideDown: { '0%': { transform: 'translateY(-20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+                        bounceSlight: { '0%, 100%': { transform: 'scale(1)' }, '50%': { transform: 'scale(0.95)' } },
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        scaleIn: { '0%': { transform: 'scale(0.9)', opacity: '0' }, '100%': { transform: 'scale(1)', opacity: '1' } }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root { --sat: env(safe-area-inset-top); --sab: env(safe-area-inset-bottom); --app-height: 100dvh; }
+        body { font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; overflow: hidden; height: var(--app-height); background-color: #0b141a; -webkit-tap-highlight-color: transparent; }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(134, 150, 160, 0.3); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(134, 150, 160, 0.5); }
+        .glass-modal { backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); background-color: rgba(0,0,0,0.4); }
+        .glass-panel { background: rgba(32, 44, 51, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
+        .glass-premium { background: linear-gradient(135deg, rgba(0,168,132,0.08) 0%, rgba(0,80,64,0.04) 100%); backdrop-filter: blur(20px); border: 1px solid rgba(0,168,132,0.15); }
+        .msg-anim { animation: msgSlide 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; transform-origin: bottom; }
+        @keyframes msgSlide { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .ios-blur { backdrop-filter: blur(60px) saturate(180%); -webkit-backdrop-filter: blur(60px) saturate(180%); background: rgba(10, 15, 20, 0.9); }
+        .call-btn { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .call-btn:active { transform: scale(0.9); filter: brightness(0.8); }
+        .ripple { position: absolute; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); animation: rippleAnim 2s infinite ease-out; pointer-events: none; z-index: 0; width: 100%; height: 100%; top: 0; left: 0; }
+        @keyframes rippleAnim { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(2.5); opacity: 0; } }
+        .edited-tag { font-size: 10px; color: #8696a0; font-style: italic; margin-left: 4px; display: inline-block; }
+        .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+        .typing-dot { animation: typing 1.4s infinite ease-in-out both; fill: currentColor; }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { pointer-events: auto; min-width: 300px; padding: 16px; border-radius: 16px; background: rgba(32,44,51,0.96); backdrop-filter: blur(20px); color: white; box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05); display: flex; align-items: center; gap: 12px; animation: slideDown 0.3s forwards; border-left: 4px solid #00a884; }
+        .toast.error { border-left-color: #ff3b30; }
+        .toast.info { border-left-color: #007aff; }
+        #lightbox { transition: opacity 0.3s; }
+        #lightbox.open { opacity: 1; pointer-events: auto; }
+        #lightbox:not(.open) { opacity: 0; pointer-events: none; }
+        .toggle-checkbox:checked { right: 0; border-color: #00a884; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #00a884; }
+
+        /* NEW FEATURES STYLES */
+        .reply-bubble { background: rgba(0,0,0,0.08); border-left: 3px solid #00a884; border-radius: 6px; padding: 5px 8px; margin-bottom: 5px; font-size: 11px; color: #8696a0; cursor: pointer; }
+        .dark .reply-bubble { background: rgba(255,255,255,0.05); }
+
+        #emojiPicker { position: absolute; bottom: 100%; left: 0; z-index: 100; background: #1a2530; border-radius: 20px; padding: 14px; box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.06); display: none; flex-direction: column; gap: 8px; width: 310px; backdrop-filter: blur(20px); animation: scaleIn 0.15s ease-out; border: 1px solid rgba(255,255,255,0.06); }
+        #emojiPicker.open { display: flex; }
+        .emoji-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; }
+        .emoji-btn { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; transition: all 0.1s; }
+        .emoji-btn:hover { background: rgba(255,255,255,0.1); transform: scale(1.25); }
+
+        .ctx-menu { position: fixed; z-index: 9999; background: #1a2530; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.07); min-width: 180px; overflow: hidden; animation: scaleIn 0.12s ease-out; }
+        .ctx-item { padding: 11px 16px; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.1s; color: #e9edef; }
+        .ctx-item:hover { background: rgba(255,255,255,0.07); }
+        .ctx-item.danger { color: #ff3b30; }
+        .ctx-item.danger:hover { background: rgba(255,59,48,0.1); }
+
+        #chatSearchBar { display: none; padding: 8px 16px; background: #1a2530; border-bottom: 1px solid rgba(255,255,255,0.05); animation: slideDown 0.2s ease; }
+        #chatSearchBar.open { display: flex; }
+
+        #pinnedBanner { background: rgba(0,168,132,0.08); border-bottom: 1px solid rgba(0,168,132,0.2); padding: 8px 16px; display: none; align-items: center; gap: 10px; cursor: pointer; z-index: 9; }
+        #pinnedBanner.visible { display: flex; }
+
+        .online-pulse { animation: onlinePulse 2.5s infinite; }
+        @keyframes onlinePulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        .reaction-bar { position: absolute; bottom: 100%; background: #1a2530; border-radius: 100px; padding: 5px 10px; display: flex; gap: 2px; box-shadow: 0 8px 30px rgba(0,0,0,0.6); opacity: 0; pointer-events: none; transition: all 0.15s ease; z-index: 50; border: 1px solid rgba(255,255,255,0.07); margin-bottom: 4px; }
+        .group\/msg:hover .reaction-bar { opacity: 1; pointer-events: auto; }
+        .react-emoji { font-size: 17px; cursor: pointer; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.1s; }
+        .react-emoji:hover { background: rgba(255,255,255,0.12); transform: scale(1.35); }
+
+        .v13-badge { background: linear-gradient(135deg, #00a884, #0070f3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; letter-spacing: 0.05em; }
+        .chat-item-active { background: linear-gradient(90deg, rgba(0,168,132,0.15) 0%, rgba(0,168,132,0.04) 100%); border-left: 3px solid #00a884; }
+        .emoji-scroll::-webkit-scrollbar { width: 4px; }
+        .emoji-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+        .tab-btn.active-tab { color: #00a884 !important; border-bottom-color: #00a884 !important; }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        .shimmer { background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+
+        /* Call timer */
+        #callTimer { font-variant-numeric: tabular-nums; }
+    </style>
+</head>
