@@ -340,9 +340,9 @@
             <div class="flex items-center gap-1.5 text-gray-600 dark:text-gray-400">
                 <button onclick="window.switchTab('status')" class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition" title="Status"><i data-lucide="circle-dashed" class="w-5 h-5"></i></button>
                 <button onclick="window.toggleModal('newGroupModal')" class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition" title="Neue Gruppe"><i data-lucide="message-square-plus" class="w-5 h-5"></i></button>
-                <div class="relative group">
-                    <button class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition"><i data-lucide="more-vertical" class="w-5 h-5"></i></button>
-                    <div class="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-sc-panel rounded-2xl shadow-xl border border-gray-100 dark:border-sc-border hidden group-hover:block z-50 py-2 origin-top-right animate-scale-in overflow-hidden">
+                <div class="relative group" data-hover-menu-wrapper>
+                    <button class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition" data-hover-menu-trigger><i data-lucide="more-vertical" class="w-5 h-5"></i></button>
+                    <div class="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-sc-panel rounded-2xl shadow-xl border border-gray-100 dark:border-sc-border hidden group-hover:block z-50 py-2 origin-top-right animate-scale-in overflow-hidden" data-hover-menu>
                         <button onclick="window.switchTab('settings')" class="w-full text-left px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-white/5 text-sm flex items-center gap-2"><i data-lucide="settings" class="w-4 h-4"></i>Einstellungen</button>
                         <button onclick="window.switchTab('calls')" class="w-full text-left px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-white/5 text-sm flex items-center gap-2"><i data-lucide="phone" class="w-4 h-4"></i>Anrufverlauf</button>
                         <button onclick="window.toggleModal('joinGroupModal')" class="w-full text-left px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-white/5 text-sm flex items-center gap-2"><i data-lucide="log-in" class="w-4 h-4"></i>Gruppe beitreten</button>
@@ -655,9 +655,9 @@
                 </div>
                 <button onclick="window.toggleChatSearch()" class="p-2 text-gray-500 hover:text-sc-accent hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition" title="Im Chat suchen"><i data-lucide="search" class="w-5 h-5"></i></button>
                 <button onclick="window.initiateCall()" class="p-2.5 text-sc-accent hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition shadow-sm bg-white dark:bg-transparent" title="Anruf starten"><i data-lucide="phone" class="w-5 h-5 fill-current"></i></button>
-                <div class="relative group">
-                    <button class="p-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition"><i data-lucide="more-vertical" class="w-5 h-5"></i></button>
-                    <div class="absolute right-0 top-full mt-2 w-52 bg-white dark:bg-sc-panel rounded-2xl shadow-xl border border-gray-100 dark:border-sc-border hidden group-hover:block z-50 py-2 origin-top-right animate-scale-in overflow-hidden">
+                <div class="relative group" data-hover-menu-wrapper>
+                    <button class="p-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition" data-hover-menu-trigger><i data-lucide="more-vertical" class="w-5 h-5"></i></button>
+                    <div class="absolute right-0 top-full mt-2 w-52 bg-white dark:bg-sc-panel rounded-2xl shadow-xl border border-gray-100 dark:border-sc-border hidden group-hover:block z-50 py-2 origin-top-right animate-scale-in overflow-hidden" data-hover-menu>
                         <button onclick="window.toggleModal('infoModal')" class="w-full text-left px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-white/5 text-sm flex items-center gap-2"><i data-lucide="info" class="w-4 h-4"></i>Chat-Info</button>
                         <button onclick="window.toggleMuteChat()" id="muteChatBtn" class="w-full text-left px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-white/5 text-sm flex items-center gap-2"><i data-lucide="bell-off" class="w-4 h-4"></i>Stummschalten</button>
                         <button onclick="window.blockCurrentUser()" id="blockChatBtn" class="w-full text-left px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-white/5 text-sm flex items-center gap-2 text-sc-danger"><i data-lucide="shield-off" class="w-4 h-4"></i>Blockieren</button>
@@ -1105,6 +1105,7 @@
             appId: "1:555331269217:web:872ef3fddca93db0957020"
         };
 
+        window.__shadowModuleLoaded = true;
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
@@ -1274,6 +1275,35 @@
             if(el.classList.contains('hidden')) { el.classList.remove('hidden'); el.classList.add('animate-fade-in'); lucide.createIcons(); }
             else { el.classList.add('hidden'); }
         };
+
+        function initHoverMenus() {
+            document.querySelectorAll('[data-hover-menu-wrapper]').forEach((wrapper) => {
+                const trigger = wrapper.querySelector('[data-hover-menu-trigger]');
+                const menu = wrapper.querySelector('[data-hover-menu]');
+                if(!trigger || !menu) return;
+
+                const showMenu = () => {
+                    menu.classList.remove('hidden');
+                    menu.classList.add('block');
+                };
+                const hideMenu = () => {
+                    menu.classList.add('hidden');
+                    menu.classList.remove('block');
+                };
+
+                wrapper.addEventListener('mouseenter', showMenu);
+                wrapper.addEventListener('mouseleave', () => {
+                    if(menu.matches(':hover')) return;
+                    hideMenu();
+                });
+                trigger.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    if(menu.classList.contains('hidden')) showMenu(); else hideMenu();
+                });
+                menu.addEventListener('mouseenter', showMenu);
+                menu.addEventListener('mouseleave', hideMenu);
+            });
+        }
 
         window.scrollToBottom = (smooth = false) => {
             const list = document.getElementById('messagesList');
@@ -1892,6 +1922,7 @@
                 cleanupOldCalls();
                 buildAvatarGrid();
                 initPwaInstallFlow();
+                initHoverMenus();
                 lucide.createIcons();
             }
         });
@@ -1907,6 +1938,41 @@
             const short = document.getElementById('setIdShort');
             if(short) short.innerText = myRealUid.substring(0,12) + '... (kopieren)';
         }
+
+        window.saveProfile = async () => {
+            if(!myRealUid) {
+                window.showToast("Profil kann noch nicht gespeichert werden. Bitte kurz warten.", 'error');
+                return;
+            }
+
+            const nickInput = document.getElementById('nickIn');
+            const bioInput = document.getElementById('bioIn');
+            const newNick = (nickInput?.value || '').trim();
+            const newBio = (bioInput?.value || '').trim();
+
+            if(!newNick) {
+                window.showToast("Bitte gib einen Namen ein.", 'error');
+                return;
+            }
+
+            try {
+                const uRef = doc(db, 'users', myRealUid);
+                await setDoc(uRef, {
+                    nickname: newNick,
+                    bio: newBio,
+                    uid: myRealUid
+                }, { merge: true });
+
+                myNick = newNick;
+                document.getElementById('setNick').innerText = newNick;
+                document.getElementById('setBio').innerText = newBio || 'Keine Bio gesetzt';
+                updateSelfUI();
+                window.showToast("Profil gespeichert!", 'success');
+            } catch (e) {
+                console.error('saveProfile failed', e);
+                window.showToast("Speichern fehlgeschlagen: " + (e?.message || 'Unbekannter Fehler'), 'error');
+            }
+        };
 
         window.recoverAccount = async () => {
             const id = document.getElementById('login_id').value.trim();
@@ -2324,6 +2390,17 @@
             window.showToast(`${name} wurde entfernt`, 'info');
             updateInfoModal(activeChatId, document.getElementById('infoTit').innerText, false);
         };
+
+     
+        function loadStatusTab() {
+            const list = document.getElementById('globalStatusList');
+            if(!list) return;
+            list.innerHTML = `
+                <div class="rounded-2xl border border-dashed border-gray-300 dark:border-sc-border bg-gray-50/80 dark:bg-sc-panel2/70 p-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                    Statusmeldungen sind gerade nicht verfügbar. Ein neuer Status kann später hier erscheinen.
+                </div>
+            `;
+        }
 
         function loadChats() {
             const q = query(collection(db, "chats"), orderBy("lastActivity", "desc"), limit(50));
@@ -2919,3 +2996,4 @@
         document.addEventListener('DOMContentLoaded', () => {
             const orig = window.toggleModal;
         });
+    </script>

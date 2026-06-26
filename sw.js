@@ -1,4 +1,4 @@
-const CACHE_NAME = 'shadowchat-v1';
+const CACHE_NAME = 'shadowchat-v2';
 const APP_SHELL = ['./', './index.html', './manifest.json', './icons/shadowchat-icon.svg'];
 
 self.addEventListener('install', (event) => {
